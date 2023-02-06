@@ -32,6 +32,7 @@ import androidx.lifecycle.Lifecycle;
  *    github : https://github.com/getActivity/AndroidProject
  *    time   : 2018/10/18
  *    desc   : Fragment 技术基类
+ * @author Admin
  */
 public abstract class BaseFragment<A extends BaseActivity> extends Fragment implements
         ActivityAction, ResourcesAction, HandlerAction, ClickAction, BundleAction, KeyboardAction , FragmentBackHandler {

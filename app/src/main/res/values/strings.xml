@@ -1,3 +1,64 @@
 <resources>
     <string name="app_name">SmartKeyboard</string>
+
+    <string name="string_custom">自定义</string>
+    <string name="string_select_pick">选择图片</string>
+    <string name="string_take_photo">相机</string>
+    <string name="string_album">相册</string>
+
+    <!-- 通用的 -->
+    <string name="common_loading">加载中&#8230;</string>
+
+    <string name="common_unknown_error">未知错误</string>
+
+    <string name="comm_prompt">提醒</string>
+    <string name="common_confirm">确定</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_exit">退出</string>
+
+    <!-- 拍照和拍摄 -->
+    <string name="video_select_title">视频选择</string>
+    <string name="video_select_all">所有视频</string>
+
+    <string name="video_select_total">共 %d 个</string>
+
+    <string name="video_select_max_hint">本次最多只能选择 %d 个视频</string>
+
+    <string name="video_select_error">无法选中，该视频已经被删除</string>
+    <string name="camera_launch_fail">无法启动相机</string>
+    <string name="camera_image_error">目标地址错误</string>
+    <!-- 图片选择 -->
+    <string name="image_select_title">图片选择</string>
+    <string name="image_select_all">所有图片</string>
+
+    <string name="image_select_total">共 %d 张</string>
+
+    <string name="image_select_max_hint">本次最多只能选择 %d 张图片</string>
+
+    <string name="image_select_error">无法选中，该图片已经被删除</string>
+
+    <string name="status_layout_no_data">空空如也</string>
+    <string name="status_layout_error_request">请求出错，请重试</string>
+    <string name="status_layout_error_network">网络错误，请重试</string>
+    <string name="status_layout_retry">重试</string>
+
+    <string name="string_today">今日</string>
+    <string name="string_yesterday">昨天</string>
+    <string name="string_before_dawn_">凌晨</string>
+    <string name="string_morning">上午</string>
+    <string name="string_noon">中午</string>
+    <string name="string_afternoon">下午</string>
+    <string name="string_night">夜晚</string>
+    <string name="string_double_click_exit">再按一次退出程序!</string>
+
+
+    <string name="user_agreement_tips">用户协议</string>//用户协议
+    <string name="privacy_agreement_tips">隐私政策</string>//用户协议
+    <string name="privacy_agreement_2">点击“同意”，即表示您同意最新的“服务协议”和关于“隐私政策”的声明。</string>
+
+    <string name="string_confirm">确定</string>
+    <string name="string_cancel">取消</string>
+    <string name="string_last_txt">最新的</string>
+    <string name="string_and">和</string>
+
 </resources>

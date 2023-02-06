@@ -1,0 +1,136 @@
+package com.app.smartkeyboard.dialog
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatDialog
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.app.smartkeyboard.BaseApplication
+import com.app.smartkeyboard.R
+import com.app.smartkeyboard.adapter.OnCommItemClickListener
+import com.app.smartkeyboard.adapter.ScanDeviceAdapter
+import com.app.smartkeyboard.bean.BleBean
+import com.app.smartkeyboard.ble.ConnStatus
+import com.app.smartkeyboard.utils.BikeUtils
+import com.app.smartkeyboard.utils.MmkvUtils
+import com.blala.blalable.listener.BleConnStatusListener
+import com.inuker.bluetooth.library.search.SearchResult
+import com.inuker.bluetooth.library.search.response.SearchResponse
+import com.tencent.mmkv.MMKV
+import timber.log.Timber
+
+/**
+ * Created by Admin
+ *Date 2023/1/12
+ */
+class DialogScanDeviceView : AppCompatDialog {
+
+    private var list : MutableList<BleBean> ?= null
+    private var scanDeviceAdapter : ScanDeviceAdapter ?= null
+    private var recyclerView : RecyclerView ?= null
+
+    //用于去重的list
+    private var repeatList : MutableList<String> ?= null
+
+
+    private var onClick : OnCommItemClickListener ?= null
+
+    fun setOnDialogClickListener(onCommItemClickListener: OnCommItemClickListener){
+        this.onClick = onCommItemClickListener
+    }
+
+    constructor(context: Context) : super (context){
+
+    }
+
+    constructor(context: Context,theme : Int) : super (context,theme){
+
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.dialog_scan_device_layout)
+
+        initViews()
+    }
+
+    private fun initViews(){
+        recyclerView = findViewById(R.id.scanRecyclerView)
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        recyclerView?.addItemDecoration(DividerItemDecoration(context,DividerItemDecoration.VERTICAL))
+        recyclerView?.layoutManager = linearLayoutManager
+        list = mutableListOf()
+        scanDeviceAdapter = ScanDeviceAdapter(context, list!!)
+        recyclerView?.adapter = scanDeviceAdapter
+        repeatList = mutableListOf()
+        scanDeviceAdapter!!.setOnItemClick(onItemClick)
+    }
+
+
+    private val onItemClick : OnCommItemClickListener =
+        OnCommItemClickListener { position ->
+            onClick?.onItemClick(0x00)
+            val service = BaseApplication.getBaseApplication().connStatusService
+            val bean = list?.get(position)
+            if (bean != null) {
+                service.connDeviceBack(bean.bluetoothDevice.name,bean.bluetoothDevice.address,object :
+                    BleConnStatusListener {
+                    override fun onConnectStatusChanged(mac: String?, status: Int) {
+                        MmkvUtils.saveConnDeviceMac(mac)
+                        MmkvUtils.saveConnDeviceName(bean.bluetoothDevice.name)
+                        BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
+                        onClick?.onItemClick(0x01)
+                        dismiss()
+                    }
+                })
+            }
+        }
+
+    //开始扫描
+     fun startScan(){
+        BaseApplication.getBaseApplication().bleOperate.scanBleDevice(object : SearchResponse{
+
+            override fun onSearchStarted() {
+
+            }
+
+            override fun onDeviceFounded(p0: SearchResult) {
+                val bleName = p0.name
+                if(BikeUtils.isEmpty(bleName) || bleName.equals("NULL") || BikeUtils.isEmpty(p0.address))
+                    return
+                if(repeatList?.contains(p0.address) == true)
+                    return
+                //判断少于40个设备就不添加了
+                if(repeatList?.size!! >40){
+                    return
+                }
+                p0.address?.let { repeatList?.add(it) }
+                list?.add(BleBean(p0.device,p0.rssi))
+                list?.sortBy {
+                    Math.abs(it.rssi)
+                }
+
+                scanDeviceAdapter?.notifyDataSetChanged()
+            }
+
+            override fun onSearchStopped() {
+
+            }
+
+            override fun onSearchCanceled() {
+
+            }
+
+        },15 * 1000,1)
+    }
+
+    override fun dismiss() {
+        super.dismiss()
+        Timber.e("------d关闭=====")
+        BaseApplication.getBaseApplication().bleOperate.stopScanDevice()
+    }
+}

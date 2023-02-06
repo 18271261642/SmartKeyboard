@@ -301,15 +301,9 @@ public class BleManager {
                     (new Handler(Looper.getMainLooper())).postDelayed(new Runnable() {
                         public void run() {
 
-                            if(bleName.toLowerCase(Locale.ROOT).contains("w561b")){
-                                w561BNotifyRealData(bleMac,bleConstant.W561B_SERVER_UUID,bleConstant.W561B_REAL_HR_UUID,connectResponse);
-                                return;
-                            }
-
                             //实时数据返回，主动通道
-                            notifyRealtime(bleMac,bleConstant.SERVICE_UUID,bleConstant.REAL_TIME_UUID);
+
                             setNotifyData(bleMac,bleConstant.SERVICE_UUID,bleConstant.READ_UUID,connectResponse);
-                            setSaveNotifyData(bleMac,bleConstant.SERVICE_UUID,bleConstant.SAVE_DATA_SEND_UUID);
 
                         }
                     }, 2000L);
@@ -571,15 +565,17 @@ public class BleManager {
     }
 
 
-    //写入设备数据
-    public synchronized void writeDataToDevice(int day,byte[] data, WriteBack24HourDataListener writeBack24HourDataListener){
+    /**
+     * 键盘写入表盘数据
+     */
+    public synchronized void writeKeyBoardDialData(byte[] data, WriteBackDataListener writeBackDataListener){
       //  this.dayTag = day;
-        Log.e(TAG,"-----写入数据="+Arrays.toString(data));
+        Log.e(TAG,"-----写入键盘表盘数据长度="+data.length +"  "+Utils.formatBtArrayToString(data));
         String bleMac = (String) BleSpUtils.get(mContext,SAVE_BLE_MAC_KEY,"");
         if(TextUtils.isEmpty(bleMac))
             return;
-        interfaceManager.setWriteBack24HourDataListener(writeBack24HourDataListener);
-        bluetoothClient.write(bleMac, bleConstant.SERVICE_UUID,bleConstant.WRITE_UUID,data,bleWriteResponse);
+        interfaceManager.setWriteBackDataListener(writeBackDataListener);
+        bluetoothClient.write(bleMac, bleConstant.SERVICE_UUID,bleConstant.KEYBOARD_DIAL_WRITE_UUID,data,bleWriteResponse);
     }
 
 

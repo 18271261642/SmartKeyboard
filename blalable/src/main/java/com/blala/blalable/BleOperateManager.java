@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+
 import androidx.annotation.NonNull;
 
 
@@ -59,6 +61,48 @@ public class BleOperateManager {
 
     public   BleOperateManager() {
     }
+
+
+
+    private List<byte[]> detailDialList = new ArrayList<>();
+    private int detailDialCount = 0;
+
+
+    private final Handler handler = new Handler(Looper.myLooper()){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if(msg.what == 0x00){
+                Log.e(TAG,"-----发送表盘index="+dialCount +"  "+ dialList.size());
+                if(dialCount < dialList.size()){
+                    detailDialList.clear();
+                    List<byte[]> indexData =dialList.get(dialCount);
+                    detailDialList.addAll(indexData);
+                    detailDialCount = 0;
+                    dialCount++;
+                    handler.sendEmptyMessageDelayed(0x01,50);
+                   // sendWriteKeyBoardData(indexData);
+                }else{ //发送完了
+                    Log.e(TAG,"---------全部发送万了");
+                }
+
+            }
+
+            //每个4K包的分包发送
+            if(msg.what == 0x01){
+                Log.e(TAG,"------4K包详细发送="+detailDialCount+" "+detailDialList.size());
+                if(detailDialCount < detailDialList.size()){
+                    byte[] detailData = detailDialList.get(detailDialCount);
+                    detailDialCount++;
+                    sendWriteKeyBoardData(detailData);
+                }else{
+                    //一个4K包里面的内容发送完了
+                    Log.e(TAG,"---------一个4K包发送全部发送万了");
+                    handler.sendEmptyMessageDelayed(0x00,50);
+                }
+            }
+        }
+    };
 
 
 
@@ -811,19 +855,19 @@ public class BleOperateManager {
     }
 
 
-    private final Handler handler = new Handler(Looper.getMainLooper()){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            if(msg.what == 0x00){
-                tmpIndex++;
-                if(tmpIndex<currListByte.size()-1){
-                    byte[] currBy = currListByte.get(tmpIndex);
-                    writeData(currBy);
-                }
-            }
-        }
-    };
+//    private final Handler handler = new Handler(Looper.getMainLooper()){
+//        @Override
+//        public void handleMessage(@NonNull Message msg) {
+//            super.handleMessage(msg);
+//            if(msg.what == 0x00){
+//                tmpIndex++;
+//                if(tmpIndex<currListByte.size()-1){
+//                    byte[] currBy = currListByte.get(tmpIndex);
+//                    writeData(currBy);
+//                }
+//            }
+//        }
+//    };
 
 
 
@@ -970,6 +1014,181 @@ public class BleOperateManager {
         });
     }
 
+
+
+
+    //连接成功第一步获取设备的状态
+    public void getKeyBoardStatus(){
+        byte[] btArray = new byte[]{0x00,0x13,0x00};
+        byte[] statusArray = Utils.getFullPackage(btArray);
+
+        bleManager.writeDataToDevice(statusArray, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+                //88 00 00 00 00 00 06 14 00 14 01 00 01 00
+                if(data.length == 14 && data[6] == 6 && data[7] == 20 && data[10] == 1){
+                    sendKeyBoardScreen();
+                }
+            }
+        });
+    }
+
+
+    //亮屏
+    public void sendKeyBoardScreen(){
+        byte[] data = new byte[]{0x01,0x1C,0x01,0x00,0x01,0x01};
+        byte[] logoArray = Utils.getFullPackage(data);
+
+        bleManager.writeDataToDevice(logoArray, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+
+            }
+        });
+    }
+
+    /**
+     * 将string类型的byte数组转成bytep[]
+     *
+     * @param str
+     * @return
+     */
+    public static byte[] stringToByte(String str) {
+        byte[] data = new byte[str.length() / 2];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = Integer.valueOf(str.substring(0 + i * 2, 2 + i * 2), 16).byteValue();
+        }
+        return data;
+    }
+
+
+    //设置非固化表盘
+    public void setLocalKeyBoardDial(){
+        String str = "880000000000060009070000FFFE";
+        byte[] array = Utils.hexStringToByte(str);
+        bleManager.writeDataToDevice(array, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+
+            }
+        });
+
+    }
+
+    //发送记事本
+    public void sendKeyBoardNoteBook(String title,Calendar noteCalendar){
+        String unitCode = Utils.getUnicode(title).replace("\\u", "");
+
+        //  00 68 00 68 00 68 00 6a 00 6a 00 68
+
+        byte[] titleArray =stringToByte(unitCode);
+
+
+        Log.e(TAG,"-------标题="+title+"\n"+unitCode+"\n"+Utils.formatBtArrayToString(titleArray));
+
+        int year = noteCalendar.get(Calendar.YEAR);
+        int month = noteCalendar.get(Calendar.MONTH)+1;
+        int day = noteCalendar.get(Calendar.DAY_OF_MONTH);
+        int hour = noteCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = noteCalendar.get(Calendar.MINUTE);
+        int second = noteCalendar.get(Calendar.SECOND);
+
+        //星期
+        int week = noteCalendar.get(Calendar.DAY_OF_WEEK)-1;
+        Log.e(TAG,"---------week="+week);
+
+        byte[] timeArray = new byte[11];
+        timeArray[0] = 0x01;
+        timeArray[2] = 0x08;
+        timeArray[3] = Utils.intToSecondByteArray(year)[1];
+        timeArray[4] = Utils.intToSecondByteArray(year)[0];
+        timeArray[5] = (byte) (month & 0xff);
+        timeArray[6] = (byte) (day & 0xff);
+        timeArray[7] = (byte) (hour & 0xff);
+        timeArray[8] = (byte) (minute & 0xff);
+        timeArray[9] = (byte) (second & 0xff);
+        timeArray[10] = (byte) week;
+        //时间
+        String timeStr = Utils.getHexString(timeArray);
+
+        Log.e(TAG,"------时间="+timeStr);
+
+        //内容
+
+        int contentLength = titleArray.length;
+        int l1 = Utils.intToSecondByteArray(contentLength)[1];
+        int l2 = Utils.intToSecondByteArray(contentLength)[0];
+
+        String conStr = "02"+ String.format("%02x",l1) + String.format("%02x",l2) +Utils.getHexString(titleArray);
+
+        String resultStr = "040A"+timeStr+conStr;
+
+        byte[] tempContentArray = Utils.hexStringToByte(resultStr);
+
+        //88 00 00 00 00 00 1c d1
+        Log.e(TAG,"-------内如="+conStr+"\n"+resultStr);
+
+        String t = "8800000000001600 040A 0100 08  07E7 0106 0304 0504 02 0006  8B B0 4E 8B 67 2C";
+        //8800000000001ccf0 040a 0100 08 07e7 01 0a 12 13 37 05 02 0120068  00680068006a006a0068
+        //88 00 00 00 00 00 1c cf 00 40 a0 10 00 80 7e 70 10 a1 21 33 70 50 20 12 00 68 00 68 00 68 00 6a 00 6a 00 68
+        //88 00 00 00 00 00 1c cf0 040a 0100 08 e707 01 0a 12 13 37 05 02 0120 06800680068006a006a0068
+        //8800000000001a2f0010008e707010a1213370502012006800680068006a006a0068
+        byte[] noteArray = Utils.getFullPackage(tempContentArray);
+
+
+        Log.e(TAG,"---------记事本="+Utils.formatBtArrayToString(noteArray));
+
+        bleManager.writeDataToDevice(noteArray, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+
+            }
+        });
+    }
+
+
+
+
+    //第一步，开始写入表盘
+    public void startFirstDial(byte[] data,WriteBackDataListener writeBackDataListener){
+        bleManager.writeDataToDevice(data, writeBackDataListener);
+    }
+
+
+    //APP 端设擦写设备端指定的 FLASH 数据块
+    public void setIndexDialFlash(byte[] data,WriteBackDataListener writeBackDataListener){
+        bleManager.writeDataToDevice(data, writeBackDataListener);
+    }
+
+
+    //总的大小
+    private int dialCount = 0;
+    //表盘数据
+    private List<List<byte[]>> dialList = new ArrayList<>();
+
+
+    //开始写入表盘flash数据
+    public void writeDialFlash(List<List<byte[]>> sourceList){
+        dialList.clear();
+        dialList.addAll(sourceList);
+        dialCount = 0;
+
+        handler.sendEmptyMessageDelayed(0x00,200);
+    }
+
+
+
+    private void sendWriteKeyBoardData(byte[] data){
+        bleManager.writeKeyBoardDialData(data, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+                Log.e(TAG,"---------4K包里面的内容返回="+Utils.formatBtArrayToString(data));
+//                handler.sendEmptyMessageDelayed(0x01,100);
+                //4K包里面的内容返回
+            }
+        });
+        handler.sendEmptyMessageDelayed(0x01,100);
+    }
 
 
     private final WriteBackDataListener writeBackDataListener = new WriteBackDataListener() {

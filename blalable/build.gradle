@@ -3,6 +3,9 @@ plugins {
 }
 
 apply from : '../common.gradle'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
 
 android {
     compileSdk 31

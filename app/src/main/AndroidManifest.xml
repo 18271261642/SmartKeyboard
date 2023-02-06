@@ -3,6 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.app.smartkeyboard">
 
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+
     <application
         android:name="com.app.smartkeyboard.BaseApplication"
         android:allowBackup="true"
@@ -11,9 +26,13 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartKeyboard"
         tools:targetApi="31">
+
+        <meta-data android:name="ScopedStorage" android:value="true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -23,6 +42,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--记事本页面-->
+        <activity android:name=".NotebookActivity"/>
+        <!--编辑记事本-->
+        <activity android:name=".EditNoteBookActivity"/>
+        <!--键盘页面-->
+        <activity android:name=".BleKeyboardActivity"/>
+        <activity android:name=".DialHomeActivity"/>
+        <activity android:name=".CustomDialActivity"/>
+
+        <activity android:name=".img.ImagePreviewActivity"/>
+        <activity android:name=".img.ImageSelectActivity"/>
+        <activity android:name=".img.CameraActivity"/>
+
+        <service android:name="com.app.smartkeyboard.ble.ConnStatusService"/>
+
+
+        <!-- 适配 Android 7.0 文件意图 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

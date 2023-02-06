@@ -16,6 +16,10 @@ import java.util.Timer;
  * Date 2021/9/16
  */
 public class Utils {
+
+
+
+
     private static final String HEX_CHARS = "0123456789ABCDEF";
 
     public static int indexPosition = 0;
@@ -448,8 +452,117 @@ public class Utils {
     }
 
 
+    // 这里替换你的产品id
+    private static String product_id = "88";
+
+    /**
+     * 获取全包内容
+     *
+     * @param value 你的 payload
+     * @return payload 加上head
+     */
+    public static byte[] getFullPackage(byte[] value) {
+        StringBuilder stringBuilder = new StringBuilder();
+        //产品id
+        stringBuilder.append(product_id)
+                .append("0000")  //Reserve
+                .append(getHexString(toByteArray(value.length)))  //长度 ，4个字节
+                .append(getHexString(new byte[]{byteXOR(value)}))  //xor crc
+                .append(getHexString(value));
+        return hexStringToByte(stringBuilder.toString());
+    }
+
+    public static byte[] toByteArray(int i) {
+        byte[] array = new byte[4];
+
+        array[3] = (byte) (i & 0xFF);
+        array[2] = (byte) ((i >> 8) & 0xFF);
+        array[1] = (byte) ((i >> 16) & 0xFF);
+        array[0] = (byte) ((i >> 24) & 0xFF);
+
+        return array;
+    }
+
+    /**
+     * @param data 要异或的数据
+     * @return 最终返回的异或数据结果
+     */
+    public static byte byteXOR(byte[] data) {
+        byte byteXor = 0x00;
+        for (int i = 0; i < data.length; i++) {
+            byteXor = (byte) (byteXor ^ data[i]);
+
+        }
+
+        return (byte) (byteXor & 0XFF);
+    }
 
 
+    public static String getUnicode(String string) {
+        StringBuffer unicode = new StringBuffer();
+        for (int i = 0; i < string.length(); i++) {
+            // 取出每一个字符
+            char c = string.charAt(i);
+            // 转换为unicode
+            unicode.append(String.format("\\u%04x", Integer.valueOf(c)));
+        }
+
+        return unicode.toString();
+    }
 
 
+    /**
+     * 这个判断是用来判断是否为需要解析的cmd
+     * 需要按照协议，发送的key  和返回的key 保证一一对应
+     *
+     * @param command 返回的 cmd
+     * @return 对应返回 ture , false 不对应
+     */
+
+    public static byte[] getPlayer(String command,String key,byte[] value) {  //
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(command)  //command
+                .append(key)  //key
+                // .append(ByteUtil.getHexString(HexDump.toByteArray((short) value.length)))  //value的长度  最新通知没了不需要了
+                .append(getHexString(value));
+        return hexStringToByte(stringBuilder.toString());
+    }
+    public static byte[] getPlayer(String Command,String key ) {  //
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(Command)  //command
+                .append(key);  //key
+        return hexStringToByte(stringBuilder.toString());
+    }
+
+    public static byte[] byteMerger(byte[] bt1, byte bt2) {
+        byte[] bt3 = new byte[bt1.length + 1];
+        int i = 0;
+        for (byte bt : bt1) {
+            bt3[i] = bt;
+            i++;
+        }
+        bt3[i] = bt2;
+        return bt3;
+    }
+
+    public static byte[] byteMerger(byte bt1, byte[] bt2) {
+        byte[] bt3 = new byte[bt2.length + 1];
+        int i = 0;
+        bt3[i] = bt1;
+        i++;
+        for (byte bt : bt2) {
+            bt3[i] = bt;
+            i++;
+        }
+
+        return bt3;
+    }
+
+    public static byte[] toByteArrayLength(int i, int size) {
+        byte[] array = new byte[size];
+        for (int j = 0; j < size; j++) {
+            array[j] = (byte) ((i >> 8 * (size - j - 1)) & 0xFF);
+        }
+        return array;
+    }
 }

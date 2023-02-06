@@ -51,14 +51,20 @@ public class BleConstant {
 
 
     /**W560b服务UUID**/
-    public UUID SERVICE_UUID = UUID.fromString("7658fd00-878a-4350-a93e-da553e719ed0");
+    public UUID SERVICE_UUID = UUID.fromString("1f40eaf8-aab4-14a3-f1ba-f61f35cddbaa");
 
     /**命令发送特征uuid**/
-    public UUID WRITE_UUID = UUID.fromString("7658fd01-878a-4350-a93e-da553e719ed0");
-    /**实时返回数据到的UUID**/
-    public UUID REAL_TIME_UUID = UUID.fromString("7658fd04-878a-4350-a93e-da553e719ed0");
+    public UUID WRITE_UUID = UUID.fromString("1f400001-aab4-14a3-f1ba-f61f35cddbaa");
     /**写入数据返回指令的UUID**/
-    public UUID READ_UUID = UUID.fromString("7658fd02-878a-4350-a93e-da553e719ed0");
+    public UUID READ_UUID = UUID.fromString("1f400002-aab4-14a3-f1ba-f61f35cddbaa");
+
+    /**表盘写入的UUID**/
+    public final UUID KEYBOARD_DIAL_WRITE_UUID = UUID.fromString("1f400003-aab4-14a3-f1ba-f61f35cddbaa");
+
+
+
+
+
     /**存储数据返回**/
     public UUID SAVE_DATA_SEND_UUID = UUID.fromString("7658fd03-878a-4350-a93e-da553e719ed0");
     /**表盘接收**/

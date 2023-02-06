@@ -38,10 +38,39 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.1'
+    implementation 'com.tencent:mmkv:1.2.14'
     implementation project(path: ':blalable')
     implementation project(path: ':widget')
     implementation project(path: ':base')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    //log日志框架
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // AOP 插件库：https://mvnrepository.com/artifact/org.aspectj/aspectjrt
+    implementation 'org.aspectj:aspectjrt:1.9.6'
+    implementation 'com.github.getActivity:ToastUtils:9.5'
+    // 沉浸式框架：https://github.com/gyf-dev/ImmersionBar
+    // 基础依赖包，必须要依赖
+    implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
+    implementation 'com.airbnb.android:lottie:4.1.0'
+    implementation 'com.github.getActivity:TitleBar:9.2'
+    // kotlin扩展（可选）
+   // implementation 'com.geyifeng.immersionbar:immersionbar-ktx:3.2.2'
+
+    //shap框架
+    implementation 'com.github.getActivity:ShapeView:8.3'
+
+    implementation 'com.github.getActivity:XXPermissions:16.5'
+
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.6.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'jp.wasabeef:glide-transformations:2.0.1'
+    //指示器
+    implementation 'me.relex:circleindicator:2.1.6'
 }
