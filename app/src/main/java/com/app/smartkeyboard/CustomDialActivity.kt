@@ -118,6 +118,11 @@ class CustomDialActivity : AppActivity() {
 
        // cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            XXPermissions.with(this).permission(arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)).request{ permissions, all -> }
+        }
+
         cropImgPath = this.getExternalFilesDir(null)?.path
 
         Timber.e("-----path="+cropImgPath)
