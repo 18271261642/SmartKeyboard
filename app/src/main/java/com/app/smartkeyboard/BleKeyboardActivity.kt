@@ -80,6 +80,16 @@ class BleKeyboardActivity : AppActivity(){
 
     override fun initData() {
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
+            XXPermissions.with(this).permission(arrayOf(
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_ADVERTISE)).request { permissions, all ->
+                //verifyScanFun()
+            }
+        }
+
         scanReScanTv?.setOnClickListener {
             verifyScanFun(false)
 

@@ -20,6 +20,7 @@ import com.app.smartkeyboard.utils.*
 import com.blala.blalable.Utils
 import com.blala.blalable.keyboard.DialCustomBean
 import com.blala.blalable.keyboard.KeyBoardConstant
+import com.blala.blalable.listener.OnKeyBoardListener
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
@@ -116,14 +117,14 @@ class CustomDialActivity : AppActivity() {
             )
         ).request { permissions, all -> }
 
-       // cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
+
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             XXPermissions.with(this).permission(arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)).request{ permissions, all -> }
         }
-
-        cropImgPath = this.getExternalFilesDir(null)?.path
+         cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
+//        cropImgPath = this.getExternalFilesDir(null)?.path
 
         Timber.e("-----path="+cropImgPath)
     }
@@ -154,8 +155,9 @@ class CustomDialActivity : AppActivity() {
             return
         }
 
+        showDialog("同步中...")
 
-        stringBuilder.delete(0,stringBuilder.length)
+        //stringBuilder.delete(0,stringBuilder.length)
         showLogTv()
 
         var uiFeature = 65533
@@ -174,12 +176,12 @@ class CustomDialActivity : AppActivity() {
         }
 
         //生成新图并保存
-        val newBit = BitmapAndRgbByteUtil.loadBitmapFromView(customShowImgView)
-        var path = FileUtils.saveBitmapToSDCard(
-            this@CustomDialActivity,
-            newBit,
-            (System.currentTimeMillis() / 1000).toString()
-        )
+//        val newBit = BitmapAndRgbByteUtil.loadBitmapFromView(customShowImgView)
+//        var path = FileUtils.saveBitmapToSDCard(
+//            this@CustomDialActivity,
+//            newBit,
+//            (System.currentTimeMillis() / 1000).toString()
+//        )
 
         dialBean.uiFeature = uiFeature.toLong()
         dialBean.binSize = grbByte.size.toLong()
@@ -187,7 +189,7 @@ class CustomDialActivity : AppActivity() {
 
         val resultArray = KeyBoardConstant.getDialByte(dialBean)
         val str = Utils.formatBtArrayToString(resultArray)
-        stringBuilder.append("发送3.11.3指令:$str"+"\n")
+      //  stringBuilder.append("发送3.11.3指令:$str"+"\n")
         Timber.e("-------表盘指令=" +str )
         showLogTv()
         BaseApplication.getBaseApplication().bleOperate.startFirstDial(resultArray
@@ -207,13 +209,30 @@ class CustomDialActivity : AppActivity() {
             0x05：其他高优先级数据在处理
              */
 
-            stringBuilder.append("设备端返回指定非固化表盘概要信息状态指令: " + Utils.formatBtArrayToString(data)+"\n")
+          //  stringBuilder.append("设备端返回指定非固化表盘概要信息状态指令: " + Utils.formatBtArrayToString(data)+"\n")
             showLogTv()
 
-            if (data.size == 11 && data[8].toInt() == 9 && data[9].toInt() == 4 && data[10].toInt() == 2) {
+            if (data.size == 11 && data[8].toInt() == 9 && data[9].toInt() == 4 ) {
+
+                val codeStatus = data[10].toInt()
+                if(codeStatus == 1){
+                    hideDialog()
+                    ToastUtils.show("传入非法值!")
+                    return@startFirstDial
+                }
+                //设备存储空间不够
+                if(codeStatus == 4){
+
+                }
+
+                if(codeStatus == 5){
+                    hideDialog()
+                    ToastUtils.show("设备正常处理其它数据，请稍后!")
+                    return@startFirstDial
+                }
 
                 val array = KeyBoardConstant.getDialStartArray()
-                stringBuilder.append("3.10.3 APP 端设擦写设备端指定的 FLASH 数据块" + Utils.formatBtArrayToString(array)+"\n")
+               // stringBuilder.append("3.10.3 APP 端设擦写设备端指定的 FLASH 数据块" + Utils.formatBtArrayToString(array)+"\n")
                 showLogTv()
 
                 BaseApplication.getBaseApplication().bleOperate.setIndexDialFlash(array){
@@ -232,14 +251,13 @@ class CustomDialActivity : AppActivity() {
                          * 0x01：不支持擦写 FLASH 数据
                          * 0x02：已擦写相应的 FLASH 数据块
                          */
-                        stringBuilder.append("3.10.4 设备端返回已擦写 FLASH 数据块的状态" + Utils.formatBtArrayToString(data)+"\n")
+                       // stringBuilder.append("3.10.4 设备端返回已擦写 FLASH 数据块的状态" + Utils.formatBtArrayToString(data)+"\n")
 
-                        stringBuilder.append("开始发送flash数据" +"\n")
+                       // stringBuilder.append("开始发送flash数据" +"\n")
                         showLogTv()
                         toStartWriteDialFlash()
 
                     }
-
 
                 }
             }
@@ -267,12 +285,37 @@ class CustomDialActivity : AppActivity() {
             }
 
         }
-        BaseApplication.getBaseApplication().bleOperate.writeDialFlash(resultArray)
+        BaseApplication.getBaseApplication().bleOperate.writeDialFlash(resultArray,object : OnKeyBoardListener{
+            override fun onSyncFlash(statusCode: Int) {
+                /**
+                 * 0x01：更新失败
+                 * 0x02：更新成功
+                 * 0x03：第 1 个 4K 数据块异常（含 APP 端发擦写和实际写入的数据地址不一致），APP 需要重走流程
+                 * 0x04：非第 1 个 4K 数据块异常，需要重新发送当前 4K 数据块
+                 * 0x05：4K 数据块正常，发送下一个 4K 数据
+                 * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
+                 */
+
+                if(statusCode == 1){
+                    hideDialog()
+                    ToastUtils.show("更新失败!")
+                }
+                if(statusCode == 2){
+                    hideDialog()
+                    ToastUtils.show("更新成功!")
+                }
+                if(statusCode == 6){
+                    hideDialog()
+                    ToastUtils.show("异常退出!")
+                }
+            }
+
+        })
     }
 
 
     private fun showLogTv(){
-        logTv?.text = stringBuilder.toString()
+       // logTv?.text = stringBuilder.toString()
     }
 
     //选择图片，展示弹窗
@@ -361,8 +404,8 @@ class CustomDialActivity : AppActivity() {
      *
      */
     private fun startPhotoZoom(uri: Uri, code: Int) {
-      //  cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
-        cropImgPath = this.getExternalFilesDir(null)?.path
+        cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
+//        cropImgPath = this.getExternalFilesDir(null)?.path
         try {
             val intent = Intent("com.android.camera.action.CROP")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -407,7 +450,7 @@ class CustomDialActivity : AppActivity() {
             //输入图片路径
             intent.setDataAndType(uri, "image/*")
             intent.putExtra("crop", "true")
-            intent.putExtra("aspectX", 1)
+            intent.putExtra("aspectX", 2)
             intent.putExtra("aspectY", 1)
             intent.putExtra("outputX", 320)
             intent.putExtra("outputY", 172)
@@ -433,12 +476,14 @@ class CustomDialActivity : AppActivity() {
 
                 Glide.with(this@CustomDialActivity).load(cropUri).into(customShowImgView!!)
 
-
+                Timber.e("-------裁剪后的图片="+(File(cropImgPath)).path)
+                val url = File(cropImgPath).path
+                dialBean.imgUrl = url
 //                if (resultCropUri == null) return
 //               // showCupImg(resultCropUri, requestCode)
 //                val selectList = PictureSelector.obtainMultipleResult(data)
 //                val url = selectList[0].cutPath
-//                Timber.e("--------图片的url=" + url)
+////                Timber.e("--------图片的url=" + url)
 //                ImgUtil.loadHead(customShowImgView!!, url, object : OnGetImgWidthListener {
 //                    override fun backImgWidthAndHeight(width: Int, height: Int) {
 //                        if (width < 320 && height < 172) {

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toolbar;
 
 import com.blala.blalable.bean.WeatherBean;
 import com.blala.blalable.blebean.AlarmBean;
@@ -17,6 +18,7 @@ import com.blala.blalable.listener.OnBleStatusBackListener;
 import com.blala.blalable.listener.OnCommBackDataListener;
 import com.blala.blalable.listener.OnCommTimeSetListener;
 import com.blala.blalable.listener.OnExerciseDataListener;
+import com.blala.blalable.listener.OnKeyBoardListener;
 import com.blala.blalable.listener.OnMeasureDataListener;
 import com.blala.blalable.listener.OnRealTimeDataListener;
 import com.blala.blalable.listener.OnSendWriteDataListener;
@@ -62,6 +64,7 @@ public class BleOperateManager {
     public   BleOperateManager() {
     }
 
+    private OnKeyBoardListener keyBoardListener;
 
 
     private List<byte[]> detailDialList = new ArrayList<>();
@@ -80,7 +83,7 @@ public class BleOperateManager {
                     detailDialList.addAll(indexData);
                     detailDialCount = 0;
                     dialCount++;
-                    handler.sendEmptyMessageDelayed(0x01,50);
+                    handler.sendEmptyMessageDelayed(0x01,20);
                    // sendWriteKeyBoardData(indexData);
                 }else{ //发送完了
                     Log.e(TAG,"---------全部发送万了");
@@ -1168,11 +1171,11 @@ public class BleOperateManager {
 
 
     //开始写入表盘flash数据
-    public void writeDialFlash(List<List<byte[]>> sourceList){
+    public void writeDialFlash(List<List<byte[]>> sourceList, OnKeyBoardListener onKeyBoardListener){
         dialList.clear();
         dialList.addAll(sourceList);
         dialCount = 0;
-
+        this.keyBoardListener = onKeyBoardListener;
         handler.sendEmptyMessageDelayed(0x00,200);
     }
 
@@ -1184,10 +1187,25 @@ public class BleOperateManager {
             public void backWriteData(byte[] data) {
                 Log.e(TAG,"---------4K包里面的内容返回="+Utils.formatBtArrayToString(data));
 //                handler.sendEmptyMessageDelayed(0x01,100);
-                //4K包里面的内容返回
+                //4K包里面的内容返回 880000000000030c080602
+                /**
+                 * 0x01：更新失败
+                 * 0x02：更新成功
+                 * 0x03：第 1 个 4K 数据块异常（含 APP 端发擦写和实际写入的数据地址不一致），APP 需要重走流程
+                 * 0x04：非第 1 个 4K 数据块异常，需要重新发送当前 4K 数据块
+                 * 0x05：4K 数据块正常，发送下一个 4K 数据
+                 * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
+                 */
+                if(data.length == 11 && data[0] == -120 && data[8] == 8 && data[9] == 6){
+                    int code = data[10] & 0xff;
+                     if(keyBoardListener != null){
+                         keyBoardListener.onSyncFlash(code);
+                     }
+                }
+
             }
         });
-        handler.sendEmptyMessageDelayed(0x01,100);
+        handler.sendEmptyMessageDelayed(0x01,20);
     }
 
 

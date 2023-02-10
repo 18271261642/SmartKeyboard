@@ -107,16 +107,19 @@ public abstract class AppActivity extends BaseActivity
             if (mDialogCount <= 0 || isFinishing() || isDestroyed()) {
                 return;
             }
+            handler.removeMessages(0x00);
 
             if (mDialog == null) {
                 mDialog = new WaitDialog.Builder(this)
                         .setMessage(msg)
-                        .setCancelable(true)
+                        .setCancelable(false)
                         .create();
             }
             if (!mDialog.isShowing()) {
                 mDialog.show();
             }
+            handler.sendEmptyMessageDelayed(0x00,90 * 1000);
+
         }, 300);
     }
 
@@ -127,7 +130,7 @@ public abstract class AppActivity extends BaseActivity
         if (isFinishing() || isDestroyed()) {
             return;
         }
-
+        handler.removeMessages(0x00);
         if (mDialogCount > 0) {
             mDialogCount--;
         }
