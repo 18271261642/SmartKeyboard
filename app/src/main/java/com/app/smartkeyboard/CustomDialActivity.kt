@@ -1,6 +1,7 @@
 package com.app.smartkeyboard
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -13,7 +14,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.app.smartkeyboard.action.AppActivity
+import com.app.smartkeyboard.action.ThreadPoolManager
 import com.app.smartkeyboard.ble.ConnStatus
+import com.app.smartkeyboard.img.CameraActivity
+import com.app.smartkeyboard.img.CameraActivity.OnCameraListener
 import com.app.smartkeyboard.img.ImageSelectActivity
 import com.app.smartkeyboard.listeners.OnGetImgWidthListener
 import com.app.smartkeyboard.utils.*
@@ -24,8 +28,10 @@ import com.blala.blalable.listener.OnKeyBoardListener
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
+import com.google.gson.Gson
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
+import com.hjq.shape.layout.ShapeConstraintLayout
 import com.hjq.shape.view.ShapeTextView
 import com.hjq.toast.ToastUtils
 import com.luck.picture.lib.PictureSelector
@@ -51,12 +57,19 @@ class CustomDialActivity : AppActivity() {
     //设置保存
     private var customSetDialTv: ShapeTextView? = null
 
+    //相机
+    private var cusDialCameraLayout : ShapeConstraintLayout ?= null
+    //相册
+    private var cusDialAlbumLayout : ShapeConstraintLayout ?= null
+
 
     //对象
     private var dialBean = DialCustomBean()
 
-    private var logTv : TextView ?= null
+//    private var logTv : TextView ?= null
 
+    //拍照的url
+    private var imageUri : Uri ?= null
 
     private var lenght = 0
 
@@ -75,12 +88,14 @@ class CustomDialActivity : AppActivity() {
     }
 
     override fun initView() {
+        cusDialAlbumLayout = findViewById(R.id.cusDialAlbumLayout)
+        cusDialCameraLayout = findViewById(R.id.cusDialCameraLayout)
         customSelectImgView = findViewById(R.id.customSelectImgView)
         customShowImgView = findViewById(R.id.customShowImgView)
         customSetDialTv = findViewById(R.id.customSetDialTv)
-        logTv = findViewById(R.id.logTv)
+      //  logTv = findViewById(R.id.logTv)
 
-        setOnClickListener(customSelectImgView, customSetDialTv)
+        setOnClickListener(customSelectImgView, customSetDialTv,cusDialAlbumLayout,cusDialCameraLayout)
 
         findViewById<TextView>(R.id.tmpTv1).setOnClickListener {
 
@@ -136,7 +151,7 @@ class CustomDialActivity : AppActivity() {
 
         when (id) {
             //选择图片
-            R.id.customSelectImgView -> {
+            R.id.cusDialAlbumLayout -> {
                 showSelectDialog()
             }
 
@@ -144,8 +159,55 @@ class CustomDialActivity : AppActivity() {
             R.id.customSetDialTv -> {
                 setDialToDevice()
             }
+
+            //相机
+            R.id.cusDialCameraLayout->{
+                checkCamera()
+            }
         }
     }
+
+
+    //判断是否有相机权限
+    private fun checkCamera(){
+        if(XXPermissions.isGranted(this,Manifest.permission.CAMERA)){
+            openCamera()
+
+        }else{
+            XXPermissions.with(this).permission(arrayOf( Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE)).request(object : OnPermissionCallback{
+                override fun onGranted(permissions: MutableList<String>, all: Boolean) {
+                    if(all){
+                        openCamera()
+                    }
+                }
+
+            })
+        }
+    }
+
+    //相机拍照
+    private fun openCamera(){
+        // 点击拍照
+
+        // 点击拍照
+        CameraActivity.start(this, object : OnCameraListener {
+            override fun onSelected(file: File) {
+                Timber.e("--------xxxx="+file.path)
+                setSelectImg(file.path, 0)
+//                // 当前选中图片的数量必须小于最大选中数
+//                if (mSelectImage.size < mMaxSelect) {
+//                    mSelectImage.add(file.path)
+//                }
+            }
+
+            override fun onError(details: String) {
+                toast(details)
+            }
+        })
+    }
+
+
+
 
     var grbByte = byteArrayOf()
 
@@ -321,11 +383,11 @@ class CustomDialActivity : AppActivity() {
     //选择图片，展示弹窗
     private fun showSelectDialog() {
 
-        if(XXPermissions.isGranted(this, arrayOf(Manifest.permission.CAMERA))){
+        if(XXPermissions.isGranted(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))){
             choosePick()
             return
         }
-        XXPermissions.with(this).permission(arrayOf(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE)).request(object : OnPermissionCallback{
+        XXPermissions.with(this).permission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)).request(object : OnPermissionCallback{
             override fun onGranted(permissions: MutableList<String>, all: Boolean) {
                 if(all){
                     choosePick()
@@ -363,27 +425,6 @@ class CustomDialActivity : AppActivity() {
 
         ImageSelectActivity.start(this@CustomDialActivity
         ) { data -> setSelectImg(data.get(0), 0) }
-
-
-//        PictureSelector.create(this)
-//            .openGallery(PictureMimeType.ofImage())
-//            .imageEngine(GlideEngine.createGlideEngine()) // 请参考Demo GlideEngine.java
-//            .maxSelectNum(1)
-//            .isAndroidQTransform(true)// 是否需要处理Android Q 拷贝至应用沙盒的操作，只针对compress(false); && .isEnableCrop(false);有效,默认处理
-//            .selectionMode(PictureConfig.SINGLE)
-//            .isPreviewImage(true)//是否可预览图片
-//            .isEnableCrop(false)//是否裁剪
-//            .withAspectRatio(2, 1)
-//            .circleDimmedLayer(false) //圆形裁剪
-//            // .isCropDragSmoothToCenter(true)// 裁剪框拖动时图片自动跟随居中
-//            .circleDimmedLayer(false)// 是否圆形裁剪
-//            .showCropFrame(true)// 是否显示裁剪矩形边框
-//            .showCropGrid(true)// 是否显示裁剪矩形网格
-////            .minimumCompressSize(127)// 小于多少kb的图片不压缩
-//            // .cropWH(360, 360)
-//            .scaleEnabled(true)//是否可缩放
-//            .cropImageWideHigh(320, 172)
-//            .forResult(PictureConfig.CHOOSE_REQUEST)
     }
 
     private fun setSelectImg(localUrl: String, code: Int) {
@@ -467,6 +508,7 @@ class CustomDialActivity : AppActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (resultCode == RESULT_OK) {
             if ((requestCode == 0x01 || requestCode == 0x00) && resultCode == RESULT_OK) {
                 if (data == null) return
@@ -479,22 +521,9 @@ class CustomDialActivity : AppActivity() {
                 Timber.e("-------裁剪后的图片="+(File(cropImgPath)).path)
                 val url = File(cropImgPath).path
                 dialBean.imgUrl = url
-//                if (resultCropUri == null) return
-//               // showCupImg(resultCropUri, requestCode)
-//                val selectList = PictureSelector.obtainMultipleResult(data)
-//                val url = selectList[0].cutPath
-////                Timber.e("--------图片的url=" + url)
-//                ImgUtil.loadHead(customShowImgView!!, url, object : OnGetImgWidthListener {
-//                    override fun backImgWidthAndHeight(width: Int, height: Int) {
-//                        if (width < 320 && height < 172) {
-//                            return
-//                        }
-//                        dialBean.imgUrl = url
-//                        GlideEngine.createGlideEngine()
-//                            .loadImage(this@CustomDialActivity, url, customShowImgView!!)
-//                    }
-//
-//                })
+
+
+                setDialToDevice()
             }
 
 

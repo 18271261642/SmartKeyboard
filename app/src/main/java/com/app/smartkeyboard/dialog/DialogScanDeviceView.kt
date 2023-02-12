@@ -15,6 +15,7 @@ import com.app.smartkeyboard.bean.BleBean
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.utils.MmkvUtils
+import com.blala.blalable.Utils
 import com.blala.blalable.listener.BleConnStatusListener
 import com.inuker.bluetooth.library.search.SearchResult
 import com.inuker.bluetooth.library.search.response.SearchResponse
@@ -99,22 +100,31 @@ class DialogScanDeviceView : AppCompatDialog {
             }
 
             override fun onDeviceFounded(p0: SearchResult) {
-                val bleName = p0.name
+
+                Timber.e("--------扫描="+p0.name+" "+Utils.formatBtArrayToString(p0.getScanRecord()))
+
+                    val recordStr = Utils.formatBtArrayToString(p0.getScanRecord())
+                    val bleName = p0.name
+
                 if(BikeUtils.isEmpty(bleName) || bleName.equals("NULL") || BikeUtils.isEmpty(p0.address))
                     return
                 if(repeatList?.contains(p0.address) == true)
                     return
-                //判断少于40个设备就不添加了
-                if(repeatList?.size!! >40){
-                    return
-                }
-                p0.address?.let { repeatList?.add(it) }
-                list?.add(BleBean(p0.device,p0.rssi))
-                list?.sortBy {
-                    Math.abs(it.rssi)
+                //030543
+                if(!BikeUtils.isEmpty(recordStr) && recordStr.contains("030543")){
+                    //判断少于40个设备就不添加了
+                    if(repeatList?.size!! >40){
+                        return
+                    }
+                    p0.address?.let { repeatList?.add(it) }
+                    list?.add(BleBean(p0.device,p0.rssi))
+                    list?.sortBy {
+                        Math.abs(it.rssi)
+                    }
+
+                    scanDeviceAdapter?.notifyDataSetChanged()
                 }
 
-                scanDeviceAdapter?.notifyDataSetChanged()
             }
 
             override fun onSearchStopped() {
