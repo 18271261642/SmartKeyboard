@@ -1,6 +1,6 @@
 package com.app.smartkeyboard.dialog
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDialog
@@ -19,7 +19,6 @@ import com.blala.blalable.Utils
 import com.blala.blalable.listener.BleConnStatusListener
 import com.inuker.bluetooth.library.search.SearchResult
 import com.inuker.bluetooth.library.search.response.SearchResponse
-import com.tencent.mmkv.MMKV
 import timber.log.Timber
 
 /**

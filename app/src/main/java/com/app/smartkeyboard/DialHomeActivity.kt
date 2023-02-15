@@ -6,6 +6,7 @@ import com.app.smartkeyboard.ble.ConnStatus
 import com.hjq.shape.view.ShapeTextView
 
 /**
+ * 表盘主页
  * Created by Admin
  *Date 2023/1/13
  */

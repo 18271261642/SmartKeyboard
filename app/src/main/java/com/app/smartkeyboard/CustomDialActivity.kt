@@ -1,7 +1,6 @@
 package com.app.smartkeyboard
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -14,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.app.smartkeyboard.action.AppActivity
-import com.app.smartkeyboard.action.ThreadPoolManager
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.img.CameraActivity
 import com.app.smartkeyboard.img.CameraActivity.OnCameraListener
@@ -40,7 +38,7 @@ import timber.log.Timber
 import java.io.File
 
 /**
- * 自定义表盘
+ * 自定义表盘页面
  * Created by Admin
  *Date 2023/1/31
  */
@@ -110,17 +108,7 @@ class CustomDialActivity : AppActivity() {
         }
 
         customShowImgView?.setOnClickListener {
-//            val start = Utils.toByteArrayLength(16777215, 4)
-//            val end = Utils.toByteArrayLength(16777215, 4)
-//            val resultArray = getDialContent(start, end, grbByte, 1000 + 101, -100, 0)
-//            Timber.e("-------reaulstArray="+resultArray.size+" "+resultArray[0].size)
-//
-//            resultArray[0].forEach {
-//
-//                Timber.e("-------内部的内容="+Gson().toJson(it))
-//
-//            }
-//            BaseApplication.getBaseApplication().bleOperate.writeDialFlash(resultArray)
+
         }
     }
 
@@ -395,28 +383,6 @@ class CustomDialActivity : AppActivity() {
             }
         })
 
-
-
-
-
-//        val dialog = SelectPhotoDialog(this, com.bonlala.base.R.style.BaseDialogTheme)
-//        dialog.show()
-//        dialog.setOnSelectListener { position ->
-//            dialog.dismiss()
-//            if (position == 0x00) { //相机
-//                choosePick()
-//            }
-//            if (position == 0x01) {   //相册
-//
-//            }
-//        }
-//
-//        val window = dialog.window
-//        val windowLayout = window?.attributes
-//        val metrics2: DisplayMetrics = resources.displayMetrics
-//        windowLayout?.width = metrics2.widthPixels
-//        windowLayout?.gravity = Gravity.BOTTOM
-//        window?.attributes = windowLayout
     }
 
 

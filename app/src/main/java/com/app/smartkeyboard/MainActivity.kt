@@ -1,7 +1,6 @@
 package com.app.smartkeyboard
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
+
 import android.view.KeyEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -18,11 +17,12 @@ import com.hjq.toast.ToastUtils
 class MainActivity : AppActivity() {
 
     //记事本
-    private var homeNotebookLayout : FrameLayout ?= null
-    //键盘页面
-    private var homeKeyboardLayout : FrameLayout ?= null
+    private var homeNotebookLayout: FrameLayout? = null
 
-    private var homeDialLayout : FrameLayout ?= null
+    //键盘页面
+    private var homeKeyboardLayout: FrameLayout? = null
+
+    private var homeDialLayout: FrameLayout? = null
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -33,23 +33,24 @@ class MainActivity : AppActivity() {
         homeKeyboardLayout = findViewById(R.id.homeKeyboardLayout)
         homeDialLayout = findViewById(R.id.homeDialLayout)
 
-        setOnClickListener(homeNotebookLayout,homeKeyboardLayout,homeDialLayout)
+        setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
     }
 
     override fun initData() {
         //判断是否需要显示隐私政策，第一次打开需要隐私政策
         val isFirstOpen = MmkvUtils.getPrivacy()
-        if(!isFirstOpen){
+        if (!isFirstOpen) {
             showPrivacyDialog()
         }
     }
 
     //显示隐私弹窗
-    private fun showPrivacyDialog(){
-        val dialog = ShowPrivacyDialogView(this, com.bonlala.base.R.style.BaseDialogTheme,this@MainActivity)
+    private fun showPrivacyDialog() {
+        val dialog =
+            ShowPrivacyDialogView(this, com.bonlala.base.R.style.BaseDialogTheme, this@MainActivity)
         dialog.show()
         dialog.setCancelable(false)
-        dialog.setOnPrivacyClickListener(object : ShowPrivacyDialogView.OnPrivacyClickListener{
+        dialog.setOnPrivacyClickListener(object : ShowPrivacyDialogView.OnPrivacyClickListener {
             override fun onCancelClick() {
                 dialog.dismiss()
                 MmkvUtils.setIsAgreePrivacy(false)
@@ -61,7 +62,7 @@ class MainActivity : AppActivity() {
 
             override fun onConfirmClick() {
                 dialog.dismiss()
-                 MmkvUtils.setIsAgreePrivacy(true)
+                MmkvUtils.setIsAgreePrivacy(true)
             }
 
         })
@@ -72,18 +73,18 @@ class MainActivity : AppActivity() {
         super.onClick(view)
         val id = view?.id
 
-        when(id){
+        when (id) {
             //表盘
-            R.id.homeDialLayout->{
+            R.id.homeDialLayout -> {
                 startActivity(DialHomeActivity::class.java)
             }
             //记事本
-            R.id.homeNotebookLayout->{
+            R.id.homeNotebookLayout -> {
                 startActivity(NotebookActivity::class.java)
             }
 
             //键盘
-            R.id.homeKeyboardLayout->{
+            R.id.homeKeyboardLayout -> {
                 startActivity(BleKeyboardActivity::class.java)
             }
         }

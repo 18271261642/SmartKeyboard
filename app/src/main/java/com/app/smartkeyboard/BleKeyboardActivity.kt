@@ -6,14 +6,12 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.app.smartkeyboard.action.AppActivity
-import com.app.smartkeyboard.adapter.OnCommItemClickListener
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.dialog.DialogScanDeviceView
 import com.app.smartkeyboard.utils.BikeUtils
@@ -26,6 +24,7 @@ import com.hjq.shape.view.ShapeTextView
 import timber.log.Timber
 
 /**
+ * 设置表盘页面
  * Created by Admin
  *Date 2023/1/12
  */

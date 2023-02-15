@@ -1,14 +1,11 @@
 package com.app.smartkeyboard;
 
-import android.app.Application;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.text.Editable;
-import android.text.TextWatcher;
-
 import com.app.smartkeyboard.action.DebugLoggerTree;
 import com.app.smartkeyboard.ble.ConnStatus;
 import com.app.smartkeyboard.ble.ConnStatusService;
@@ -17,10 +14,7 @@ import com.blala.blalable.BleApplication;
 import com.blala.blalable.BleOperateManager;
 import com.hjq.toast.ToastUtils;
 import com.tencent.mmkv.MMKV;
-
 import org.litepal.LitePal;
-import org.litepal.LitePalApplication;
-
 import timber.log.Timber;
 
 /**
