@@ -18,7 +18,10 @@ import com.app.smartkeyboard.img.CameraActivity
 import com.app.smartkeyboard.img.CameraActivity.OnCameraListener
 import com.app.smartkeyboard.img.ImageSelectActivity
 import com.app.smartkeyboard.listeners.OnGetImgWidthListener
-import com.app.smartkeyboard.utils.*
+import com.app.smartkeyboard.utils.BitmapAndRgbByteUtil
+import com.app.smartkeyboard.utils.GlideEngine
+import com.app.smartkeyboard.utils.ImgUtil
+import com.app.smartkeyboard.utils.ThreadUtils
 import com.blala.blalable.Utils
 import com.blala.blalable.keyboard.DialCustomBean
 import com.blala.blalable.keyboard.KeyBoardConstant
@@ -26,7 +29,6 @@ import com.blala.blalable.listener.OnKeyBoardListener
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
-import com.google.gson.Gson
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
 import com.hjq.shape.layout.ShapeConstraintLayout
@@ -206,7 +208,7 @@ class CustomDialActivity : AppActivity() {
         }
 
         showDialog("同步中...")
-
+        BaseApplication.getBaseApplication().connStatus = ConnStatus.IS_SYNC_DIAL
         //stringBuilder.delete(0,stringBuilder.length)
         showLogTv()
 
@@ -272,12 +274,14 @@ class CustomDialActivity : AppActivity() {
                 }
                 //设备存储空间不够
                 if(codeStatus == 4){
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
 
                 }
 
                 if(codeStatus == 5){
                     hideDialog()
                     ToastUtils.show("设备正常处理其它数据，请稍后!")
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
                     return@startFirstDial
                 }
 
@@ -349,14 +353,17 @@ class CustomDialActivity : AppActivity() {
                 if(statusCode == 1){
                     hideDialog()
                     ToastUtils.show("更新失败!")
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
                 }
                 if(statusCode == 2){
                     hideDialog()
                     ToastUtils.show("更新成功!")
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
                 }
                 if(statusCode == 6){
                     hideDialog()
                     ToastUtils.show("异常退出!")
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
                 }
             }
 
@@ -624,4 +631,9 @@ class CustomDialActivity : AppActivity() {
         return mList
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
+    }
 }

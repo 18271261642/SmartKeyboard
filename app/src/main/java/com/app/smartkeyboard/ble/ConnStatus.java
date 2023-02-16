@@ -7,6 +7,10 @@ package com.app.smartkeyboard.ble;
  * @author Admin
  */
 public enum ConnStatus {
+
+    /**默认状态**/
+    DEFAULT,
+
     /**未连接 默认状态**/
     NOT_CONNECTED,
     /**连接中**/
@@ -18,7 +22,10 @@ public enum ConnStatus {
     IS_SYNC_DATA,
 
     /**同步完成**/
-    IS_SYNC_COMPLETE
+    IS_SYNC_COMPLETE,
+
+    /**正在同步表盘中**/
+    IS_SYNC_DIAL
 
     ;
 

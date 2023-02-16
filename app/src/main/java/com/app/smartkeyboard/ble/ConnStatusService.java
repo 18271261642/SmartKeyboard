@@ -18,6 +18,7 @@ import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.blala.blalable.BleConstant;
 import com.blala.blalable.BleOperateManager;
+import com.blala.blalable.Utils;
 import com.blala.blalable.listener.BleConnStatusListener;
 import com.blala.blalable.listener.ConnStatusListener;
 import com.blala.blalable.listener.WriteBackDataListener;
@@ -30,6 +31,8 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import timber.log.Timber;
 
 
 /**
@@ -196,10 +199,27 @@ public class ConnStatusService extends Service {
                     }
                 },1000);
 
-                getKeyBoardStatus(mac,code);
+               // getKeyBoardStatus(mac,code);
+
+                setDeviceInfo(mac);
             }
         });
     }
+
+
+    //连接成功设置设备信息
+    private void setDeviceInfo(String mac){
+        BaseApplication.getBaseApplication().getBleOperate().setFirstDeviceInfo(Utils.isZh(this), new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+                Timber.e("--------设置设备信息="+Utils.formatBtArrayToString(data));
+                getKeyBoardStatus(mac,0);
+            }
+        });
+    }
+
+
+    //获取最新一条的记事本，有的话
 
 
     /**获取设备的状态**/
@@ -229,7 +249,8 @@ public class ConnStatusService extends Service {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        getKeyBoardStatus(bleMac,code);
+                        //getKeyBoardStatus(bleMac,code);
+                        setDeviceInfo(bleMac);
                     }
                 },1000);
 

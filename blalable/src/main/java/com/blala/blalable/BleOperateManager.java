@@ -12,6 +12,7 @@ import com.blala.blalable.bean.WeatherBean;
 import com.blala.blalable.blebean.AlarmBean;
 import com.blala.blalable.blebean.CommBleSetBean;
 import com.blala.blalable.blebean.CommTimeBean;
+import com.blala.blalable.keyboard.KeyBoardConstant;
 import com.blala.blalable.listener.BleConnStatusListener;
 import com.blala.blalable.listener.ConnStatusListener;
 import com.blala.blalable.listener.OnBleStatusBackListener;
@@ -846,6 +847,26 @@ public class BleOperateManager {
         Log.e(TAG, "--一个表盘发送完成=" + facePackIndex);
         if (onWatchFaceVerifyListener != null)
             onWatchFaceVerifyListener.isVerify(true, facePackIndex);
+    }
+
+
+    /**
+     * 设置设备基本信息，连接成功后就设置
+     */
+    public void setFirstDeviceInfo(boolean isChinese,WriteBackDataListener writeBackDataListener){
+        byte[] data = KeyBoardConstant.deviceInfoData(isChinese);
+
+        byte[] resultData = Utils.getFullPackage(data);
+
+        bleManager.writeDataToDevice(resultData,writeBackDataListener);
+    }
+
+
+    /**
+     * 消息推送，目前只推送微信
+     */
+    public void sendNotifyMsgData(int key,String title,String content){
+        bleManager.writeDataToDevice(KeyBoardConstant.getMsgNotifyData(key,title,content));
     }
 
 

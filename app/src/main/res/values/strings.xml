@@ -11,6 +11,9 @@
 
     <string name="common_unknown_error">未知错误</string>
 
+
+    <string name="string_notify_desc">消息提醒需要打开手机的通知功能，点击确认按钮找到"悟确智慧桌面"打开通知开关，打开后即可正常使用消息推送功能，是否打开?</string>
+
     <string name="comm_prompt">提醒</string>
     <string name="common_confirm">确定</string>
     <string name="common_cancel">取消</string>

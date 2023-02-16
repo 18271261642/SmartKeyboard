@@ -1,6 +1,7 @@
 package com.blala.blalable;
 
 
+import android.content.Context;
 import android.util.Log;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 
 /**
@@ -48,6 +50,18 @@ public class Utils {
 
     public static int byteToInt(byte data) {
         return (data & 0x00ff);
+    }
+
+
+    /**
+     * 获取系统语言是否是中文
+     * @param context
+     * @return
+     */
+    public static boolean isZh(Context context) {
+        Locale locale = context.getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        return language.endsWith("zh");
     }
 
 
@@ -123,6 +137,12 @@ public class Utils {
         return sb.toString();
     }
 
+
+    public static String getHexString(byte buffer) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(byteToHex(buffer));
+        return sb.toString();
+    }
     /**
      * 数组长度值为8，每个值代表bit，即8个bit。bit7 -> bit0
      * 	bit数组，bit3 -> bit0
@@ -510,6 +530,20 @@ public class Utils {
         return unicode.toString();
     }
 
+
+    /**
+     * 将string类型的byte数组转成bytep[]
+     *
+     * @param str
+     * @return
+     */
+    public static byte[] stringToByte(String str) {
+        byte[] data = new byte[str.length() / 2];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = Integer.valueOf(str.substring(0 + i * 2, 2 + i * 2), 16).byteValue();
+        }
+        return data;
+    }
 
     /**
      * 这个判断是用来判断是否为需要解析的cmd
