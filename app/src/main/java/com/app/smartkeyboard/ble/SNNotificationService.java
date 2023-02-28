@@ -33,9 +33,12 @@ public class SNNotificationService extends NotificationListenerService {
 
     int other = 2;
 
-
+    /**微信**/
     private static final String WX_PACK_NAME = "com.tencent.mm";
-    private static final String QQ_PACK_NAME = "com.tencent.mobileqqi";
+    /**QQ**/
+    private static final String QQ_PACK_NAME = "com.tencent.mobileqq";
+    /**Discord**/
+    private static final String DISCORD_PACK_NAME = "com.discord";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -117,6 +120,9 @@ public class SNNotificationService extends NotificationListenerService {
                 }
                 if(packName.toLowerCase(Locale.ROOT).equals(QQ_PACK_NAME)){
                     sendApps(0x09,title,content);
+                }
+                if(packName.toLowerCase(Locale.ROOT).equals(DISCORD_PACK_NAME)){
+                    sendApps(0x0D,title,content);
                 }
 
             }
