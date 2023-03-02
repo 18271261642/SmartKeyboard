@@ -755,19 +755,6 @@ public class BleOperateManager {
     }
 
 
-//    private final Handler handler = new Handler(Looper.getMainLooper()){
-//        @Override
-//        public void handleMessage(@NonNull Message msg) {
-//            super.handleMessage(msg);
-//            if(msg.what == 0x00){
-//                tmpIndex++;
-//                if(tmpIndex<currListByte.size()-1){
-//                    byte[] currBy = currListByte.get(tmpIndex);
-//                    writeData(currBy);
-//                }
-//            }
-//        }
-//    };
 
 
     public void sendSelectDial(List<RawFileBean> list, OnWriteProgressListener onWriteProgressListener) {
@@ -848,6 +835,20 @@ public class BleOperateManager {
         if (onWatchFaceVerifyListener != null)
             onWatchFaceVerifyListener.isVerify(true, facePackIndex);
     }
+
+
+    /**
+     * 同步键盘的时间
+     */
+    public void syncKeyBoardTime(){
+
+        byte[] timeByte = bleConstant.syncTime();
+        byte[] resultData = Utils.getFullPackage(timeByte);
+        bleManager.writeDataToDevice(resultData,writeBackDataListener);
+
+    }
+
+
 
 
     /**

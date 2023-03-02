@@ -7,6 +7,7 @@ import android.util.Log;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
@@ -90,6 +91,28 @@ public class BleConstant {
 
     /**设置时间**/
     public byte[] syncTime(int year,int month,int day,int hour ,int minute,int second){
+        byte[] timeByte = new byte[9];
+        timeByte[0] = 0x07;
+        timeByte[1] = 0x30;
+        timeByte[2] = (byte) (year & 0x00ff);
+        timeByte[3] = (byte) ((year>>8) & 0xff);
+        timeByte[4] = (byte) (month & 0xff);
+        timeByte[5] = (byte) (day & 0xff);
+        timeByte[6] = (byte) (hour & 0xff);
+        timeByte[7] = (byte) (minute & 0xff);
+        timeByte[8] = (byte) (second & 0xff);
+        return timeByte;
+    }
+
+    /**设置时间**/
+    public byte[] syncTime(){
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH)+1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
         byte[] timeByte = new byte[9];
         timeByte[0] = 0x07;
         timeByte[1] = 0x30;

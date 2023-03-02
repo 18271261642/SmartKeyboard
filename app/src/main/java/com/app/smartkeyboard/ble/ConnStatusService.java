@@ -225,6 +225,15 @@ public class ConnStatusService extends Service {
     /**获取设备的状态**/
     private void getKeyBoardStatus(String mac,int code){
         BaseApplication.getBaseApplication().getBleOperate().getKeyBoardStatus();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //同步时间
+                BaseApplication.getBaseApplication().getBleOperate().syncKeyBoardTime();
+            }
+        },2000);
+
     }
 
 
