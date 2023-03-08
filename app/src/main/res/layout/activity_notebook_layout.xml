@@ -15,14 +15,14 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         app:lineVisible="false"
-        app:title="记事本"
+        app:title="@string/string_notebook"
         app:titleColor="@color/white"
         app:leftIcon="@drawable/ic_white_left_back"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="笔记"
+        android:text="@string/string_note"
         android:textColor="@color/white"
         android:textSize="30sp"
         android:layout_margin="@dimen/dp_10"/>
@@ -49,7 +49,7 @@
             android:id="@+id/noteBookSearchEdit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="搜索笔记"
+            android:hint="@string/string_search_note"
             android:padding="@dimen/dp_3"
             android:textColor="#ff999999"
             android:textSize="20sp"
@@ -70,7 +70,7 @@
             android:id="@+id/noteBookEmptyTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="没有笔记"
+            android:text="@string/string_empty_note"
             android:visibility="gone"
             android:textColor="@color/white"
             android:gravity="center"

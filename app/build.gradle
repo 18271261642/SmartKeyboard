@@ -65,7 +65,7 @@ dependencies {
     //shap框架
     implementation 'com.github.getActivity:ShapeView:8.3'
 
-    implementation 'com.github.getActivity:XXPermissions:16.5'
+    implementation 'com.github.getActivity:XXPermissions:16.6'
 
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.6.0'
 

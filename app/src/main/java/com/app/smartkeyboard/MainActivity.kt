@@ -1,6 +1,7 @@
 package com.app.smartkeyboard
 
 
+import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
@@ -9,6 +10,7 @@ import android.content.Intent
 import android.view.KeyEvent
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.core.app.NotificationManagerCompat
 import com.app.smartkeyboard.action.ActivityManager
 import com.app.smartkeyboard.action.AppActivity
@@ -16,7 +18,10 @@ import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.dialog.NoticeDialog
 import com.app.smartkeyboard.dialog.ShowPrivacyDialogView
 import com.app.smartkeyboard.utils.MmkvUtils
+import com.app.smartkeyboard.utils.NotificationUtils
+import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
+import timber.log.Timber
 
 /**
  * 首页面
@@ -41,6 +46,17 @@ class MainActivity : AppActivity() {
         homeDialLayout = findViewById(R.id.homeDialLayout)
 
         setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
+
+        findViewById<ImageView>(R.id.titleImgView).setOnClickListener {
+            BaseApplication.getBaseApplication().bleOperate.syncKeyBoardTime()
+        }
+        
+//        XXPermissions.with(this).permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)).request { permissions, all ->  }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //showOpenNotifyDialog()
     }
 
     override fun initData() {
@@ -121,16 +137,7 @@ class MainActivity : AppActivity() {
     }
 
 
-    //显示打开通知权限弹窗
-    private fun showOpenNotifyDialog() {
-        //判断通知权限是否打开了
-        val isOpen = hasNotificationListenPermission(this)
-        if(isOpen)
-            return
-
-
-
-
+    private fun openNoti(){
         val dialog = NoticeDialog(this, com.bonlala.base.R.style.BaseDialogTheme)
         dialog.show()
         dialog.setCancelable(false)
@@ -138,11 +145,26 @@ class MainActivity : AppActivity() {
             if (position == 0x00) {
                 dialog.dismiss()
                 startToNotificationListenSetting(this@MainActivity)
+//                NotificationUtils.gotoSet(this)
+                XXPermissions.with(this).permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)).request { permissions, all ->  }
             }
             if (position == 0x01) {
                 dialog.dismiss()
             }
         }
+    }
+
+    //显示打开通知权限弹窗
+    private fun showOpenNotifyDialog() {
+        //判断通知权限是否打开了
+        val isOpen2 = hasNotificationListenPermission(this)
+        val isOpen = NotificationUtils.isNotificationEnabled(this)
+        Timber.e("--------通知是否打开了="+isOpen+" "+isOpen2)
+        if(!isOpen2){
+            openNoti()
+        }
+
+
     }
 
 

@@ -209,15 +209,27 @@ public class ConnStatusService extends Service {
 
     //连接成功设置设备信息
     private void setDeviceInfo(String mac){
-        BaseApplication.getBaseApplication().getBleOperate().setFirstDeviceInfo(Utils.isZh(this), new WriteBackDataListener() {
+
+        //同步时间
+        BaseApplication.getBaseApplication().getBleOperate().syncKeyBoardTime(new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+                syncSet();
+            }
+        });
+
+
+    }
+
+    private void syncSet(){
+        BaseApplication.getBaseApplication().getBleOperate().setFirstDeviceInfo(Utils.isZh(ConnStatusService.this), new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
                 Timber.e("--------设置设备信息="+Utils.formatBtArrayToString(data));
-                getKeyBoardStatus(mac,0);
+                getKeyBoardStatus(null,0);
             }
         });
     }
-
 
     //获取最新一条的记事本，有的话
 
@@ -226,13 +238,6 @@ public class ConnStatusService extends Service {
     private void getKeyBoardStatus(String mac,int code){
         BaseApplication.getBaseApplication().getBleOperate().getKeyBoardStatus();
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //同步时间
-                BaseApplication.getBaseApplication().getBleOperate().syncKeyBoardTime();
-            }
-        },2000);
 
     }
 

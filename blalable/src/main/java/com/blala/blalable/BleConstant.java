@@ -114,8 +114,8 @@ public class BleConstant {
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);
         byte[] timeByte = new byte[9];
-        timeByte[0] = 0x07;
-        timeByte[1] = 0x30;
+        timeByte[0] = 0x04;
+        timeByte[1] = 0x01;
         timeByte[2] = (byte) (year & 0x00ff);
         timeByte[3] = (byte) ((year>>8) & 0xff);
         timeByte[4] = (byte) (month & 0xff);

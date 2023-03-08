@@ -36,7 +36,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="标题"
+            android:text="@string/string_title"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_20"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -114,7 +114,7 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/editNoteBookEditText"
             android:layout_width="match_parent"
-            android:hint="开始书写"
+            android:hint="@string/string_start_write"
             android:textSize="25sp"
             android:layout_marginTop="@dimen/dp_5"
             android:textColor="#333333"

@@ -15,6 +15,7 @@
 
 
     <ImageView
+        android:id="@+id/titleImgView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -48,7 +49,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="上传动画"
+                    android:text="@string/string_upload_anim"
                     android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:drawableTop="@mipmap/ic_home_upload_mi"/>
@@ -72,7 +73,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="选择设备"
+                    android:text="@string/string_selector_device"
                     android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:drawableTop="@mipmap/ic_home_select_device_key"/>
@@ -96,7 +97,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="记事本"
+                    android:text="@string/string_notebook"
                     android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:drawableTop="@mipmap/ic_home_notepadd"/>

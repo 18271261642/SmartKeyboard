@@ -3,37 +3,36 @@
 
     <string name="string_custom">自定义</string>
     <string name="string_select_pick">选择图片</string>
-    <string name="string_take_photo">相机</string>
-    <string name="string_album">相册</string>
+    <string name="string_take_photo">Camera</string>
+    <string name="string_album">Album</string>
 
-    <string name="string_note">笔记</string>
-    <string name="string_search_note">搜索笔记</string>
-    <string name="string_empty_note">没有笔记</string>
-    <string name="string_no_conn_device">无可连接设备</string>
-    <string name="string_retry">重试</string>
+    <string name="string_note">Notes</string>
+    <string name="string_search_note">search notes</string>
+    <string name="string_empty_note">no notes</string>
+    <string name="string_no_conn_device">No device</string>
+    <string name="string_retry">Retry</string>
+
+    <string name="string_start_write">start writing</string>
+    <string name="string_title">Title</string>
+    <string name="string_default_anim">Default animation</string>
+    <string name="string_selector_cus">Choose custom</string>
+
+    <string name="string_notebook">NoteBook</string>
+    <string name="string_selector_device">Selector Device</string>
+    <string name="string_upload_anim">Upload animation</string>
     
-    
-    <string name="string_start_write">开始书写</string>
-    <string name="string_title">标题</string>
-    <string name="string_default_anim">默认动画</string>
-    <string name="string_selector_cus">选择自定义</string>
-
-    <string name="string_notebook">记事本</string>
-    <string name="string_selector_device">选择设备</string>
-    <string name="string_upload_anim">上传动画</string>
-
     <!-- 通用的 -->
-    <string name="common_loading">加载中&#8230;</string>
+    <string name="common_loading">Loading&#8230;</string>
 
-    <string name="common_unknown_error">未知错误</string>
+    <string name="common_unknown_error">Unknown Error</string>
 
 
     <string name="string_notify_desc">消息提醒需要打开手机的通知功能，点击确认按钮找到"悟确智慧桌面"打开通知开关，打开后即可正常使用消息推送功能，是否打开?</string>
 
-    <string name="comm_prompt">提醒</string>
-    <string name="common_confirm">确定</string>
-    <string name="common_cancel">取消</string>
-    <string name="common_exit">退出</string>
+    <string name="comm_prompt">Prompt</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_exit">Exit</string>
 
     <!-- 拍照和拍摄 -->
     <string name="video_select_title">视频选择</string>
@@ -71,13 +70,13 @@
     <string name="string_double_click_exit">再按一次退出程序!</string>
 
 
-    <string name="user_agreement_tips">用户协议</string>//用户协议
-    <string name="privacy_agreement_tips">隐私政策</string>//用户协议
+    <string name="user_agreement_tips">User Agreement</string>//用户协议
+    <string name="privacy_agreement_tips">Privacy</string>//用户协议
     <string name="privacy_agreement_2">点击“同意”，即表示您同意最新的“服务协议”和关于“隐私政策”的声明。</string>
 
-    <string name="string_confirm">确定</string>
-    <string name="string_cancel">取消</string>
-    <string name="string_last_txt">最新的</string>
-    <string name="string_and">和</string>
+    <string name="string_confirm">confirm</string>
+    <string name="string_cancel">cancel</string>
+    <string name="string_last_txt">Last</string>
+    <string name="string_and">And</string>
 
 </resources>

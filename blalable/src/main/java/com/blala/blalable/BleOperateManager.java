@@ -847,7 +847,16 @@ public class BleOperateManager {
         bleManager.writeDataToDevice(resultData,writeBackDataListener);
 
     }
+    /**
+     * 同步键盘的时间
+     */
+    public void syncKeyBoardTime(WriteBackDataListener writeBackDataListener){
 
+        byte[] timeByte = bleConstant.syncTime();
+        byte[] resultData = Utils.getFullPackage(timeByte);
+        bleManager.writeDataToDevice(resultData,writeBackDataListener);
+
+    }
 
 
 
