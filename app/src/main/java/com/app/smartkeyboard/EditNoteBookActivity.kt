@@ -53,7 +53,7 @@ class EditNoteBookActivity : AppActivity() {
     }
 
     override fun initData() {
-        editNoteBookTitleTv?.text = "添加"
+        editNoteBookTitleTv?.text = resources.getString(R.string.string_add)
         editNoteBookEditText?.addTextChangedListener(textWatcher)
 
         editNoteBookTimeTv?.text = BikeUtils.formatKeyboardTime(System.currentTimeMillis(),this)

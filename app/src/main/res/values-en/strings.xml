@@ -1,10 +1,25 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+    <string name="string_add">Add</string>
     <string name="string_custom">自定义</string>
     <string name="string_select_pick">选择图片</string>
     <string name="string_take_photo">Camera</string>
     <string name="string_album">Album</string>
+
+    <string name="string_retry_conn">Reconnect</string>
+    <string name="string_error_exit">Abnormal exit!</string>
+    <string name="string_update_failed">Update failed!</string>
+    <string name="string_update_success">Update succeeded!</string>
+    <string name="string_device_busy">The device is busy, please wait!</string>
+
+    <string name="string_sync_ing">Synchronizing..</string>
+    <string name="string_device_not_connect">device not connected!</string>
+    <string name="string_name">Name</string>
+    <string name="string_unbind">unbind</string>
+    <string name="string_connected">connected</string>
+    <string name="string_connecting">connecting..</string>
+
 
     <string name="string_note">Notes</string>
     <string name="string_search_note">search notes</string>
@@ -18,8 +33,8 @@
     <string name="string_selector_cus">Choose custom</string>
 
     <string name="string_notebook">NoteBook</string>
-    <string name="string_selector_device">Selector Device</string>
-    <string name="string_upload_anim">Upload animation</string>
+    <string name="string_selector_device">Device</string>
+    <string name="string_upload_anim">Animation</string>
     
     <!-- 通用的 -->
     <string name="common_loading">Loading&#8230;</string>
@@ -46,8 +61,8 @@
     <string name="camera_launch_fail">无法启动相机</string>
     <string name="camera_image_error">目标地址错误</string>
     <!-- 图片选择 -->
-    <string name="image_select_title">图片选择</string>
-    <string name="image_select_all">所有图片</string>
+    <string name="image_select_title">Picture selection</string>
+    <string name="image_select_all">All pictures</string>
 
     <string name="image_select_total">共 %d 张</string>
 
@@ -60,14 +75,14 @@
     <string name="status_layout_error_network">网络错误，请重试</string>
     <string name="status_layout_retry">重试</string>
 
-    <string name="string_today">今日</string>
-    <string name="string_yesterday">昨天</string>
+    <string name="string_today">today</string>
+    <string name="string_yesterday">yesterday</string>
     <string name="string_before_dawn_">凌晨</string>
-    <string name="string_morning">上午</string>
-    <string name="string_noon">中午</string>
-    <string name="string_afternoon">下午</string>
-    <string name="string_night">夜晚</string>
-    <string name="string_double_click_exit">再按一次退出程序!</string>
+    <string name="string_morning">morning</string>
+    <string name="string_noon">noon</string>
+    <string name="string_afternoon">afternoon</string>
+    <string name="string_night">night</string>
+    <string name="string_double_click_exit">Double-click to exit!</string>
 
 
     <string name="user_agreement_tips">User Agreement</string>//用户协议

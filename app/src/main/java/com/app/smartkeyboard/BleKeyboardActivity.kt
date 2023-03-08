@@ -154,12 +154,12 @@ class BleKeyboardActivity : AppActivity(){
         //是否已连接
         if(!isBind){
             val bleName = MmkvUtils.getConnDeviceName()
-            keyBoardNameTv?.text = "名称: "+bleName
+            keyBoardNameTv?.text = resources.getString(R.string.string_name)+": "+bleName
             keyBoardMacTv?.text = "MAC: "+bleMac
             val isConn = BaseApplication.getBaseApplication().connStatus == ConnStatus.CONNECTED
 
             Timber.e("-----连接状态="+isConn)
-            keyBoardStatusTv?.text = if(isConn) "已连接" else (if(isConnecting) "连接中.." else "重新连接")
+            keyBoardStatusTv?.text = if(isConn) resources.getString(R.string.string_connected) else (if(isConnecting) resources.getString(R.string.string_connecting) else resources.getString(R.string.string_retry_conn))
 
         }
 
@@ -211,9 +211,9 @@ class BleKeyboardActivity : AppActivity(){
             if(BikeUtils.isEmpty(mac))
                 return
             isConnecting = true
-            keyBoardStatusTv?.text = "连接中.."
+            keyBoardStatusTv?.text = resources.getString(R.string.string_connecting)
             BaseApplication.getBaseApplication().connStatusService.autoConnDevice(mac,false)
-            keyBoardStatusTv?.text = "连接中.."
+            keyBoardStatusTv?.text = resources.getString(R.string.string_connecting)
         }else{
             showScanDialog()
         }
@@ -230,7 +230,7 @@ class BleKeyboardActivity : AppActivity(){
 
             Timber.e("-----position="+position)
             if (position == 0x00) {   //显示进度条
-                showDialog("连接中...")
+                showDialog(resources.getString(R.string.string_connecting))
             }
 
             if (position == 0x01) {   //连接成功

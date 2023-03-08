@@ -202,12 +202,12 @@ class CustomDialActivity : AppActivity() {
     var grbByte = byteArrayOf()
 
     private fun setDialToDevice() {
-        if(BaseApplication.getBaseApplication().connStatus != ConnStatus.CONNECTED){
-            ToastUtils.show("设备未连接!")
+        if(BaseApplication.getBaseApplication().connStatus == ConnStatus.NOT_CONNECTED){
+            ToastUtils.show(resources.getString(R.string.string_device_not_connect))
             return
         }
 
-        showDialog("同步中...")
+        showDialog(resources.getString(R.string.string_sync_ing))
         BaseApplication.getBaseApplication().connStatus = ConnStatus.IS_SYNC_DIAL
         //stringBuilder.delete(0,stringBuilder.length)
         showLogTv()
@@ -274,14 +274,14 @@ class CustomDialActivity : AppActivity() {
                 }
                 //设备存储空间不够
                 if(codeStatus == 4){
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
 
                 }
 
                 if(codeStatus == 5){
                     hideDialog()
-                    ToastUtils.show("设备正常处理其它数据，请稍后!")
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
+                    ToastUtils.show(resources.getString(R.string.string_device_busy))
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
                     return@startFirstDial
                 }
 
@@ -352,18 +352,18 @@ class CustomDialActivity : AppActivity() {
 
                 if(statusCode == 1){
                     hideDialog()
-                    ToastUtils.show("更新失败!")
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
+                    ToastUtils.show(resources.getString(R.string.string_update_failed))
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
                 }
                 if(statusCode == 2){
                     hideDialog()
-                    ToastUtils.show("更新成功!")
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
+                    ToastUtils.show(resources.getString(R.string.string_update_success))
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
                 }
                 if(statusCode == 6){
                     hideDialog()
-                    ToastUtils.show("异常退出!")
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
+                    ToastUtils.show(resources.getString(R.string.string_error_exit))
+                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
                 }
             }
 
@@ -634,6 +634,6 @@ class CustomDialActivity : AppActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        BaseApplication.getBaseApplication().connStatus = ConnStatus.DEFAULT
+        BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
     }
 }

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         app:lineVisible="false"
-        app:title="选择设备"
+        app:title="@string/string_selector_device"
         app:titleColor="@color/white"
         app:leftIcon="@drawable/ic_white_left_back"/>
 
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_40"
-            android:text="选择设备"
+            android:text="@string/string_selector_device"
             android:textColor="@color/white"
             android:layout_gravity="center"
             android:gravity="center"
@@ -68,7 +68,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="无可连接设备"
+            android:text="@string/string_no_conn_device"
             android:layout_marginTop="@dimen/sp_10"
             android:textColor="#ff666666"
             android:textSize="30sp"
@@ -93,7 +93,7 @@
             android:paddingEnd="@dimen/dp_15"
             app:shape_radius="@dimen/dp_10"
             android:layout_margin="@dimen/dp_10"
-            android:text="重试"/>
+            android:text="@string/string_retry"/>
         </LinearLayout>
 
 
@@ -139,7 +139,7 @@
                     android:layout_margin="@dimen/dp_10"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/keyBoardMacTv"
-                    android:text="解除绑定"/>
+                    android:text="@string/string_unbind"/>
 
 
                 <com.hjq.shape.view.ShapeTextView
