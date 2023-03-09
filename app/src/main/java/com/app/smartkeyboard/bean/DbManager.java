@@ -6,6 +6,8 @@ import org.litepal.LitePal;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by Admin
  * Date 2023/1/10
@@ -68,4 +70,13 @@ public class DbManager {
         return list == null || list.isEmpty() ? null : list;
     }
 
+
+    /**
+     * 删除对应的笔记
+     * @param timeStr
+     */
+    public void deleteNotebook(String timeStr){
+        int code = LitePal.deleteAll(NoteBookBean.class,"saveTime = ?",timeStr);
+        Timber.e("--------删除="+code);
+    }
 }

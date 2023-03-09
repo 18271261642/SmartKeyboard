@@ -3,6 +3,8 @@ package com.app.smartkeyboard
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -12,10 +14,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.adapter.NoteBookAdapter
+import com.app.smartkeyboard.adapter.OnClickLongListener
 import com.app.smartkeyboard.adapter.OnCommItemClickListener
+import com.app.smartkeyboard.bean.DbManager
 import com.app.smartkeyboard.bean.NoteBookBean
 import com.app.smartkeyboard.ble.ConnStatus
+import com.app.smartkeyboard.dialog.DeleteNoteDialog
 import com.app.smartkeyboard.viewmodel.NoteBookViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 
@@ -59,6 +67,7 @@ class NotebookActivity : AppActivity() {
         allList = mutableListOf()
 
         noteAdapter?.setOnCommClickListener(onItemClick)
+        noteAdapter?.setOnLongClickListener(onLongClick)
 
         noteBookSearchEdit?.addTextChangedListener(textWatcher)
         noteBookAddImgView?.setOnClickListener {
@@ -166,6 +175,38 @@ class NotebookActivity : AppActivity() {
      //   startActivity(EditNoteBookActivity::class.java)
 
     }
+
+
+    //item长按删除数据
+    private val onLongClick = OnClickLongListener { position -> showDeleteDialog(position) }
+
+
+    //是否删除数据dialog
+    private fun showDeleteDialog(positions : Int){
+        val dialog = DeleteNoteDialog(this, com.bonlala.base.R.style.BaseDialogTheme)
+        dialog.show()
+        dialog.setOnCommClickListener { position ->
+            dialog.dismiss()
+            if (position == 0x01) { //删除
+                DbManager.getInstance().deleteNotebook(noteList?.get(positions)?.saveTime)
+                GlobalScope.launch {
+                    delay(500)
+                    getAllDbData()
+                }
+            }
+        }
+
+        val window = dialog.window
+        val windowLayout = window?.attributes
+        val metrics2: DisplayMetrics = resources.displayMetrics
+        val widthW: Int = metrics2.widthPixels
+
+        windowLayout?.width = widthW
+       windowLayout?.gravity = Gravity.BOTTOM
+        window?.attributes = windowLayout
+
+    }
+
 
 
     //发送数据

@@ -3,6 +3,7 @@ package com.app.smartkeyboard.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +17,21 @@ import com.app.smartkeyboard.bean.NoteBookBean
  */
 class NoteBookAdapter(private val context: Context,private val list : MutableList<NoteBookBean>) : RecyclerView.Adapter<NoteBookAdapter.NoteBookViewHolder>() {
 
-
+    //item点击
     private var onItemClickListener : OnCommItemClickListener ?= null
+
+    //长按
+    private var onLongClick : OnClickLongListener ?= null
+
+
 
     fun setOnCommClickListener(onclick : OnCommItemClickListener){
         this.onItemClickListener = onclick
+    }
+
+
+    fun setOnLongClickListener(ontLongListener: OnClickLongListener){
+        this.onLongClick = ontLongListener
     }
 
 
@@ -41,6 +52,12 @@ class NoteBookAdapter(private val context: Context,private val list : MutableLis
         holder.itemView.setOnClickListener {
             val position = holder.layoutPosition
             onItemClickListener?.onItemClick(position)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            val position = holder.layoutPosition
+            onLongClick?.onLongClick(position)
+            true
         }
     }
 

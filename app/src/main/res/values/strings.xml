@@ -2,6 +2,7 @@
     <string name="app_name">掌上悟确</string>
 
 
+    <string name="string_is_delete_note">是否需要删除该条笔记?</string>
     <string name="string_add">添加</string>
     <string name="string_error_exit">异常退出!</string>
     <string name="string_update_failed">更新失败!</string>

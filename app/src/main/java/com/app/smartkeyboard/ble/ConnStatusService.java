@@ -15,6 +15,7 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.app.smartkeyboard.BaseApplication;
+import com.app.smartkeyboard.utils.BikeUtils;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.blala.blalable.BleConstant;
 import com.blala.blalable.BleOperateManager;
@@ -304,6 +305,14 @@ public class ConnStatusService extends Service {
             //连接断开
             if(action.equals(BleConstant.BLE_SOURCE_DIS_CONNECTION_ACTION)){
                 sendActionBroad(BleConstant.BLE_DIS_CONNECT_ACTION,"");
+                BaseApplication.getBaseApplication().setConnStatus(ConnStatus.NOT_CONNECTED);
+                //判断是否主动断开，主动断开无Mac地址
+                String saveMac = MmkvUtils.getConnDeviceMac();
+                Timber.e("----------锻炼联了=");
+                if(BikeUtils.isEmpty(saveMac)){
+                    return;
+                }
+                autoConnDevice(saveMac,true);
             }
 
 
@@ -312,19 +321,19 @@ public class ConnStatusService extends Service {
                // abortBroadcast();
             }
 
-
-            //连接断开
-            if(action.equals(BleConstant.BLE_DIS_CONNECT_ACTION)){
-
-                BaseApplication.getBaseApplication().setConnStatus(ConnStatus.NOT_CONNECTED);
-                //判断是否主动断开，主动断开无Mac地址
+//
+//            //连接断开
+//            if(action.equals(BleConstant.BLE_DIS_CONNECT_ACTION)){
+//
+//                BaseApplication.getBaseApplication().setConnStatus(ConnStatus.NOT_CONNECTED);
+//                //判断是否主动断开，主动断开无Mac地址
 //                String saveMac = MmkvUtils.getConnDeviceMac();
 //                Timber.e("----------锻炼联了=");
 //                if(BikeUtils.isEmpty(saveMac)){
 //                    return;
 //                }
 //                autoConnDevice(saveMac,true);
-            }
+//            }
 
             if(action.equals(BleConstant.COMM_BROADCAST_ACTION)){
                 int[] valueArray = intent.getIntArrayExtra(BleConstant.COMM_BROADCAST_KEY);
