@@ -2,6 +2,14 @@
     <string name="app_name">掌上悟确</string>
 
 
+    <string name="string_is_unbind">是否确认解除绑定?</string>
+
+    <string name="string_keyboard_max_length">键盘最多显示40个文字</string>
+    <string name="string_selector">选择</string>
+    <string name="string_note_detail">笔记详情</string>
+    <string name="string_set_note_to_device">同步至键盘</string>
+
+
     <string name="string_is_delete_note">是否需要删除该条笔记?</string>
     <string name="string_add">添加</string>
     <string name="string_error_exit">异常退出!</string>
@@ -9,6 +17,9 @@
     <string name="string_update_success">更新成功!</string>
     <string name="string_device_busy">设备正常处理其它数据，请稍后!</string>
 
+
+    <string name="string_conn_success">连接成功!</string>
+    <string name="string_conn_disconn">连接已断开!</string>
 
     <string name="string_retry_conn">重新连接</string>
     <string name="string_sync_ing">同步中..</string>

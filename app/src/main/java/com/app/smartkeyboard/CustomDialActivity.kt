@@ -135,6 +135,18 @@ class CustomDialActivity : AppActivity() {
     }
 
 
+
+    //从raw目录下获取dial
+    private fun getDialForRaw(){
+        val inputStream = resources.openRawResource(R.raw.gif_dial)
+        val array = inputStream.readBytes()
+        setDialToDevice(array)
+
+    }
+
+
+
+
     override fun onClick(view: View?) {
         super.onClick(view)
         val id = view?.id
@@ -142,12 +154,13 @@ class CustomDialActivity : AppActivity() {
         when (id) {
             //选择图片
             R.id.cusDialAlbumLayout -> {
-                showSelectDialog()
+                getDialForRaw()
+               // showSelectDialog()
             }
 
             //保存
             R.id.customSetDialTv -> {
-                setDialToDevice()
+                setDialToDevice(byteArrayOf(0x00))
             }
 
             //相机
@@ -201,7 +214,7 @@ class CustomDialActivity : AppActivity() {
 
     var grbByte = byteArrayOf()
 
-    private fun setDialToDevice() {
+    private fun setDialToDevice(byteArray: ByteArray) {
         if(BaseApplication.getBaseApplication().connStatus == ConnStatus.NOT_CONNECTED){
             ToastUtils.show(resources.getString(R.string.string_device_not_connect))
             return
@@ -222,10 +235,12 @@ class CustomDialActivity : AppActivity() {
                     Target.SIZE_ORIGINAL,
                     Target.SIZE_ORIGINAL
                 ).get()
-            grbByte = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+//            grbByte = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
             Timber.e("------大小=" + grbByte.size)
             //   ImgUtil.loadMeImgDialCircle(imgRecall, bitmap)
         }
+
+        grbByte = byteArray
 
         //生成新图并保存
 //        val newBit = BitmapAndRgbByteUtil.loadBitmapFromView(customShowImgView)
@@ -237,7 +252,8 @@ class CustomDialActivity : AppActivity() {
 
         dialBean.uiFeature = uiFeature.toLong()
         dialBean.binSize = grbByte.size.toLong()
-        dialBean.type = 1
+        dialBean.name = "12"
+        dialBean.type = 2
 
         val resultArray = KeyBoardConstant.getDialByte(dialBean)
         val str = Utils.formatBtArrayToString(resultArray)
@@ -328,6 +344,7 @@ class CustomDialActivity : AppActivity() {
             0xff.toByte()
         )
 
+
         val resultArray = getDialContent(startByte, startByte, grbByte, 1000 + 701, -100, 0)
         Timber.e("-------reaulstArray="+resultArray.size+" "+resultArray[0].size)
 
@@ -339,35 +356,42 @@ class CustomDialActivity : AppActivity() {
             }
 
         }
-        BaseApplication.getBaseApplication().bleOperate.writeDialFlash(resultArray,object : OnKeyBoardListener{
-            override fun onSyncFlash(statusCode: Int) {
-                /**
-                 * 0x01：更新失败
-                 * 0x02：更新成功
-                 * 0x03：第 1 个 4K 数据块异常（含 APP 端发擦写和实际写入的数据地址不一致），APP 需要重走流程
-                 * 0x04：非第 1 个 4K 数据块异常，需要重新发送当前 4K 数据块
-                 * 0x05：4K 数据块正常，发送下一个 4K 数据
-                 * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
-                 */
+        BaseApplication.getBaseApplication().bleOperate.writeDialFlash(resultArray
+        ) { statusCode ->
+            /**
+             * 0x01：更新失败
+             * 0x02：更新成功
+             * 0x03：第 1 个 4K 数据块异常（含 APP 端发擦写和实际写入的数据地址不一致），APP 需要重走流程
+             * 0x04：非第 1 个 4K 数据块异常，需要重新发送当前 4K 数据块
+             * 0x05：4K 数据块正常，发送下一个 4K 数据
+             * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
+             */
 
-                if(statusCode == 1){
-                    hideDialog()
-                    ToastUtils.show(resources.getString(R.string.string_update_failed))
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
-                }
-                if(statusCode == 2){
-                    hideDialog()
-                    ToastUtils.show(resources.getString(R.string.string_update_success))
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
-                }
-                if(statusCode == 6){
-                    hideDialog()
-                    ToastUtils.show(resources.getString(R.string.string_error_exit))
-                    BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
-                }
+            /**
+             * 0x01：更新失败
+             * 0x02：更新成功
+             * 0x03：第 1 个 4K 数据块异常（含 APP 端发擦写和实际写入的数据地址不一致），APP 需要重走流程
+             * 0x04：非第 1 个 4K 数据块异常，需要重新发送当前 4K 数据块
+             * 0x05：4K 数据块正常，发送下一个 4K 数据
+             * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
+             */
+
+            if (statusCode == 1) {
+                hideDialog()
+                ToastUtils.show(resources.getString(R.string.string_update_failed))
+                BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
             }
-
-        })
+            if (statusCode == 2) {
+                hideDialog()
+                ToastUtils.show(resources.getString(R.string.string_update_success))
+                BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
+            }
+            if (statusCode == 6) {
+                hideDialog()
+                ToastUtils.show(resources.getString(R.string.string_error_exit))
+                BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
+            }
+        }
     }
 
 
@@ -496,7 +520,7 @@ class CustomDialActivity : AppActivity() {
                 dialBean.imgUrl = url
 
 
-                setDialToDevice()
+                setDialToDevice(byteArrayOf(0x00))
             }
 
 

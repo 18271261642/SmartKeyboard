@@ -177,13 +177,14 @@ public class BleManager {
      */
     public void startScanBleDevice(final SearchResponse searchResponse, boolean scanClass,int duration, int times){
 
-        if(!scanClass){
-            startScanBleDevice(searchResponse,duration,times);
-            return;
-        }
+//        if(!scanClass){
+//            startScanBleDevice(searchResponse,duration,times);
+//            return;
+//        }
+//        bluetoothClient.stopSearch();
         final SearchRequest searchRequest = new SearchRequest.Builder()
                 .searchBluetoothLeDevice(duration,times)
-                .searchBluetoothClassicDevice(10 * 1000)
+//                .searchBluetoothClassicDevice(10 * 1000)
                 .build();
         bluetoothClient.search(searchRequest, new SearchResponse() {
             @Override

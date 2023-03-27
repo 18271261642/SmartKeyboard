@@ -77,6 +77,7 @@ public class BaseApplication extends BleApplication {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             connStatusService =( (ConnStatusService.ConnBinder)iBinder).getService();
+            Timber.e("--------绑定服务="+(connStatusService == null));
         }
 
         @Override

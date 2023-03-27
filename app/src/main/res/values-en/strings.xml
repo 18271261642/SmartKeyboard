@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+    <string name="string_is_unbind">Are you sure to unbind?</string>
+    <string name="string_conn_success">connection succeeded!</string>
+    <string name="string_conn_disconn">connection disconnected!</string>
+
+    <string name="string_keyboard_max_length">The keyboard only displays 40 bytes</string>
+    <string name="string_selector">Select</string>
+    <string name="string_note_detail">Note details</string>
+    <string name="string_set_note_to_device">Show it on the Keyboard</string>
+
 
     <string name="string_is_delete_note">Do you want to delete this note?</string>
     <string name="string_add">Add</string>

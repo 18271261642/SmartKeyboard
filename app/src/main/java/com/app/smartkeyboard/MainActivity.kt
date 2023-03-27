@@ -3,24 +3,32 @@ package com.app.smartkeyboard
 
 import android.Manifest
 import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
+import android.content.*
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.app.smartkeyboard.action.ActivityManager
 import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.dialog.NoticeDialog
 import com.app.smartkeyboard.dialog.ShowPrivacyDialogView
+import com.app.smartkeyboard.utils.BikeUtils
+import com.app.smartkeyboard.utils.BonlalaUtils
 import com.app.smartkeyboard.utils.MmkvUtils
 import com.app.smartkeyboard.utils.NotificationUtils
+import com.blala.blalable.BleConstant
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -48,15 +56,103 @@ class MainActivity : AppActivity() {
         setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
 
         findViewById<ImageView>(R.id.titleImgView).setOnClickListener {
-            BaseApplication.getBaseApplication().bleOperate.syncKeyBoardTime()
+           // BaseApplication.getBaseApplication().bleOperate.syncKeyBoardTime()
         }
-        
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(BleConstant.BLE_CONNECTED_ACTION)
+        intentFilter.addAction(BleConstant.BLE_DIS_CONNECT_ACTION)
+        intentFilter.addAction(BleConstant.BLE_SCAN_COMPLETE_ACTION)
+        registerReceiver(broadcastReceiver,intentFilter)
 //        XXPermissions.with(this).permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)).request { permissions, all ->  }
     }
+
+
+
+
+
+
 
     override fun onResume() {
         super.onResume()
         //showOpenNotifyDialog()
+    }
+
+
+    //判断是否连接，未连接重连
+    private fun retryConn() {
+        val connBleMac = MmkvUtils.getConnDeviceMac()
+        if (!BikeUtils.isEmpty(connBleMac)) {
+            //是否已经连接
+            val isConn = BaseApplication.getBaseApplication().connStatus == ConnStatus.CONNECTED
+            if (isConn) {
+                return
+            }
+
+            verifyScanFun(connBleMac)
+        }
+    }
+
+
+    //判断是否有位置权限了，没有请求权限
+    private fun verifyScanFun(mac: String) {
+
+        //判断蓝牙是否开启
+        if (!BikeUtils.isBleEnable(this)) {
+            BikeUtils.openBletooth(this)
+            return
+        }
+        //判断权限
+        val isPermission = ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!isPermission) {
+            XXPermissions.with(this).permission(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            ).request { permissions, all ->
+                connToDevice(mac)
+            }
+            // ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),0x00)
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
+            XXPermissions.with(this).permission(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_ADVERTISE
+                )
+            ).request { permissions, all ->
+                //verifyScanFun()
+            }
+        }
+
+
+        //判断蓝牙是否打开
+        val isOpenBle = BonlalaUtils.isOpenBlue(this@MainActivity)
+        if (!isOpenBle) {
+            BonlalaUtils.openBluetooth(this)
+            return
+        }
+        connToDevice(mac)
+    }
+
+    private fun connToDevice(mac : String){
+        Handler(Looper.getMainLooper()).postDelayed({
+            val service = BaseApplication.getBaseApplication().connStatusService
+
+            if(service != null){
+                BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTING
+                service.autoConnDevice(mac, false)
+            }
+
+        },3000)
+
     }
 
     override fun initData() {
@@ -64,9 +160,11 @@ class MainActivity : AppActivity() {
         val isFirstOpen = MmkvUtils.getPrivacy()
         if (!isFirstOpen) {
             showPrivacyDialog()
-        }else{
+        } else {
             showOpenNotifyDialog()
         }
+
+        retryConn()
     }
 
     //显示隐私弹窗
@@ -130,14 +228,13 @@ class MainActivity : AppActivity() {
                 BaseApplication.getBaseApplication().connStatus = ConnStatus.NOT_CONNECTED
                 ActivityManager.getInstance().finishAllActivities()
                 finish()
-                finish()
             }
         }
         return super.onKeyDown(keyCode, event)
     }
 
 
-    private fun openNoti(){
+    private fun openNoti() {
         val dialog = NoticeDialog(this, com.bonlala.base.R.style.BaseDialogTheme)
         dialog.show()
         dialog.setCancelable(false)
@@ -146,7 +243,9 @@ class MainActivity : AppActivity() {
                 dialog.dismiss()
                 startToNotificationListenSetting(this@MainActivity)
 //                NotificationUtils.gotoSet(this)
-                XXPermissions.with(this).permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)).request { permissions, all ->  }
+                XXPermissions.with(this)
+                    .permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE))
+                    .request { permissions, all -> }
             }
             if (position == 0x01) {
                 dialog.dismiss()
@@ -159,12 +258,10 @@ class MainActivity : AppActivity() {
         //判断通知权限是否打开了
         val isOpen2 = hasNotificationListenPermission(this)
         val isOpen = NotificationUtils.isNotificationEnabled(this)
-        Timber.e("--------通知是否打开了="+isOpen+" "+isOpen2)
-        if(!isOpen2){
+        Timber.e("--------通知是否打开了=" + isOpen + " " + isOpen2)
+        if (!isOpen2) {
             openNoti()
         }
-
-
     }
 
 
@@ -207,5 +304,30 @@ class MainActivity : AppActivity() {
     private fun hasNotificationListenPermission(context: Context): Boolean {
         val packageNames = NotificationManagerCompat.getEnabledListenerPackages(context)
         return !packageNames.isEmpty() && packageNames.contains(context.packageName)
+    }
+
+
+    private val broadcastReceiver : BroadcastReceiver = object : BroadcastReceiver(){
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            val action = p1?.action
+            Timber.e("---------acdtion="+action)
+            if(action == BleConstant.BLE_CONNECTED_ACTION){
+                ToastUtils.show(resources.getString(R.string.string_conn_success))
+                BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
+            }
+            if(action == BleConstant.BLE_DIS_CONNECT_ACTION){
+                ToastUtils.show(resources.getString(R.string.string_conn_disconn))
+            }
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(broadcastReceiver)
+        }catch (e : Exception){
+            e.printStackTrace()
+        }
     }
 }

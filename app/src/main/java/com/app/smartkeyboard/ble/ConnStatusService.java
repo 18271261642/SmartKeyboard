@@ -106,7 +106,7 @@ public class ConnStatusService extends Service {
         BleOperateManager.getInstance().scanBleDevice(new SearchResponse() {
             @Override
             public void onSearchStarted() {
-//                Timber.e("----onSearchStarted--");
+                Timber.e("----onSearchStarted--");
                 isScanDevice = false;
 
 //                sendActionBroad(BleConstant.BLE_CONNECTED_ACTION,"");
@@ -134,6 +134,9 @@ public class ConnStatusService extends Service {
                         @Override
                         public void run() {
                             sendActionBroad(BleConstant.BLE_SCAN_COMPLETE_ACTION,"0");
+                            if(BaseApplication.getBaseApplication().getConnStatus() != ConnStatus.CONNECTED){
+                                BaseApplication.getBaseApplication().setConnStatus(ConnStatus.NOT_CONNECTED);
+                            }
                         }
                     },3 *1000);
 

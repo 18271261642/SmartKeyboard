@@ -36,6 +36,9 @@ class EditNoteBookActivity : AppActivity() {
     //时间
     private var editNoteBookTimeTv : TextView ?= null
 
+    //时间
+    private var timeStr : String?= null
+
     override fun getLayoutId(): Int {
         return R.layout.activity_edit_notebook_layout
     }
@@ -59,10 +62,8 @@ class EditNoteBookActivity : AppActivity() {
         editNoteBookTimeTv?.text = BikeUtils.formatKeyboardTime(System.currentTimeMillis(),this)
 
         //时间戳
-        val timeStr = intent.getStringExtra("timeKey")
-        if (timeStr != null) {
-            queryNoteBookData(timeStr)
-        }
+        timeStr = intent.getStringExtra("timeKey")
+        timeStr?.let { queryNoteBookData(it) }
 
     }
 
@@ -135,7 +136,7 @@ class EditNoteBookActivity : AppActivity() {
         noteBookBean.noteContent = inputContent
         noteBookBean.noteTimeLong = System.currentTimeMillis()
         noteBookBean.saveTime = BikeUtils.getCurrDate()
-        noteBookBean.saveTime = BikeUtils.getFormatDate(System.currentTimeMillis(),"yyyy-MM-dd HH:mm:ss")
+        noteBookBean.saveTime = if(timeStr != null ) timeStr else BikeUtils.getFormatDate(System.currentTimeMillis(),"yyyy-MM-dd HH:mm:ss")
 
         val  isSave = DbManager.getInstance().saveOrUpdateData(noteBookBean)
         if(isSave){

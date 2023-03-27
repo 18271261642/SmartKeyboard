@@ -122,9 +122,9 @@ class BleKeyboardActivity : AppActivity(){
 
     private fun dealDevice(){
         val alert = AlertDialog.Builder(this)
-            .setTitle("提醒")
-            .setMessage("是否解除绑定?")
-            .setPositiveButton("确定"
+            .setTitle(resources.getString(R.string.comm_prompt))
+            .setMessage(resources.getString(R.string.string_is_unbind))
+            .setPositiveButton(resources.getString(R.string.common_confirm)
             ) { p0, p1 ->
                 p0?.dismiss()
 
@@ -135,7 +135,7 @@ class BleKeyboardActivity : AppActivity(){
                 showDeviceStatus()
 
             }
-            .setNegativeButton("取消"
+            .setNegativeButton(resources.getString(R.string.common_cancel)
             ) { p0, p1 -> p0?.dismiss()
                 p0?.dismiss()
             }
@@ -156,10 +156,9 @@ class BleKeyboardActivity : AppActivity(){
             val bleName = MmkvUtils.getConnDeviceName()
             keyBoardNameTv?.text = resources.getString(R.string.string_name)+": "+bleName
             keyBoardMacTv?.text = "MAC: "+bleMac
-            val isConn = BaseApplication.getBaseApplication().connStatus == ConnStatus.CONNECTED
-
-            Timber.e("-----连接状态="+isConn)
-            keyBoardStatusTv?.text = if(isConn) resources.getString(R.string.string_connected) else (if(isConnecting) resources.getString(R.string.string_connecting) else resources.getString(R.string.string_retry_conn))
+            val isConnStatus = BaseApplication.getBaseApplication().connStatus
+            Timber.e("-----连接状态="+isConnStatus)
+            keyBoardStatusTv?.text = if(isConnStatus == ConnStatus.CONNECTED) resources.getString(R.string.string_connected) else (if(isConnecting || isConnStatus == ConnStatus.CONNECTING) resources.getString(R.string.string_connecting) else resources.getString(R.string.string_retry_conn))
 
         }
 
@@ -167,7 +166,6 @@ class BleKeyboardActivity : AppActivity(){
 
 
     //判断是否有位置权限了，没有请求权限
-
     private fun verifyScanFun(isReconn : Boolean){
 
         //判断蓝牙是否开启

@@ -20,6 +20,7 @@ import com.app.smartkeyboard.bean.DbManager
 import com.app.smartkeyboard.bean.NoteBookBean
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.dialog.DeleteNoteDialog
+import com.app.smartkeyboard.dialog.SelectPhotoDialog
 import com.app.smartkeyboard.viewmodel.NoteBookViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -166,19 +167,15 @@ class NotebookActivity : AppActivity() {
 
     //item点击
     private val onItemClick : OnCommItemClickListener = OnCommItemClickListener {
-
-        val noteBean = noteList?.get(it)
-        if (noteBean != null) {
-           // startActivity(EditNoteBookActivity::class.java, arrayOf("timeKey"), arrayOf(noteBean.saveTime))
-            sendNotToDevice(noteBean.noteTitle,noteBean.noteTimeLong)
-        }
-     //   startActivity(EditNoteBookActivity::class.java)
-
+        showClickDialog(it)
     }
 
 
     //item长按删除数据
-    private val onLongClick = OnClickLongListener { position -> showDeleteDialog(position) }
+    private val onLongClick = OnClickLongListener { position ->
+        showDeleteDialog(position)
+
+    }
 
 
     //是否删除数据dialog
@@ -207,6 +204,39 @@ class NotebookActivity : AppActivity() {
 
     }
 
+
+
+    private fun showClickDialog(index : Int){
+        val dialog = SelectPhotoDialog(this, com.bonlala.base.R.style.BaseDialogTheme)
+        dialog.show()
+        dialog.setOnSelectListener { position ->
+            dialog.dismiss()
+            val noteBean = noteList?.get(index)
+            if (position == 0x00) { //详情
+                startActivity(
+                    EditNoteBookActivity::class.java,
+                    arrayOf("timeKey"),
+                    arrayOf(noteBean?.saveTime)
+                )
+            }
+            if (position == 0x01) { //发送到键盘
+
+                if (noteBean != null) {
+
+                    sendNotToDevice(noteBean.noteTitle, noteBean.noteTimeLong)
+                }
+            }
+        }
+
+        val window = dialog.window
+        val windowLayout = window?.attributes
+        val metrics2: DisplayMetrics = resources.displayMetrics
+        val widthW: Int = metrics2.widthPixels
+
+        windowLayout?.width = widthW
+        windowLayout?.gravity = Gravity.BOTTOM
+        window?.attributes = windowLayout
+    }
 
 
     //发送数据
