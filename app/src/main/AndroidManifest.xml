@@ -6,8 +6,6 @@
 
     <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
         tools:ignore="ProtectedPermissions" />
-    <!--文件读写所有权限-->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -50,13 +48,21 @@
         </activity>
 
         <!--记事本页面-->
-        <activity android:name=".NotebookActivity"/>
+        <activity android:name=".NotebookActivity"
+            android:screenOrientation="portrait"/>
         <!--编辑记事本-->
-        <activity android:name=".EditNoteBookActivity"/>
+        <activity android:name=".EditNoteBookActivity"
+            android:screenOrientation="portrait"/>
         <!--键盘页面-->
-        <activity android:name=".BleKeyboardActivity"/>
-        <activity android:name=".DialHomeActivity"/>
-        <activity android:name=".CustomDialActivity"/>
+        <activity android:name=".BleKeyboardActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".DialHomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CustomDialActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ShowWebViewActivity"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".img.ImagePreviewActivity"/>
         <activity android:name=".img.ImageSelectActivity"/>

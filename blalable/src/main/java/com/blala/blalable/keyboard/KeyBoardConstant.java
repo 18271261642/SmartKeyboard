@@ -20,20 +20,22 @@ public class KeyBoardConstant {
         byte[] binSize = Utils.toByteArray((int) dialCustomBean.getBinSize());
         byte[] unicode = Utils.stringToByte(Utils.getUnicode(dialCustomBean.getName()).replace("\\u", ""));//解码
 
-//        byte[] send=new byte[]{
-//                0x01,0x00,0x0B,
-//                uiId[0],uiId[1],uiId[2],uiId[3],
-//                binSize[0],binSize[1],binSize[2],binSize[3],
-//                (byte) 0xff,(byte) 0xff,(byte) 0xff
-//        };
+        byte[] send=new byte[]{
+                0x01,0x00,0x0B,
+                uiId[0],uiId[1],uiId[2],uiId[3],
+                binSize[0],binSize[1],binSize[2],binSize[3],
+                (byte) 0xff,(byte) 0xff,(byte) 0xff
+        };
 
         //gif指令
-       byte[] array04 = new byte[]{0x04,0x00,0x04,0x00,0x00, (byte) 0xff, (byte) 0xfc};
+//       byte[] array04 = new byte[]{0x04,0x00,0x04,0x00,0x00, (byte) 0xff, (byte) 0xfc};
+//
+//       byte[] array05 = new byte[]{0x05,0x00,0x14, (byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff};
+//
+//        byte[] tnnpArr = Utils.hexStringToByte(keyValue(array04,array05));
 
-       byte[] array05 = new byte[]{0x05,0x00,0x14, (byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff};
 
-        byte[] tnnpArr = Utils.hexStringToByte(keyValue(array04,array05));
-        sendData=  Utils.getFullPackage(Utils.getPlayer("09", "03",tnnpArr));
+        sendData=  Utils.getFullPackage(Utils.getPlayer("09", "03",send));
 
         return sendData;
     }

@@ -1,7 +1,10 @@
 package com.app.smartkeyboard
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -25,7 +28,6 @@ import com.app.smartkeyboard.utils.ThreadUtils
 import com.blala.blalable.Utils
 import com.blala.blalable.keyboard.DialCustomBean
 import com.blala.blalable.keyboard.KeyBoardConstant
-import com.blala.blalable.listener.OnKeyBoardListener
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
@@ -122,14 +124,8 @@ class CustomDialActivity : AppActivity() {
             )
         ).request { permissions, all -> }
 
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            XXPermissions.with(this).permission(arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)).request{ permissions, all -> }
-        }
-         cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
-//        cropImgPath = this.getExternalFilesDir(null)?.path
+//         cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
+        cropImgPath = this.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath
 
         Timber.e("-----path="+cropImgPath)
     }
@@ -154,8 +150,8 @@ class CustomDialActivity : AppActivity() {
         when (id) {
             //选择图片
             R.id.cusDialAlbumLayout -> {
-                getDialForRaw()
-               // showSelectDialog()
+                //getDialForRaw()
+                showSelectDialog()
             }
 
             //保存
@@ -225,22 +221,21 @@ class CustomDialActivity : AppActivity() {
         //stringBuilder.delete(0,stringBuilder.length)
         showLogTv()
 
-        var uiFeature = 65533
+        val uiFeature = 65533
 
         ThreadUtils.submit {
-            var bitmap = Glide.with(this)
+            val bitmap = Glide.with(this)
                 .asBitmap()
                 .load(dialBean.imgUrl)
                 .into(
                     Target.SIZE_ORIGINAL,
                     Target.SIZE_ORIGINAL
                 ).get()
-//            grbByte = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+            grbByte = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
             Timber.e("------大小=" + grbByte.size)
             //   ImgUtil.loadMeImgDialCircle(imgRecall, bitmap)
         }
 
-        grbByte = byteArray
 
         //生成新图并保存
 //        val newBit = BitmapAndRgbByteUtil.loadBitmapFromView(customShowImgView)
@@ -442,8 +437,8 @@ class CustomDialActivity : AppActivity() {
      *
      */
     private fun startPhotoZoom(uri: Uri, code: Int) {
-        cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
-//        cropImgPath = this.getExternalFilesDir(null)?.path
+//        cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
+        cropImgPath = this.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath
         try {
             val intent = Intent("com.android.camera.action.CROP")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -481,7 +476,7 @@ class CustomDialActivity : AppActivity() {
             }
 
             //所有版本这里都这样调用
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cutFile))
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, cRui)
 
 //               intent.putExtra(MediaStore.EXTRA_OUTPUT,  getUriForFile(NewShareActivity.this,cutFile));
 //                intent.putExtra(MediaStore.EXTRA_OUTPUT,  uri);
@@ -496,6 +491,9 @@ class CustomDialActivity : AppActivity() {
             intent.putExtra("scaleUpIfNeeded", true)
             intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString())
             intent.putExtra("return-data", false)
+
+            grantPermissionFix(intent,cRui)
+
             startActivityForResult(intent, code)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -660,4 +658,23 @@ class CustomDialActivity : AppActivity() {
         super.onDestroy()
         BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
     }
+
+    private fun grantPermissionFix(intent: Intent, uri: Uri) {
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        val resolveInfos: List<ResolveInfo> =
+            packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        for (resolveInfo in resolveInfos) {
+            val packageName: String = resolveInfo.activityInfo.packageName
+            grantUriPermission(
+                packageName,
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            intent.action = null
+            intent.component =
+                ComponentName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name)
+            break
+        }
+    }
+
 }

@@ -12,4 +12,6 @@
     <external-cache-path name="name" path="path" />
     <!-- Environment.getExternalStorageDirectory() -->
     <external-path name="external" path="." />
+
+    <external-files-path name="DCIM" path="." />
 </paths>

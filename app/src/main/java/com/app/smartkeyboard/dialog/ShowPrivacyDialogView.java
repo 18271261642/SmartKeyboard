@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.app.smartkeyboard.R;
+import com.app.smartkeyboard.ShowWebViewActivity;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.hjq.shape.layout.ShapeLinearLayout;
 import com.hjq.shape.view.ShapeButton;
@@ -107,6 +108,11 @@ public class ShowPrivacyDialogView extends AppCompatDialog implements View.OnCli
 //                intent.putExtra("title",getContext().getResources().getString(R.string.user_agreement_tips));
 //                getContext().startActivity(intent);
 
+                Intent intent = new Intent(getContext(), ShowWebViewActivity.class);
+                intent.putExtra("title",getContext().getResources().getString(R.string.privacy_agreement_tips));
+                intent.putExtra("url", "file:///android_asset/keyboard_privacy.html");
+                getContext().startActivity(intent);
+
             }
 
             @Override
@@ -120,10 +126,10 @@ public class ShowPrivacyDialogView extends AppCompatDialog implements View.OnCli
             @Override
             public void onClick(@NonNull View view) {
 
-//                Intent intent = new Intent(getContext(), ShowWebActivity.class);
-//                intent.putExtra("title",getContext().getResources().getString(R.string.privacy_agreement_tips));
-//                intent.putExtra("url", MmkvUtils.getPrivacyUrl());
-//                getContext().startActivity(intent);
+                Intent intent = new Intent(getContext(), ShowWebViewActivity.class);
+                intent.putExtra("title",getContext().getResources().getString(R.string.privacy_agreement_tips));
+                intent.putExtra("url", "file:///android_asset/keyboard_privacy.html");
+                getContext().startActivity(intent);
 
             }
 
