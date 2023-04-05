@@ -133,4 +133,19 @@ public class KeyBoardConstant {
                 Utils.getHexString(key2)
                 ;
     }
+
+
+
+
+
+
+    //GIF功能，B的指令
+    public static byte[] dealWidthBData(int imgCount){
+        byte[] bByte = new byte[28];
+
+        bByte[0] = 0x15;
+        bByte[1] = 0x01;
+        bByte[7] = 0x01;
+        return bByte;
+    }
 }
