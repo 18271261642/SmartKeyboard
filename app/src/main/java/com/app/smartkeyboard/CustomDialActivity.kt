@@ -7,8 +7,7 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
@@ -23,6 +22,7 @@ import com.app.smartkeyboard.img.ImageSelectActivity
 import com.app.smartkeyboard.listeners.OnGetImgWidthListener
 import com.app.smartkeyboard.utils.BitmapAndRgbByteUtil
 import com.app.smartkeyboard.utils.GlideEngine
+import com.app.smartkeyboard.utils.ImageUtils
 import com.app.smartkeyboard.utils.ImgUtil
 import com.app.smartkeyboard.utils.ThreadUtils
 import com.blala.blalable.Utils
@@ -30,6 +30,7 @@ import com.blala.blalable.keyboard.DialCustomBean
 import com.blala.blalable.keyboard.KeyBoardConstant
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
+import com.bumptech.glide.gifdecoder.GifDecoder
 import com.bumptech.glide.request.target.Target
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
@@ -83,6 +84,20 @@ class CustomDialActivity : AppActivity() {
     //裁剪图片
     private var cropImgPath: String? = null
     private var resultCropUri: Uri? = null
+
+
+    private val handlers : Handler = object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if(msg.what == 0x00){
+                val array = msg.obj as ByteArray
+                setDialToDevice(array)
+
+            }
+
+
+        }
+    }
 
 
     override fun getLayoutId(): Int {
@@ -150,7 +165,7 @@ class CustomDialActivity : AppActivity() {
         when (id) {
             //选择图片
             R.id.cusDialAlbumLayout -> {
-                //getDialForRaw()
+//                getDialForRaw()
                 showSelectDialog()
             }
 
@@ -216,6 +231,8 @@ class CustomDialActivity : AppActivity() {
             return
         }
 
+        val isSynGif = byteArray.isNotEmpty() && byteArray.size>10
+
         showDialog(resources.getString(R.string.string_sync_ing))
         BaseApplication.getBaseApplication().connStatus = ConnStatus.IS_SYNC_DIAL
         //stringBuilder.delete(0,stringBuilder.length)
@@ -231,11 +248,16 @@ class CustomDialActivity : AppActivity() {
                     Target.SIZE_ORIGINAL,
                     Target.SIZE_ORIGINAL
                 ).get()
-            grbByte = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+            if(isSynGif){
+                grbByte = byteArray
+            }else{
+                grbByte = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+            }
+
             Timber.e("------大小=" + grbByte.size)
             //   ImgUtil.loadMeImgDialCircle(imgRecall, bitmap)
         }
-
+        grbByte = byteArray
 
         //生成新图并保存
 //        val newBit = BitmapAndRgbByteUtil.loadBitmapFromView(customShowImgView)
@@ -248,7 +270,7 @@ class CustomDialActivity : AppActivity() {
         dialBean.uiFeature = uiFeature.toLong()
         dialBean.binSize = grbByte.size.toLong()
         dialBean.name = "12"
-        dialBean.type = 2
+        dialBean.type = if(isSynGif) 2 else 1
 
         val resultArray = KeyBoardConstant.getDialByte(dialBean)
         val str = Utils.formatBtArrayToString(resultArray)
@@ -421,6 +443,12 @@ class CustomDialActivity : AppActivity() {
 
     private fun setSelectImg(localUrl: String, code: Int) {
         Timber.e("--------选择图片=$localUrl")
+        if(localUrl.contains(".gif")){
+            dealWidthGif(localUrl)
+            return
+        }
+
+
         val uri: Uri
         uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             FileProvider.getUriForFile(this, "com.app.smartkeyboard.provider", File(localUrl))
@@ -675,6 +703,57 @@ class CustomDialActivity : AppActivity() {
                 ComponentName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name)
             break
         }
+    }
+
+
+
+    //处理gif的图片
+    private fun dealWidthGif(gifPath : String ){
+        val gifList = ImageUtils.getGifData(File(gifPath))
+        Timber.e("-------gifList="+gifList.size)
+
+        //将图片转换成byte集合,得到gif D的数据
+        val gifByteArray = mutableListOf<ByteArray>()
+
+        val dByteStr = StringBuilder()
+
+        val cByteStr = StringBuilder()
+
+        var arraySize = 0
+        ThreadUtils.submit {
+            for(i in 0 until gifList.size){
+                val beforeSize = arraySize
+
+                val tempArray = Utils.intToByteArray(beforeSize)
+                val tempStr = Utils.getHexString(tempArray)
+                cByteStr.append(tempStr)
+
+                val bitmap = gifList[i]
+                val bitArray = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+                arraySize+=bitArray.size
+                dByteStr.append(Utils.getHexString(bitArray))
+
+
+            }
+
+            Timber.e("-----111--c的内容="+cByteStr)
+            //得到D的数组
+            val resultDArray = Utils.hexStringToByte(dByteStr.toString())
+            //得到C的数组
+            val resultCArray = Utils.hexStringToByte(cByteStr.toString())
+            //得到B的数组
+            val resultBArray = KeyBoardConstant.dealWidthBData(gifList.size)
+
+            val resultAllArray = KeyBoardConstant.getGifAArrayData(gifList.size,resultBArray,resultCArray,resultDArray)
+            val msg = handlers.obtainMessage()
+            msg.what = 0x00
+            msg.obj = resultAllArray
+            handlers.sendMessageDelayed(msg,500)
+        }
+
+        //得到C的内容
+        Timber.e("----222---c的内容="+cByteStr)
+
     }
 
 }

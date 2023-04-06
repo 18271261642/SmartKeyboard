@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -599,4 +600,38 @@ public class Utils {
         }
         return array;
     }
+
+    /**
+     * 数组合并
+     * @param first 第一个
+     * @param rest 后续的
+     * @param <T>类型
+     * @return一个数组
+     */
+    public static <T> byte[] concatAll(byte[] first, byte[]... rest) {
+
+        int totalLength = first.length;
+        for (byte[] array : rest) {
+            totalLength += array.length;
+        }
+
+        byte[] result = Arrays.copyOf(first, totalLength);
+        int offset = first.length;
+        for (byte[] array : rest) {
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+        return result;
+    }
+
+
+    public static <T> byte[] concat(byte[] first, byte[] second) {
+
+        byte[] result = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
+    }
+
+
+
 }
