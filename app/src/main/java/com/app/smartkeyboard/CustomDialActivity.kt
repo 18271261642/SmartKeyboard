@@ -90,11 +90,17 @@ class CustomDialActivity : AppActivity() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             if(msg.what == 0x00){
+                hideDialog()
                 val array = msg.obj as ByteArray
                 setDialToDevice(array)
 
             }
 
+            if(msg.what == 0x01){
+                hideDialog()
+                val tempArray = msg.obj as ByteArray
+                startDialToDevice(tempArray,false)
+            }
 
         }
     }
@@ -220,61 +226,21 @@ class CustomDialActivity : AppActivity() {
         })
     }
 
+    private fun startDialToDevice(imgByteArray: ByteArray,isGIf : Boolean){
 
 
-
-    var grbByte = byteArrayOf()
-
-    private fun setDialToDevice(byteArray: ByteArray) {
-        if(BaseApplication.getBaseApplication().connStatus == ConnStatus.NOT_CONNECTED){
-            ToastUtils.show(resources.getString(R.string.string_device_not_connect))
-            return
-        }
-
-        val isSynGif = byteArray.isNotEmpty() && byteArray.size>10
-
-        showDialog(resources.getString(R.string.string_sync_ing))
-        BaseApplication.getBaseApplication().connStatus = ConnStatus.IS_SYNC_DIAL
-        //stringBuilder.delete(0,stringBuilder.length)
-        showLogTv()
+        showDialog("Loading...")
+        grbByte = imgByteArray
 
         val uiFeature = 65533
-
-        ThreadUtils.submit {
-            val bitmap = Glide.with(this)
-                .asBitmap()
-                .load(dialBean.imgUrl)
-                .into(
-                    Target.SIZE_ORIGINAL,
-                    Target.SIZE_ORIGINAL
-                ).get()
-            if(isSynGif){
-                grbByte = byteArray
-            }else{
-                grbByte = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
-            }
-
-            Timber.e("------大小=" + grbByte.size)
-            //   ImgUtil.loadMeImgDialCircle(imgRecall, bitmap)
-        }
-        grbByte = byteArray
-
-        //生成新图并保存
-//        val newBit = BitmapAndRgbByteUtil.loadBitmapFromView(customShowImgView)
-//        var path = FileUtils.saveBitmapToSDCard(
-//            this@CustomDialActivity,
-//            newBit,
-//            (System.currentTimeMillis() / 1000).toString()
-//        )
-
         dialBean.uiFeature = uiFeature.toLong()
         dialBean.binSize = grbByte.size.toLong()
         dialBean.name = "12"
-        dialBean.type = if(isSynGif) 2 else 1
+        dialBean.type = if(isGIf) 2 else 1
 
         val resultArray = KeyBoardConstant.getDialByte(dialBean)
         val str = Utils.formatBtArrayToString(resultArray)
-      //  stringBuilder.append("发送3.11.3指令:$str"+"\n")
+        //  stringBuilder.append("发送3.11.3指令:$str"+"\n")
         Timber.e("-------表盘指令=" +str )
         showLogTv()
         BaseApplication.getBaseApplication().bleOperate.startFirstDial(resultArray
@@ -294,7 +260,7 @@ class CustomDialActivity : AppActivity() {
             0x05：其他高优先级数据在处理
              */
 
-          //  stringBuilder.append("设备端返回指定非固化表盘概要信息状态指令: " + Utils.formatBtArrayToString(data)+"\n")
+            //  stringBuilder.append("设备端返回指定非固化表盘概要信息状态指令: " + Utils.formatBtArrayToString(data)+"\n")
             showLogTv()
 
             if (data.size == 11 && data[8].toInt() == 9 && data[9].toInt() == 4 ) {
@@ -319,11 +285,11 @@ class CustomDialActivity : AppActivity() {
                 }
 
                 val array = KeyBoardConstant.getDialStartArray()
-               // stringBuilder.append("3.10.3 APP 端设擦写设备端指定的 FLASH 数据块" + Utils.formatBtArrayToString(array)+"\n")
+                // stringBuilder.append("3.10.3 APP 端设擦写设备端指定的 FLASH 数据块" + Utils.formatBtArrayToString(array)+"\n")
                 showLogTv()
 
                 BaseApplication.getBaseApplication().bleOperate.setIndexDialFlash(array){
-                    data->
+                        data->
                     Timber.e("-----大塔="+Utils.formatBtArrayToString(data))
                     //880000000000030f090402
                     if(data.size == 11 && data[0].toInt() == -120 && data[8].toInt() == 8 && data[9].toInt() == 4 && data[10].toInt() == 2 ){
@@ -338,9 +304,9 @@ class CustomDialActivity : AppActivity() {
                          * 0x01：不支持擦写 FLASH 数据
                          * 0x02：已擦写相应的 FLASH 数据块
                          */
-                       // stringBuilder.append("3.10.4 设备端返回已擦写 FLASH 数据块的状态" + Utils.formatBtArrayToString(data)+"\n")
+                        // stringBuilder.append("3.10.4 设备端返回已擦写 FLASH 数据块的状态" + Utils.formatBtArrayToString(data)+"\n")
 
-                       // stringBuilder.append("开始发送flash数据" +"\n")
+                        // stringBuilder.append("开始发送flash数据" +"\n")
                         showLogTv()
                         toStartWriteDialFlash()
 
@@ -349,6 +315,51 @@ class CustomDialActivity : AppActivity() {
                 }
             }
         }
+    }
+
+
+
+    var grbByte = byteArrayOf()
+
+    private fun setDialToDevice(byteArray: ByteArray) {
+        if(BaseApplication.getBaseApplication().connStatus == ConnStatus.NOT_CONNECTED){
+            ToastUtils.show(resources.getString(R.string.string_device_not_connect))
+            hideDialog()
+            return
+        }
+
+        val isSynGif = byteArray.isNotEmpty() && byteArray.size>10
+
+        showDialog(resources.getString(R.string.string_sync_ing))
+        BaseApplication.getBaseApplication().connStatus = ConnStatus.IS_SYNC_DIAL
+        //stringBuilder.delete(0,stringBuilder.length)
+        showLogTv()
+
+        if(isSynGif){
+            startDialToDevice(byteArray,true)
+            return
+        }
+
+        ThreadUtils.submit {
+            val bitmap = Glide.with(this)
+                .asBitmap()
+                .load(dialBean.imgUrl)
+                .into(
+                    Target.SIZE_ORIGINAL,
+                    Target.SIZE_ORIGINAL
+                ).get()
+
+            val  tempArray = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+            val msg = handlers.obtainMessage()
+            msg.what = 0x01
+            msg.obj = tempArray
+            handlers.sendMessageDelayed(msg,100)
+            Timber.e("------大小=" + grbByte.size)
+            //   ImgUtil.loadMeImgDialCircle(imgRecall, bitmap)
+        }
+
+
+
     }
 
 
@@ -720,6 +731,7 @@ class CustomDialActivity : AppActivity() {
         val cByteStr = StringBuilder()
 
         var arraySize = 0
+        showDialog("Loading...")
         ThreadUtils.submit {
             for(i in 0 until gifList.size){
                 val beforeSize = arraySize

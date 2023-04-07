@@ -7,6 +7,7 @@ import android.util.TimeFormatException;
 import com.blala.blalable.Utils;
 
 import java.util.Arrays;
+import java.util.Timer;
 
 /**
  * Created by Admin
@@ -153,12 +154,16 @@ public class KeyBoardConstant {
         byte[] bt2 = new byte[]{0x14, 0x03, 0x00, 0x01, 0x0B, 0x00, 0x00, (byte) imgCount, 0x00, 0x00, 0x01, 0x40, 0x00, (byte) 0xAC, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00};
         byte[] bt3 = new byte[]{0x14, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x40, 0x00, (byte) 0xAC, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00};
 
-        byte[] re = Utils.concatAll(bt1,bt2,bt3);
+        //15 01 00 00 00 00 00 01 00 00 01 40 00 AC 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+        //14 03 00 01 0B 00 00 02 00 00 01 40 00 AC 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+        //14 04 00 00 00 00 00 01 00 00 01 40 00 AC 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 
-        byte[] resultByte = new byte[bt1.length+bt2.length+bt3.length];
-        System.arraycopy(bt1,0,resultByte,0,bt1.length);
-        System.arraycopy(bt2,0,resultByte,bt1.length,bt2.length);
-        System.arraycopy(bt3,0,resultByte,bt1.length+bt2.length,bt3.length);
+        byte[] re = Utils.concatAll(bt1,bt2,bt3);
+//
+//        byte[] resultByte = new byte[bt1.length+bt2.length+bt3.length];
+//        System.arraycopy(bt1,0,resultByte,0,bt1.length);
+//        System.arraycopy(bt2,0,resultByte,bt1.length,bt2.length);
+//        System.arraycopy(bt3,0,resultByte,bt1.length+bt2.length,bt3.length);
 
         return re;
     }
@@ -166,30 +171,36 @@ public class KeyBoardConstant {
 
     public static byte[]  getGifAArrayData(int imgSize,byte[] bArray,byte[] cArray,byte[] dArray){
         byte[] eArray = new byte[]{(byte) 0xFC, (byte) 0xFF, 0x00, 0x00};
+
+        Log.e("键盘","------B的长度="+bArray.length+" C长度="+cArray.length+" D长度="+dArray.length);
+
                                 //00 44 4C 58 FC FF 00 00 60 01 03 00 02 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00
         byte[] a1 = new byte[]{0x00, 0x44, 0x4C, 0x58, (byte) 0xFC, (byte) 0xFF, 0x00, 0x00, 0x60, 0x01, 0x03 ,0x00, (byte) imgSize, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-//        byte[] a1 = new byte[]{0x00, 0x44 ,0x4C, 0x58, (byte) 0xFC, (byte) 0xFF, 0x00, 0x00, 0x60, 0x01,0x03,0x00, (byte) imgSize,0x00,0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         byte[] a2 = new byte[320];
         Arrays.fill(a2, (byte) 0xFF);
-
         byte[] a3 = Utils.concat(a1,a2);
 
-        byte[] a4 = new byte[]{0x70, 0x01, 0x00, 0x00, (byte) 0xC4, 0x01, 0x00, 0x00, (byte) 0xCC, 0x01, 0x00, 0x00};
+        //整个A的长度
+        int ALength = a1.length+a2.length+16;
+        //A里面的B内容，固定长度
+        byte[] aIntoB = new byte[]{0x70, 0x01, 0x00, 0x00};
 
-        byte[] tempA = Utils.concat(a3,a4);
+        //A里面C的长度=A的长度+B的长度+C的长度
+        int aIntoCLength = ALength+bArray.length;
+        byte[] ACArray = Utils.intToByteArray(aIntoCLength);
 
-        //计算E的长度
-        int eLength = tempA.length+4+dArray.length;
+        //A里面D的长度
+        int aIntoDLength = aIntoCLength+cArray.length;
+        byte[] ADArray = Utils.intToByteArray(aIntoDLength);
+        //A里面E的长度
+        int aIntoELength = aIntoDLength+dArray.length;
+        byte[] AEArray = Utils.intToByteArray(aIntoELength);
 
-        byte[] tempEArray = Utils.intToByteArray(eLength);
+        Log.e("键盘","----------C="+Utils.formatBtArrayToString(ACArray)+"\n"+Utils.formatBtArrayToString(ADArray)+"\n"+Utils.formatBtArrayToString(AEArray));
 
-        Log.e("键盘","--------计算="+"E的长度="+eLength+" A的长度="+(tempA.length+4)+" "+Utils.formatBtArrayToString(tempEArray));
+        byte[] resultArray = Utils.concatAll(a3,aIntoB,ACArray,ADArray,AEArray);
+        byte[] allResult = Utils.concatAll(resultArray,bArray,cArray,dArray,eArray);
 
-        byte[] resultA = Utils.concat(tempA,tempEArray);
-
-        //A+B+C+D+E
-        byte[] result = Utils.concatAll(resultA,bArray,cArray,dArray,eArray);
-
-        return result;
+        return allResult;
     }
 }

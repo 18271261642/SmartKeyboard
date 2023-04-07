@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"
-        android:text="选择设备"
+        android:text="@string/string_selector_device"
         android:textColor="@color/white"
         android:layout_gravity="center"
         android:gravity="center"

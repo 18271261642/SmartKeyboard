@@ -30,7 +30,6 @@
     <string name="string_connecting">连接中..</string>
 
 
-
     <string name="string_custom">自定义</string>
     <string name="string_select_pick">选择图片</string>
     <string name="string_take_photo">相机</string>
@@ -41,8 +40,8 @@
     <string name="string_empty_note">没有笔记</string>
     <string name="string_no_conn_device">无可连接设备</string>
     <string name="string_retry">重试</string>
-    
-    
+
+
     <string name="string_start_write">开始书写</string>
     <string name="string_title">标题</string>
     <string name="string_default_anim">默认动画</string>

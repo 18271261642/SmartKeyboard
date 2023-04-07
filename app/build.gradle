@@ -81,4 +81,6 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
     //指示器
     implementation 'me.relex:circleindicator:2.1.6'
+
+    implementation 'com.github.Baseflow:PhotoView:2.3.0'
 }

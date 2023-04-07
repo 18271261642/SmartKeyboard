@@ -5,7 +5,8 @@ import android.view.ViewGroup;
 
 import com.app.smartkeyboard.R;
 import com.bumptech.glide.Glide;
-import com.luck.picture.lib.photoview.PhotoView;
+import com.github.chrisbanes.photoview.PhotoView;
+
 
 import androidx.annotation.NonNull;
 

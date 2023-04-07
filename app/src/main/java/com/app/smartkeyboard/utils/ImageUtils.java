@@ -25,7 +25,8 @@ public class ImageUtils {
                 Bitmap bt = gifDrawable.seekToFrameAndGet(i);
                 lt.add(bt);
             }
-            return lt;
+
+            return lt.size()>10 ? lt.subList(0,10) : lt;
         }catch (Exception e){
             e.printStackTrace();
             lt.clear();
