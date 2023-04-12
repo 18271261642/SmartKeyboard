@@ -5,6 +5,7 @@ import android.util.Log;
 import android.util.TimeFormatException;
 
 import com.blala.blalable.Utils;
+import com.google.gson.Gson;
 
 import java.util.Arrays;
 import java.util.Timer;
@@ -151,7 +152,7 @@ public class KeyBoardConstant {
      */
     public static byte[] dealWidthBData(int imgCount){
         byte[] bt1 = new byte[]{0x15, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x40, 0x00, (byte) 0xAC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        byte[] bt2 = new byte[]{0x14, 0x03, 0x00, 0x01, 0x0B, 0x00, 0x00, (byte) imgCount, 0x00, 0x00, 0x01, 0x40, 0x00, (byte) 0xAC, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00};
+        byte[] bt2 = new byte[]{0x14, 0x03, 0x00, 0x01, 0x02, 0x00, 0x00, (byte) imgCount, 0x00, 0x00, 0x01, 0x40, 0x00, (byte) 0xAC, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00};
         byte[] bt3 = new byte[]{0x14, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x40, 0x00, (byte) 0xAC, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ,0x00, 0x00, 0x00, 0x00};
 
         //15 01 00 00 00 00 00 01 00 00 01 40 00 AC 00 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -168,39 +169,80 @@ public class KeyBoardConstant {
         return re;
     }
 
+    private static StringBuffer stringBuffer = new StringBuffer();
+
+
+    public static String getStringBuffer(){
+        return stringBuffer.toString();
+    }
+
 
     public static byte[]  getGifAArrayData(int imgSize,byte[] bArray,byte[] cArray,byte[] dArray){
+        stringBuffer.delete(0,stringBuffer.length());
         byte[] eArray = new byte[]{(byte) 0xFC, (byte) 0xFF, 0x00, 0x00};
-
-        Log.e("键盘","------B的长度="+bArray.length+" C长度="+cArray.length+" D长度="+dArray.length);
-
-                                //00 44 4C 58 FC FF 00 00 60 01 03 00 02 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00
-        byte[] a1 = new byte[]{0x00, 0x44, 0x4C, 0x58, (byte) 0xFC, (byte) 0xFF, 0x00, 0x00, 0x60, 0x01, 0x03 ,0x00, (byte) imgSize, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        byte[] a2 = new byte[320];
+        //00 44 4C 58 FC FF 00 00 60 01 03 00 02 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00
+        byte[] a1 = new byte[]{0x00, 0x44, 0x4C, 0x58, (byte) 0xFC, (byte) 0xFF, 0x00, 0x00, 0x60, 0x01, 0x03 ,0x00, (byte) imgSize, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00};
+//        byte[] a1 = new byte[]{0x00, 0x44 ,0x4C, 0x58, (byte) 0xFC, (byte) 0xFF, 0x00, 0x00, 0x60, 0x01,0x03,0x00, (byte) imgSize,0x00,0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        byte[] a2 = new byte[324];
         Arrays.fill(a2, (byte) 0xFF);
-        byte[] a3 = Utils.concat(a1,a2);
+        String a2Str = Utils.getHexString(a2);
+        String a1Str = Utils.getHexString(a1);
+
+        byte[] a3 = Utils.hexStringToByte(a1Str+a2Str);
 
         //整个A的长度
-        int ALength = a1.length+a2.length+16;
-        //A里面的B内容，固定长度
-        byte[] aIntoB = new byte[]{0x70, 0x01, 0x00, 0x00};
+        int ALength = a3.length+16;
 
-        //A里面C的长度=A的长度+B的长度+C的长度
-        int aIntoCLength = ALength+bArray.length;
-        byte[] ACArray = Utils.intToByteArray(aIntoCLength);
+        Log.e("TTT","----------a3="+ALength+"  "+a1.length+" "+a2.length+"   " +a3.length+"="+Utils.getHexString(a3));
 
-        //A里面D的长度
-        int aIntoDLength = aIntoCLength+cArray.length;
-        byte[] ADArray = Utils.intToByteArray(aIntoDLength);
-        //A里面E的长度
-        int aIntoELength = aIntoDLength+dArray.length;
-        byte[] AEArray = Utils.intToByteArray(aIntoELength);
+        //将A转换成4个byte 就是B
+        byte[] bByteArray = Utils.intToByteArray(ALength);
+       // stringBuffer.append("A的大小="+ALength+"内容:"+Utils.formatBtArrayToString(bByteArray)+"\n");
 
-        Log.e("键盘","----------C="+Utils.formatBtArrayToString(ACArray)+"\n"+Utils.formatBtArrayToString(ADArray)+"\n"+Utils.formatBtArrayToString(AEArray));
+        //计算C = A+B
+        int CLength = ALength+bArray.length;
+        //将C转换成4个byte = C
+        byte[] cByteArray = Utils.intToByteArray(CLength);
+        //stringBuffer.append("A+B的大小="+CLength+"内容:"+Utils.formatBtArrayToString(cByteArray)+"\n");
 
-        byte[] resultArray = Utils.concatAll(a3,aIntoB,ACArray,ADArray,AEArray);
-        byte[] allResult = Utils.concatAll(resultArray,bArray,cArray,dArray,eArray);
+        //计算D = A+B+C
+        int DLength = CLength+cArray.length;
+        //将C转换成4个byte = D
+        byte[] dByteArray = Utils.intToByteArray(DLength);
+       // stringBuffer.append("A+B+C的大小="+DLength+"内容:"+Utils.formatBtArrayToString(dByteArray)+"\n");
 
-        return allResult;
+
+        //计算E = A+B+C+D
+        int ELength = DLength+dArray.length;
+        //转换成4个byte = E
+        byte[] eByteArray = Utils.intToByteArray(ELength);
+        Log.e("键盘","-----------ABCD="+Utils.formatBtArrayToString(bByteArray)+"\n"+Utils.formatBtArrayToString(cByteArray)+"\n"+Utils.formatBtArrayToString(dByteArray)+"\n"+Utils.formatBtArrayToString(eByteArray));
+       // stringBuffer.append("A+B+C+D的大小="+ELength+"内容:"+Utils.formatBtArrayToString(eByteArray)+"\n");
+
+        String a3Str = a1Str+a2Str;
+        String bByteArrayStr = Utils.getHexString(bByteArray);
+        String ccByteArrayStr = Utils.getHexString(cByteArray);
+        String ddByteArrayStr = Utils.getHexString(dByteArray);
+        String eeByteArrayStr = Utils.getHexString(eByteArray);
+
+        Log.e("TAG","-------a3Str="+a3Str+"\n"+bByteArrayStr+" "+ccByteArrayStr.length()+"\n"+ddByteArrayStr.length()+"\n"+eeByteArrayStr.length());
+
+        String AStr = a3Str+bByteArrayStr+ccByteArrayStr+ddByteArrayStr+eeByteArrayStr;
+     //   stringBuffer.append(AStr);
+
+        Log.e("TTT","--------AStr="+AStr.length() +" "+AStr);
+
+
+        String BStr = Utils.getHexString(bArray);
+        String CStr = Utils.getHexString(cArray);
+        String DStr = Utils.getHexString(dArray);
+        String EStr = Utils.getHexString(eArray);
+
+        String resultAll = AStr+BStr+CStr+DStr+EStr;
+
+        byte[] result = Utils.hexStringToByte(resultAll);
+
+        Log.e("TAG","-------a_B="+result.length);
+        return result;
     }
 }

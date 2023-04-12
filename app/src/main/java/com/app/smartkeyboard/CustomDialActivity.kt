@@ -21,6 +21,7 @@ import com.app.smartkeyboard.img.CameraActivity.OnCameraListener
 import com.app.smartkeyboard.img.ImageSelectActivity
 import com.app.smartkeyboard.listeners.OnGetImgWidthListener
 import com.app.smartkeyboard.utils.BitmapAndRgbByteUtil
+import com.app.smartkeyboard.utils.FileU
 import com.app.smartkeyboard.utils.GlideEngine
 import com.app.smartkeyboard.utils.ImageUtils
 import com.app.smartkeyboard.utils.ImgUtil
@@ -50,6 +51,9 @@ import java.io.File
 class CustomDialActivity : AppActivity() {
 
     private val tags = "CustomDialActivity"
+
+
+    private var gifLogTv : TextView ?= null
 
     //选择图片的按钮
     private var customSelectImgView: ImageView? = null
@@ -92,6 +96,9 @@ class CustomDialActivity : AppActivity() {
             if(msg.what == 0x00){
                 hideDialog()
                 val array = msg.obj as ByteArray
+                val path = getExternalFilesDir(null)?.path
+
+               // FileU.getFile(array,path,"gif.bin")
                 setDialToDevice(array)
 
             }
@@ -100,6 +107,12 @@ class CustomDialActivity : AppActivity() {
                 hideDialog()
                 val tempArray = msg.obj as ByteArray
                 startDialToDevice(tempArray,false)
+            }
+
+            if(msg.what == 0x08){
+                val log = msg.obj as String
+                gifLogTv?.text = log
+
             }
 
         }
@@ -111,6 +124,7 @@ class CustomDialActivity : AppActivity() {
     }
 
     override fun initView() {
+        gifLogTv = findViewById(R.id.gifLogTv)
         cusDialAlbumLayout = findViewById(R.id.cusDialAlbumLayout)
         cusDialCameraLayout = findViewById(R.id.cusDialCameraLayout)
         customSelectImgView = findViewById(R.id.customSelectImgView)
@@ -358,8 +372,6 @@ class CustomDialActivity : AppActivity() {
             //   ImgUtil.loadMeImgDialCircle(imgRecall, bitmap)
         }
 
-
-
     }
 
 
@@ -403,7 +415,6 @@ class CustomDialActivity : AppActivity() {
              * 0x05：4K 数据块正常，发送下一个 4K 数据
              * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
              */
-
             if (statusCode == 1) {
                 hideDialog()
                 ToastUtils.show(resources.getString(R.string.string_update_failed))
@@ -730,9 +741,12 @@ class CustomDialActivity : AppActivity() {
 
         val cByteStr = StringBuilder()
 
+        gifLogTv?.text = ""
+
         var arraySize = 0
         showDialog("Loading...")
-        ThreadUtils.submit {
+
+        Thread(Runnable {
             for(i in 0 until gifList.size){
                 val beforeSize = arraySize
 
@@ -757,11 +771,23 @@ class CustomDialActivity : AppActivity() {
             val resultBArray = KeyBoardConstant.dealWidthBData(gifList.size)
 
             val resultAllArray = KeyBoardConstant.getGifAArrayData(gifList.size,resultBArray,resultCArray,resultDArray)
+
+             // val logStr = KeyBoardConstant.getStringBuffer()
+
+            //Timber.e("-------结果="+resultDArray.size)
+
             val msg = handlers.obtainMessage()
             msg.what = 0x00
             msg.obj = resultAllArray
             handlers.sendMessageDelayed(msg,500)
-        }
+
+//
+//            val msg2 = handlers.obtainMessage()
+//            msg2.what = 0x08
+//            msg2.obj = logStr
+//            handlers.sendMessage(msg2)
+
+        }).start()
 
         //得到C的内容
         Timber.e("----222---c的内容="+cByteStr)

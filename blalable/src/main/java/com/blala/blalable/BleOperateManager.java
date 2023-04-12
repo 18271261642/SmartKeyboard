@@ -90,6 +90,10 @@ public class BleOperateManager {
                     // sendWriteKeyBoardData(indexData);
                 } else { //发送完了
                     Log.e(TAG, "---------全部发送万了");
+                    if(keyBoardListener != null){
+                        keyBoardListener.onSyncFlash(0x02);
+                    }
+
                 }
 
             }
@@ -1042,9 +1046,10 @@ public class BleOperateManager {
         bleManager.writeKeyBoardDialData(data, new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
-                Log.e(TAG, "---------4K包里面的内容返回=" + Utils.formatBtArrayToString(data));
+                Log.e(TAG, "---------4K包里面的内容返回=" + Utils.formatBtArrayToString(data)+" "+(data[10])+" "+(data[0]& 0xff));
 //                handler.sendEmptyMessageDelayed(0x01,100);
-                //4K包里面的内容返回 880000000000030c080602
+                //4K包里面的内容返回  880000000000030c080602
+                //                  88 00 00 00 00 00 03 0c 08 06 02
                 /**
                  * 0x01：更新失败
                  * 0x02：更新成功
@@ -1053,8 +1058,10 @@ public class BleOperateManager {
                  * 0x05：4K 数据块正常，发送下一个 4K 数据
                  * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
                  */
-                if (data.length == 11 && data[0] == -120 && data[8] == 8 && data[9] == 6) {
+
+                if (data.length == 11 && ((data[0]& 0xff) == 136) && data[8] == 8 && data[9] == 6) {
                     int code = data[10] & 0xff;
+
                     if (keyBoardListener != null) {
                         keyBoardListener.onSyncFlash(code);
                     }

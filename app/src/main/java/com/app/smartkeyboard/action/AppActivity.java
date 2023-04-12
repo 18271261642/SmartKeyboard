@@ -112,7 +112,7 @@ public abstract class AppActivity extends BaseActivity
             if (mDialog == null) {
                 mDialog = new WaitDialog.Builder(this)
                         .setMessage(msg)
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .create();
             }
             if (!mDialog.isShowing()) {
@@ -135,9 +135,13 @@ public abstract class AppActivity extends BaseActivity
             mDialogCount--;
         }
 
-        if (mDialogCount != 0 || mDialog == null || !mDialog.isShowing()) {
+
+        if (mDialog == null || !mDialog.isShowing()) {
             return;
         }
+//        if (mDialogCount != 0 || mDialog == null || !mDialog.isShowing()) {
+//            return;
+//        }
 
         mDialog.dismiss();
     }
