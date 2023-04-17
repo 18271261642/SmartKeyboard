@@ -729,9 +729,20 @@ class CustomDialActivity : AppActivity() {
 
 
 
+    //gif取帧，拆分
+    private fun dealWidthWidthGif(){
+        Thread(Runnable {
+
+        })
+
+
+    }
+
+
+
     //处理gif的图片
     private fun dealWidthGif(gifPath : String ){
-        val gifList = ImageUtils.getGifData(File(gifPath))
+        val gifList = ImageUtils.getGifDataBitmap(File(gifPath))
         Timber.e("-------gifList="+gifList.size)
 
         //将图片转换成byte集合,得到gif D的数据

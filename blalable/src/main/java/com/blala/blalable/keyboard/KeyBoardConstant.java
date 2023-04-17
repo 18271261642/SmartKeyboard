@@ -24,6 +24,7 @@ public class KeyBoardConstant {
 
         byte[] uiId = Utils.toByteArray((int) dialCustomBean.getUiFeature());
         byte[] binSize = Utils.toByteArray((int) dialCustomBean.getBinSize());
+
         byte[] unicode = Utils.stringToByte(Utils.getUnicode(dialCustomBean.getName()).replace("\\u", ""));//解码
 
         byte[] send=new byte[]{
@@ -38,7 +39,7 @@ public class KeyBoardConstant {
         //设置gif的指令
         if(dialCustomBean.type == 2){
             //gif指令
-            byte[] array04 = new byte[]{0x04,0x00,0x04,0x00,0x00, (byte) 0xff, (byte) 0xfc};
+            byte[] array04 = new byte[]{0x04,0x00,0x04, binSize[0],binSize[1],binSize[2],binSize[3]};
 
             byte[] array05 = new byte[]{0x05,0x00,0x14, (byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff};
 

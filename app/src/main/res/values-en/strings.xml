@@ -1,108 +1,112 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
-    <string name="string_is_unbind">Are you sure to unbind?</string>
-    <string name="string_conn_success">connection succeeded!</string>
-    <string name="string_conn_disconn">connection disconnected!</string>
 
-    <string name="string_keyboard_max_length">The keyboard only displays 40 bytes</string>
+    <string name="string_is_unbind">Do you want to unbind?</string>
+
+    <string name="string_keyboard_max_length">The keyboard can display up to 40 characters</string>
     <string name="string_selector">Select</string>
-    <string name="string_note_detail">Note details</string>
-    <string name="string_set_note_to_device">Show it on the Keyboard</string>
+    <string name="string_note_detail">Note Details</string>
+    <string name="string_set_note_to_device">Sync to keyboard</string>
 
 
     <string name="string_is_delete_note">Do you want to delete this note?</string>
     <string name="string_add">Add</string>
-    <string name="string_custom">customize</string>
-    <string name="string_select_pick">selector </string>
-    <string name="string_take_photo">Camera</string>
-    <string name="string_album">Album</string>
+    <string name="string_error_exit">Exit Exception!</string>
+    <string name="string_update_failed">Update Failed!</string>
+    <string name="string_update_success">Update Completed!</string>
+    <string name="string_device_busy">The device is processing other data, please wait!</string>
+
+
+    <string name="string_conn_success">Connected!</string>
+    <string name="string_conn_disconn">Disconnected!</string>
 
     <string name="string_retry_conn">Reconnect</string>
-    <string name="string_error_exit">Abnormal exit!</string>
-    <string name="string_update_failed">Update failed!</string>
-    <string name="string_update_success">Update succeeded!</string>
-    <string name="string_device_busy">The device is busy, please wait!</string>
-
     <string name="string_sync_ing">Synchronizing..</string>
-    <string name="string_device_not_connect">device not connected!</string>
+    <string name="string_device_not_connect">Device is not connected!</string>
     <string name="string_name">Name</string>
-    <string name="string_unbind">unbind</string>
-    <string name="string_connected">connected</string>
-    <string name="string_connecting">connecting..</string>
+    <string name="string_unbind">Unbind</string>
+    <string name="string_connected">Connected</string>
+    <string name="string_connecting">Connecting..</string>
 
+
+    <string name="string_custom">Customize</string>
+    <string name="string_select_pick">Select Image</string>
+    <string name="string_take_photo">Camera</string>
+    <string name="string_album">Album</string>
 
     <string name="string_note">Notes</string>
     <string name="string_search_note">search notes</string>
     <string name="string_empty_note">no notes</string>
-    <string name="string_no_conn_device">No device</string>
+    <string name="string_no_conn_device">no connectable device</string>
     <string name="string_retry">Retry</string>
+
 
     <string name="string_start_write">start writing</string>
     <string name="string_title">Title</string>
-    <string name="string_default_anim">Default animation</string>
-    <string name="string_selector_cus">Choose custom</string>
+    <string name="string_default_anim">Default Animation</string>
+    <string name="string_selector_cus">Customize</string>
 
-    <string name="string_notebook">NoteBook</string>
-    <string name="string_selector_device">Device</string>
-    <string name="string_upload_anim">Animation</string>
-    
+    <string name="string_notebook">Notebook</string>
+    <string name="string_selector_device">Choose device</string>
+    <string name="string_upload_anim">Upload animation</string>
+
     <!-- 通用的 -->
     <string name="common_loading">Loading&#8230;</string>
 
     <string name="common_unknown_error">Unknown Error</string>
 
 
-    <string name="string_notify_desc">消息提醒需要打开手机的通知功能，点击确认按钮找到"悟确智慧桌面"打开通知开关，打开后即可正常使用消息推送功能，是否打开?</string>
+    <string name="string_notify_desc">For message reminders, you need to turn on the notification function of your mobile phone. Click the confirmation button to find "Pocket Wuque" and turn on the notification switch. After turning it on, you can use the message push function normally. Is it turned on?</string>
 
-    <string name="comm_prompt">Prompt</string>
+    <string name="comm_prompt">Remind</string>
     <string name="common_confirm">Confirm</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_exit">Exit</string>
 
     <!-- 拍照和拍摄 -->
-    <string name="video_select_title">视频选择</string>
-    <string name="video_select_all">所有视频</string>
+    <string name="video_select_title">Video Selection</string>
+    <string name="video_select_all">All videos</string>
 
-    <string name="video_select_total">共 %d 个</string>
+    <string name="video_select_total">total %d </string>
 
-    <string name="video_select_max_hint">本次最多只能选择 %d 个视频</string>
+    <string name="video_select_max_hint">Only %d videos can be selected at most at this time</string>
 
-    <string name="video_select_error">无法选中，该视频已经被删除</string>
-    <string name="camera_launch_fail">无法启动相机</string>
-    <string name="camera_image_error">目标地址错误</string>
+    <string name="video_select_error">Cannot be selected, the video has been deleted</string>
+    <string name="camera_launch_fail">Can\'t start camera</string>
+    <string name="camera_image_error">Destination address error</string>
     <!-- 图片选择 -->
-    <string name="image_select_title">Picture selection</string>
-    <string name="image_select_all">All pictures</string>
+    <string name="image_select_title">Image Selection</string>
+    <string name="image_select_all">All Images</string>
 
-    <string name="image_select_total">共 %d 张</string>
+    <string name="image_select_total">total %d</string>
 
-    <string name="image_select_max_hint">本次最多只能选择 %d 张图片</string>
+    <string name="image_select_max_hint">Only %d images can be selected at most at this time</string>
 
-    <string name="image_select_error">无法选中，该图片已经被删除</string>
+    <string name="image_select_error">Cannot be selected, the image has been deleted</string>
 
-    <string name="status_layout_no_data">空空如也</string>
-    <string name="status_layout_error_request">请求出错，请重试</string>
-    <string name="status_layout_error_network">网络错误，请重试</string>
-    <string name="status_layout_retry">重试</string>
+    <string name="status_layout_no_data">empty</string>
+    <string name="status_layout_error_request">Request error, please try again</string>
+    <string name="status_layout_error_network">Network error, please try again</string>
+    <string name="status_layout_retry">Retry</string>
 
-    <string name="string_today">today</string>
-    <string name="string_yesterday">yesterday</string>
-    <string name="string_before_dawn_">凌晨</string>
-    <string name="string_morning">morning</string>
-    <string name="string_noon">noon</string>
-    <string name="string_afternoon">afternoon</string>
-    <string name="string_night">night</string>
-    <string name="string_double_click_exit">Double-click to exit!</string>
+    <string name="string_today">Today</string>
+    <string name="string_yesterday">Yesterday</string>
+    <string name="string_before_dawn_">Midnight</string>
+    <string name="string_morning">Morning</string>
+    <string name="string_noon">Noon</string>
+    <string name="string_afternoon">Afternoon</string>
+    <string name="string_night">Night</string>
+    <string name="string_double_click_exit">Press again to exit the program!</string>
 
 
-    <string name="user_agreement_tips">User Agreement</string>//用户协议
-    <string name="privacy_agreement_tips">Privacy</string>//用户协议
-    <string name="privacy_agreement_2">点击“同意”，即表示您同意最新的“服务协议”和关于“隐私政策”的声明。</string>
+    <string name="user_agreement_tips">User Agreement</string>//User Agreement
+    <string name="privacy_agreement_tips">Privacy Policy</string>//Privacy Policy
+    <string name="privacy_agreement_2">By clicking "Agree", you are indicating your agreement to the most recent terms and conditions set forth in the "Service Agreement" and "Privacy Policy."</string>
 
-    <string name="string_confirm">confirm</string>
-    <string name="string_cancel">cancel</string>
-    <string name="string_last_txt">Last</string>
-    <string name="string_and">And</string>
+    <string name="string_confirm">Confirm</string>
+    <string name="string_cancel">Cancel</string>
+    <string name="string_last_txt">Latest</string>
+    <string name="string_and">with</string>
 
 </resources>
