@@ -112,13 +112,13 @@ public abstract class AppActivity extends BaseActivity
             if (mDialog == null) {
                 mDialog = new WaitDialog.Builder(this)
                         .setMessage(msg)
-                        .setCancelable(true)
+                        .setCancelable(false)
                         .create();
             }
             if (!mDialog.isShowing()) {
                 mDialog.show();
             }
-            handler.sendEmptyMessageDelayed(0x00,90 * 1000);
+            handler.sendEmptyMessageDelayed(0x00,180 * 1000);
 
         }, 300);
     }

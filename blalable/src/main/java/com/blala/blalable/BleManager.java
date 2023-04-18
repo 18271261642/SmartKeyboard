@@ -571,7 +571,7 @@ public class BleManager {
      */
     public synchronized void writeKeyBoardDialData(byte[] data, WriteBackDataListener writeBackDataListener){
       //  this.dayTag = day;
-        Log.e(TAG,"-----写入键盘表盘数据长度="+data.length +"  "+Utils.formatBtArrayToString(data));
+       // Log.e(TAG,"-----写入键盘表盘数据长度="+data.length +"  "+Utils.formatBtArrayToString(data));
         String bleMac = (String) BleSpUtils.get(mContext,SAVE_BLE_MAC_KEY,"");
         if(TextUtils.isEmpty(bleMac))
             return;

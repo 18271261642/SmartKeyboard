@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
-
+    <string name="string_gig_small">The GIF is too small, please choose a normal gif!</string>
     <string name="string_is_unbind">Do you want to unbind?</string>
 
     <string name="string_keyboard_max_length">The keyboard can display up to 40 characters</string>

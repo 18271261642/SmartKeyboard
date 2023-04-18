@@ -218,7 +218,9 @@ public class ConnStatusService extends Service {
         BaseApplication.getBaseApplication().getBleOperate().syncKeyBoardTime(new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
+                Timber.e("--------同步时间返回="+Utils.formatBtArrayToString(data));
                 syncSet();
+
             }
         });
 

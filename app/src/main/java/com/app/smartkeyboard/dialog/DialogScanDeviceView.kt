@@ -3,6 +3,9 @@ package com.app.smartkeyboard.dialog
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import androidx.appcompat.app.AppCompatDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +37,16 @@ class DialogScanDeviceView : AppCompatDialog {
     //用于去重的list
     private var repeatList : MutableList<String> ?= null
 
+
+
+    private val handlers : Handler = object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if(msg.what == 0x00){
+                BaseApplication.getBaseApplication().bleOperate.stopScanDevice()
+            }
+        }
+    }
 
     private var onClick : OnCommItemClickListener ?= null
 
@@ -77,6 +90,7 @@ class DialogScanDeviceView : AppCompatDialog {
             val service = BaseApplication.getBaseApplication().connStatusService
             val bean = list?.get(position)
             if (bean != null) {
+                handlers.sendEmptyMessageDelayed(0x00,500)
                 service.connDeviceBack(bean.bluetoothDevice.name,bean.bluetoothDevice.address,object :
                     BleConnStatusListener {
                     override fun onConnectStatusChanged(mac: String?, status: Int) {

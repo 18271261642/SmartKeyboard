@@ -40,6 +40,8 @@ import com.hjq.shape.view.ShapeTextView
 import com.hjq.toast.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 
@@ -739,24 +741,65 @@ class CustomDialActivity : AppActivity() {
     }
 
 
+    val dByteStr = StringBuilder()
 
+    val cByteStr = StringBuilder()
     //处理gif的图片
     private fun dealWidthGif(gifPath : String ){
         val gifList = ImageUtils.getGifDataBitmap(File(gifPath))
         Timber.e("-------gifList="+gifList.size)
-
+        if(gifList.size == 0){
+            ToastUtils.show(resources.getString(R.string.string_gig_small))
+            return
+        }
         //将图片转换成byte集合,得到gif D的数据
         val gifByteArray = mutableListOf<ByteArray>()
+        dByteStr.delete(0,dByteStr.length)
+        cByteStr.delete(0,cByteStr.length)
 
-        val dByteStr = StringBuilder()
-
-        val cByteStr = StringBuilder()
 
         gifLogTv?.text = ""
 
         var arraySize = 0
         showDialog("Loading...")
 
+        GlobalScope.launch {
+            for(i in 0 until gifList.size){
+                val beforeSize = arraySize
+
+                val tempArray = Utils.intToByteArray(beforeSize)
+                val tempStr = Utils.getHexString(tempArray)
+                cByteStr.append(tempStr)
+
+                val bitmap = gifList[i]
+                val bitArray = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+                arraySize+=bitArray.size
+                dByteStr.append(Utils.getHexString(bitArray))
+
+
+            }
+
+            Timber.e("-----111--c的内容="+cByteStr)
+            //得到D的数组
+            val resultDArray = Utils.hexStringToByte(dByteStr.toString())
+            //得到C的数组
+            val resultCArray = Utils.hexStringToByte(cByteStr.toString())
+            //得到B的数组
+            val resultBArray = KeyBoardConstant.dealWidthBData(gifList.size)
+
+            val resultAllArray = KeyBoardConstant.getGifAArrayData(gifList.size,resultBArray,resultCArray,resultDArray)
+
+            // val logStr = KeyBoardConstant.getStringBuffer()
+
+            //Timber.e("-------结果="+resultDArray.size)
+
+            val msg = handlers.obtainMessage()
+            msg.what = 0x00
+            msg.obj = resultAllArray
+            handlers.sendMessageDelayed(msg,500)
+
+        }
+/*
         Thread(Runnable {
             for(i in 0 until gifList.size){
                 val beforeSize = arraySize
@@ -798,7 +841,7 @@ class CustomDialActivity : AppActivity() {
 //            msg2.obj = logStr
 //            handlers.sendMessage(msg2)
 
-        }).start()
+        }).start()*/
 
         //得到C的内容
         Timber.e("----222---c的内容="+cByteStr)

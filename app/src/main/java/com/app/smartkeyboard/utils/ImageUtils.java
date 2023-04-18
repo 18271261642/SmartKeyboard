@@ -28,11 +28,10 @@ public class ImageUtils {
                 int width = bt.getWidth();
                 int height = bt.getHeight();
 
-                Timber.e("--------尺寸=" + width + " height=" + height);
+                //Timber.e("--------尺寸=" + width + " height=" + height);
                 if (width < 320 || height < 172) {
                     break;
                 }
-
                 lt.add(bt);
             }
 
@@ -61,7 +60,7 @@ public class ImageUtils {
                 int width = bt.getWidth();
                 int height = bt.getHeight();
 
-              //  Timber.e("---111-----尺寸=" + width + " height=" + height);
+                //Timber.e("---111-----尺寸=" + width + " height=" + height);
                 if (width < 320 || height < 172) {
                     lt.clear();
                     break;
@@ -71,21 +70,30 @@ public class ImageUtils {
                 if(width == 320 && height == 172){
                     lt.add(bt);
                 }else{
-                    Bitmap newBitmap = Bitmap.createBitmap(bt,0,0,320,172);
+                    //计算偏移量
+                    int x = width / 2 - 160;
+                    int y = height / 2 - 81;
 
-                   // Timber.e("---222-----尺寸=" + newBitmap.getWidth() + " height=" + newBitmap.getHeight());
+
+                    Bitmap newBitmap = Bitmap.createBitmap(bt,x,y,320,172);
+
+                    //Timber.e("---222-----尺寸=" + newBitmap.getWidth() + " height=" + newBitmap.getHeight());
                     lt.add(newBitmap);
                 }
 
             }
 
-            int size = lt.size();
 
+            int size = lt.size();
+            if(size == 0){
+                return lt;
+            }
             if(size>9){
                 List<Bitmap> bigList = new ArrayList<>();
                 int number = size / 9;
+                Timber.e("-------number="+number);
                 for(int k = 0;k<size;k+=number){
-                    if((k+=number)<size){
+                    if((k+number)<size){
                         bigList.add(lt.get(k));
                     }
                 }
@@ -99,6 +107,7 @@ public class ImageUtils {
             lt.clear();
             return lt;
         }
+
 
     }
 

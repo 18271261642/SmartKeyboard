@@ -39,7 +39,7 @@ public class KeyBoardConstant {
         //设置gif的指令
         if(dialCustomBean.type == 2){
             //gif指令
-            byte[] array04 = new byte[]{0x04,0x00,0x04, binSize[0],binSize[1],binSize[2],binSize[3]};
+            byte[] array04 = new byte[]{0x04,0x00,0x08,0x00,0x00, (byte) 0xff, (byte) 0xfc,binSize[0],binSize[1],binSize[2],binSize[3]};
 
             byte[] array05 = new byte[]{0x05,0x00,0x14, (byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff};
 
@@ -186,10 +186,20 @@ public class KeyBoardConstant {
 //        byte[] a1 = new byte[]{0x00, 0x44 ,0x4C, 0x58, (byte) 0xFC, (byte) 0xFF, 0x00, 0x00, 0x60, 0x01,0x03,0x00, (byte) imgSize,0x00,0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         byte[] a2 = new byte[324];
         Arrays.fill(a2, (byte) 0xFF);
+
+
         String a2Str = Utils.getHexString(a2);
         String a1Str = Utils.getHexString(a1);
 
-        byte[] a3 = Utils.hexStringToByte(a1Str+a2Str);
+
+        byte[] a3Array = new byte[a1.length+a2.length];
+
+        System.arraycopy(a1,0,a3Array,0,a1.length);
+        System.arraycopy(a2,0,a3Array,a1.length,a2.length);
+
+//        byte[] a3 = Utils.hexStringToByte(a1Str+a2Str);
+        byte[] a3 = a3Array;
+
 
         //整个A的长度
         int ALength = a3.length+16;
@@ -220,6 +230,10 @@ public class KeyBoardConstant {
         Log.e("键盘","-----------ABCD="+Utils.formatBtArrayToString(bByteArray)+"\n"+Utils.formatBtArrayToString(cByteArray)+"\n"+Utils.formatBtArrayToString(dByteArray)+"\n"+Utils.formatBtArrayToString(eByteArray));
        // stringBuffer.append("A+B+C+D的大小="+ELength+"内容:"+Utils.formatBtArrayToString(eByteArray)+"\n");
 
+
+
+
+
         String a3Str = a1Str+a2Str;
         String bByteArrayStr = Utils.getHexString(bByteArray);
         String ccByteArrayStr = Utils.getHexString(cByteArray);
@@ -228,22 +242,36 @@ public class KeyBoardConstant {
 
         Log.e("TAG","-------a3Str="+a3Str+"\n"+bByteArrayStr+" "+ccByteArrayStr.length()+"\n"+ddByteArrayStr.length()+"\n"+eeByteArrayStr.length());
 
+
         String AStr = a3Str+bByteArrayStr+ccByteArrayStr+ddByteArrayStr+eeByteArrayStr;
      //   stringBuffer.append(AStr);
 
         Log.e("TTT","--------AStr="+AStr.length() +" "+AStr);
 
 
-        String BStr = Utils.getHexString(bArray);
-        String CStr = Utils.getHexString(cArray);
-        String DStr = Utils.getHexString(dArray);
-        String EStr = Utils.getHexString(eArray);
+//        String BStr = Utils.getHexString(bArray);
+//        String CStr = Utils.getHexString(cArray);
+//        String DStr = Utils.getHexString(dArray);
+//        String EStr = Utils.getHexString(eArray);
+//
 
-        String resultAll = AStr+BStr+CStr+DStr+EStr;
 
-        byte[] result = Utils.hexStringToByte(resultAll);
 
-        Log.e("TAG","-------a_B="+result.length);
-        return result;
+        byte[] temp1 = Utils.copyArray(bArray,cArray);
+        byte[] temp2 = Utils.copyArray(temp1,dArray);
+        byte[] temp3 = Utils.copyArray(temp2,eArray);
+
+
+        byte[] aTempA = Utils.hexStringToByte(AStr);
+
+
+        byte[] re = Utils.copyArray(aTempA,temp3);
+
+//        String resultAll = AStr+BStr+CStr+DStr+EStr;
+//
+//        byte[] result = Utils.hexStringToByte(resultAll);
+
+        Log.e("TAG","-------a_B="+re.length);
+        return re;
     }
 }
