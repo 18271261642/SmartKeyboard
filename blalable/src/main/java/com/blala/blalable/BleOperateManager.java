@@ -115,6 +115,18 @@ public class BleOperateManager {
     };
 
 
+    public String getLog(){
+        return bleManager.getLog();
+    }
+
+    public void clearLog(){
+        bleManager.clearLog();
+    }
+
+
+
+
+
     //设置写入指令监听
     public void setOnOperateSendListener(OnSendWriteDataListener onOperateSendListener) {
         bleManager.setOnSendWriteListener(onOperateSendListener);

@@ -177,6 +177,7 @@ public class ConnStatusService extends Service {
     }
 
     public void connDeviceBack(String bleName, String mac, BleConnStatusListener bleConnStatusListener){
+
         setConnListener();
         BleOperateManager.getInstance().connYakDevice(bleName, mac, new ConnStatusListener() {
             @Override

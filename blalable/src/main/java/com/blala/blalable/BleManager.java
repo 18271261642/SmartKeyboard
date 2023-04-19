@@ -64,8 +64,8 @@ public class BleManager {
 
     private static Context mContext;
 
-    //天，0今天；1昨天，2前天
-    private int dayTag ;
+
+    private final StringBuffer stringBuffer = new StringBuffer();
 
     private final BleConstant bleConstant = new BleConstant();
 
@@ -211,6 +211,15 @@ public class BleManager {
     }
 
 
+    public void clearLog(){
+        stringBuffer.delete(0,stringBuffer.length());
+    }
+
+    public String getLog(){
+        return stringBuffer.toString();
+    }
+
+
 
     /**
      * 停止搜索
@@ -282,9 +291,10 @@ public class BleManager {
 
     private synchronized void connBleDevice(final String bleMac, final String bleName, final ConnStatusListener connectResponse){
         BleSpUtils.put(mContext,SAVE_BLE_MAC_KEY,bleMac);
-
+        clearLog();
+        stringBuffer.append("连接"+"\n");
         int status = bluetoothClient.getConnectStatus(bleMac);
-
+        sendCommBroadcast("ble_action",0);
         Log.e(TAG,"************连接处="+bleMac+"--连接状态="+status);
 
         bluetoothClient.registerConnectStatusListener(bleMac,connectStatusListener);
@@ -298,6 +308,8 @@ public class BleManager {
                 Log.e(TAG,"-----onResponse="+code+"\n"+new Gson().toJson(serviceList));
 
                 if(code == 0){  //连接成功了，开始设置通知
+                    stringBuffer.append("连接成功"+"\n");
+                    sendCommBroadcast("ble_action",0);
                     //判断是否是OTA升级状态，是OTA状态不保存地址
                     (new Handler(Looper.getMainLooper())).postDelayed(new Runnable() {
                         public void run() {
@@ -321,29 +333,6 @@ public class BleManager {
             interfaceManager.writeBack24HourDataListener = null;
     }
 
-    /**存储数据，当日详细计步，心率，锻炼数据等**/
-    private synchronized void setSaveNotifyData(String mac,UUID serviceUUid,UUID notifyUid){
-        bluetoothClient.notify(mac, serviceUUid, notifyUid, new BleNotifyResponse() {
-            @Override
-            public void onNotify(UUID uuid, UUID uuid1, byte[] bytes) {
-                Log.e(TAG,"-----存储数据返回="+uuid1.toString()+" "+Utils.formatBtArrayToString(bytes));
-                if(interfaceManager.writeBack24HourDataListener != null){
-                    interfaceManager.writeBack24HourDataListener.onWriteBack(bytes);
-                }
-
-                if(interfaceManager.onExerciseDataListener != null){
-                    interfaceManager.onExerciseDataListener.backExerciseData(bytes);
-                }
-
-            }
-
-            @Override
-            public void onResponse(int i) {
-
-            }
-        });
-    }
-
 
 
     public void setClearListener(){
@@ -362,13 +351,15 @@ public class BleManager {
     }
 
 
-
     //数据发送通道返回数据，app端发送数据后设备返回数据
     private synchronized void setNotifyData(String mac,UUID serviceUUid,UUID notifyUUid,ConnStatusListener connStatusListener){
         bluetoothClient.notify(mac, serviceUUid, notifyUUid, new BleNotifyResponse() {
             @Override
             public void onNotify(UUID uuid, UUID uuid1, byte[] bytes) {
-                Log.e(TAG,"------写入数据返回="+uuid1.toString()+" "+Utils.formatBtArrayToString(bytes));
+                String notifyStr = uuid1.toString()+" "+Utils.formatBtArrayToString(bytes);
+                Log.e(TAG,"------写入数据返回="+notifyStr);
+                stringBuffer.append("数据返回:"+notifyStr+"\n");
+                sendCommBroadcast("ble_action",0);
                 if(interfaceManager.writeBackDataListener != null){
                     interfaceManager.writeBackDataListener.backWriteData(bytes);
                 }
@@ -415,60 +406,6 @@ public class BleManager {
         });
     }
 
-    /**W561B的实时心率返回**/
-    private synchronized void w561BNotifyRealData(String bleMac,UUID serverUUid,UUID uuid,ConnStatusListener connStatusListener){
-        bluetoothClient.notify(bleMac, serverUUid, uuid, new BleNotifyResponse() {
-            @Override
-            public void onNotify(UUID uuid, UUID uuid1, byte[] bytes) {
-                Log.e(TAG,"------w61b实时心率="+Utils.formatBtArrayToString(bytes));
-                if(bytes.length == 2 ){
-                    //实时心率
-                    int hr = bytes[1] & 0xff;
-                    if(interfaceManager.onRealTimeDataListener != null){
-                        interfaceManager.onRealTimeDataListener.realTimeData(hr,0,0,0);
-                    }
-
-                }
-            }
-
-            @Override
-            public void onResponse(int i) {
-                connStatusListener.setNoticeStatus(i);
-            }
-        });
-    }
-
-
-    /**实时数据返回**/
-    private synchronized void notifyRealtime(String bleMac,UUID serUUId,UUID realUUid){
-        bluetoothClient.notify(bleMac, serUUId, realUUid, new BleNotifyResponse() {
-            @Override
-            public void onNotify(UUID uuid, UUID uuid1, byte[] bytes) {
-                if(bytes[0] == 2){ //实时的计步返回
-                    //实时心率
-                    int realHr = bytes[1] & 0xff;
-                    //计步
-                    int realStep = Utils.getIntFromBytes((byte) 0x00,bytes[6],bytes[5],bytes[4]);
-                    //卡路里
-                    int realKcal = Utils.getIntFromBytes((byte) 0x00,bytes[9],bytes[8],bytes[7]);
-                    //距离
-                    int realDis = Utils.getIntFromBytes((byte) 0x00,bytes[12],bytes[11],bytes[10]);
-
-//                    Log.e(TAG,"-----实时数据="+realHr+" "+realStep+" "+realKcal+" "+realDis);
-
-                    if(interfaceManager.onRealTimeDataListener != null)
-                        interfaceManager.onRealTimeDataListener.realTimeData(realHr,realStep,realKcal,realDis);
-                }
-            }
-
-            @Override
-            public void onResponse(int i) {
-
-            }
-        });
-    }
-
-
 
     /**读取电量**/
     public synchronized void readDeviceBatteryValue(OnCommBackDataListener onCommBackDataListener){
@@ -489,57 +426,15 @@ public class BleManager {
     }
 
 
-    //设置通知
-    private synchronized void setNotiData(String bleMac, UUID serUUID, UUID notiUUID, final ConnStatusListener connStatusListener){
-        bluetoothClient.notify(bleMac, serUUID, notiUUID, new BleNotifyResponse() {
-            @Override
-            public void onNotify(UUID service, UUID character, final byte[] value) {
-                 Log.e(TAG,"---111-----设置通知="+ Arrays.toString(value));
-                if(value[0] == 2 && value[1] == -1 && value[2] == 64 && value[3] == dayTag){
-
-                }
-                if(interfaceManager.writeBackDataListener != null){
-                    interfaceManager.writeBackDataListener.backWriteData(value);
-                }
-
-                if(value[0] == 1 && value[1] == 19){    //音乐控制返回
-                    if(interfaceManager.onBleBackListener != null)
-                        interfaceManager.onBleBackListener.intoMusicStatus(value[2] & 0xff);
-                }
-
-                if(value[0] == 1 && value[1] == 20){    //查找手机
-                    if(interfaceManager.onBleBackListener != null)
-                        interfaceManager.onBleBackListener.findPhone();
-                }
-
-                //挂断电话
-                if(value[0] == 1 && value[1] == 82 && value[2] == 2){
-
-                }
-
-
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                }, 1000L);
-
-            }
-
-            @Override
-            public void onResponse(int code) {
-                connStatusListener.setNoticeStatus(code);
-            }
-        });
-    }
-
     //写入设备数据
     public synchronized void writeDataToDevice(byte[] data, WriteBackDataListener writeBackDataListener){
-        Log.e(TAG,"-----写入数据="+Utils.formatBtArrayToString(data));
+        String writeStr = Utils.formatBtArrayToString(data);
+        Log.e(TAG,"-----写入数据="+writeStr);
         String bleMac = (String) BleSpUtils.get(mContext,SAVE_BLE_MAC_KEY,"");
         if(TextUtils.isEmpty(bleMac))
             return;
+        stringBuffer.append("写入数据:"+writeStr+"\n");
+        sendCommBroadcast("ble_action",0);
         interfaceManager.setWriteBackDataListener(writeBackDataListener);
         bluetoothClient.write(bleMac,bleConstant.SERVICE_UUID,bleConstant.WRITE_UUID,data,bleWriteResponse);
     }

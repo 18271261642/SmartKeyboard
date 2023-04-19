@@ -3,8 +3,7 @@ package com.app.smartkeyboard
 import android.Manifest
 import android.content.*
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
+import android.os.*
 import android.util.DisplayMetrics
 import android.view.View
 import android.widget.LinearLayout
@@ -18,6 +17,7 @@ import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.utils.BonlalaUtils
 import com.app.smartkeyboard.utils.MmkvUtils
 import com.blala.blalable.BleConstant
+import com.blala.blalable.BleOperateManager
 import com.hjq.permissions.XXPermissions
 import com.hjq.shape.layout.ShapeConstraintLayout
 import com.hjq.shape.view.ShapeTextView
@@ -49,6 +49,21 @@ class BleKeyboardActivity : AppActivity(){
     //是否正在连接
     private var isConnecting = false
 
+    private var lowTv : TextView ?= null
+
+
+    private val handlers : Handler = object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if(!activity.isFinishing){
+                val log = BleOperateManager.getInstance().getLog()
+                Timber.e("--------log="+log.toString())
+                lowTv?.text = log.toString()
+            }
+
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +71,7 @@ class BleKeyboardActivity : AppActivity(){
         intentFilter.addAction(BleConstant.BLE_CONNECTED_ACTION)
         intentFilter.addAction(BleConstant.BLE_DIS_CONNECT_ACTION)
         intentFilter.addAction(BleConstant.BLE_SCAN_COMPLETE_ACTION)
+        intentFilter.addAction("ble_action")
         registerReceiver(broadcastReceiver,intentFilter)
     }
 
@@ -64,6 +80,7 @@ class BleKeyboardActivity : AppActivity(){
     }
 
     override fun initView() {
+        lowTv = findViewById(R.id.lowTv)
         scanReScanTv = findViewById(R.id.scanReScanTv)
         scanEmptyLayout = findViewById(R.id.scanEmptyLayout)
 
@@ -73,7 +90,22 @@ class BleKeyboardActivity : AppActivity(){
         keyBoardStatusTv = findViewById(R.id.keyBoardStatusTv)
         keyBoardUnBindTv = findViewById(R.id.keyBoardUnBindTv)
 
+//        startRunnable()
 
+    }
+
+    private fun startRunnable(){
+      handlers.postDelayed(runnable,1000)
+    }
+
+    private var runnable : Runnable = Runnable {
+       handlers.sendEmptyMessageDelayed(0x00,1000)
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        handlers.removeMessages(0x00)
 
     }
 
@@ -268,6 +300,10 @@ class BleKeyboardActivity : AppActivity(){
             if(action == BleConstant.BLE_DIS_CONNECT_ACTION){
                 isConnecting = false
                 showDeviceStatus()
+            }
+
+            if(action == "ble_action"){
+                handlers.sendEmptyMessage(0x00)
             }
         }
 
