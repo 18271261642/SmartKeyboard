@@ -56,12 +56,13 @@ class MainActivity : AppActivity() {
         setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
 
         findViewById<ImageView>(R.id.titleImgView).setOnClickListener {
-           // BaseApplication.getBaseApplication().bleOperate.syncKeyBoardTime()
+          startActivity(LogActivity::class.java)
         }
         val intentFilter = IntentFilter()
         intentFilter.addAction(BleConstant.BLE_CONNECTED_ACTION)
         intentFilter.addAction(BleConstant.BLE_DIS_CONNECT_ACTION)
         intentFilter.addAction(BleConstant.BLE_SCAN_COMPLETE_ACTION)
+        intentFilter.addAction(BleConstant.BLE_START_SCAN_ACTION)
         registerReceiver(broadcastReceiver,intentFilter)
 //        XXPermissions.with(this).permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)).request { permissions, all ->  }
     }
@@ -318,6 +319,7 @@ class MainActivity : AppActivity() {
             if(action == BleConstant.BLE_DIS_CONNECT_ACTION){
                 ToastUtils.show(resources.getString(R.string.string_conn_disconn))
             }
+
         }
 
     }

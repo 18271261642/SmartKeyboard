@@ -904,18 +904,98 @@ public class BleOperateManager {
         bleManager.writeDataToDevice(statusArray, new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
+                Log.e(TAG,"-----状态返回="+Utils.formatBtArrayToString(data)+" "+(data[10]));
                 //88 00 00 00 00 00 06 14 00 14 01 00 01 00
-                if (data.length == 14 && data[6] == 6 && data[7] == 20 && data[10] == 1) {
-                    sendKeyBoardScreen();
+                //88 00 00 00 00 00 06 14 00 14 01 00 01 00
+                /**
+                 *
+                 */
+
+                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 0 )) {
+                    sendKeyBoardScreen(1);
                 }
+
+                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 1 )) {
+                    sendKeyBoardScreen(1);
+                }
+
+                if (data.length == 14 && data[6] == 6 && data[9] == 20 && data[10] == 4) {
+                    sendKeyBoardScreen(2);
+                }
+
             }
         });
     }
 
 
+    /**
+     * 获取状态是否是2，不是2根据不同状态设置状态
+     */
+
+    public void getKeyBoardStatus(OnCommBackDataListener onCommBackDataListener){
+        byte[] btArray = new byte[]{0x00, 0x13, 0x00};
+        byte[] statusArray = Utils.getFullPackage(btArray);
+
+        bleManager.writeDataToDevice(statusArray, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+                Log.e(TAG,"----222-状态返回="+Utils.formatBtArrayToString(data));
+                //88 00 00 00 00 00 06 14 00 14 01 00 01 00
+                //88 00 00 00 00 00 06 16 00 14 01 00 01 02
+                //88 00 00 00 00 00 06 16 00 14 01 00 01 02
+//                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[10] == 2 )){
+//                    onCommBackDataListener.onIntDataBack(new int[]{88});
+//                }
+
+
+                if(data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 3 )){
+                    onCommBackDataListener.onIntDataBack(new int[]{3});
+                    BleOperateManager.getInstance().setClearListener();
+                }else{
+                    onCommBackDataListener.onIntDataBack(new int[]{0});
+                    BleOperateManager.getInstance().setClearListener();
+                }
+
+
+
+//                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 0 )) {
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            getKeyBoardStatus();
+//                        }
+//                    },3000);
+//                }
+//
+//                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 1 )) {
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            onCommBackDataListener.onIntDataBack(new int[]{88});
+//                        }
+//                    },2000);
+//                }
+//
+//                if (data.length == 14 && data[6] == 6 && data[9] == 20 && data[10] == 4) {
+//                    sendKeyBoardScreen(2);
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            onCommBackDataListener.onIntDataBack(new int[]{88});
+//                        }
+//                    },2000);
+//                }
+
+            }
+        });
+    }
+
+
+
+
     //亮屏
-    public void sendKeyBoardScreen() {
-        byte[] data = new byte[]{0x01, 0x1C, 0x01, 0x00, 0x01, 0x01};
+    public void sendKeyBoardScreen(int status) {
+        byte[] data = new byte[]{0x01, 0x1C, 0x01, 0x00, 0x01, (byte) status};
         byte[] logoArray = Utils.getFullPackage(data);
 
         bleManager.writeDataToDevice(logoArray, new WriteBackDataListener() {

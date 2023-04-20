@@ -67,7 +67,7 @@
         <activity android:name=".img.ImagePreviewActivity"/>
         <activity android:name=".img.ImageSelectActivity"/>
         <activity android:name=".img.CameraActivity"/>
-
+        <activity android:name=".LogActivity"/>
         <service android:name="com.app.smartkeyboard.ble.ConnStatusService"/>
 
 

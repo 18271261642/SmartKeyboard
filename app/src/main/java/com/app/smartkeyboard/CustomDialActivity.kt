@@ -29,6 +29,7 @@ import com.app.smartkeyboard.utils.ThreadUtils
 import com.blala.blalable.Utils
 import com.blala.blalable.keyboard.DialCustomBean
 import com.blala.blalable.keyboard.KeyBoardConstant
+import com.blala.blalable.listener.OnCommBackDataListener
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.gifdecoder.GifDecoder
@@ -109,6 +110,8 @@ class CustomDialActivity : AppActivity() {
                 hideDialog()
                 val tempArray = msg.obj as ByteArray
                 startDialToDevice(tempArray,false)
+
+//                getDeviceStatus(tempArray,false)
             }
 
             if(msg.what == 0x08){
@@ -173,7 +176,7 @@ class CustomDialActivity : AppActivity() {
     private fun getDialForRaw(){
         val inputStream = resources.openRawResource(R.raw.gif_dial)
         val array = inputStream.readBytes()
-        setDialToDevice(array)
+        //setDialToDevice(array)
 
     }
 
@@ -193,7 +196,7 @@ class CustomDialActivity : AppActivity() {
 
             //保存
             R.id.customSetDialTv -> {
-                setDialToDevice(byteArrayOf(0x00))
+                //setDialToDevice(byteArrayOf(0x00))
             }
 
             //相机
@@ -242,6 +245,25 @@ class CustomDialActivity : AppActivity() {
         })
     }
 
+
+    private fun getDeviceStatus(imgByteArray: ByteArray,isGIf : Boolean){
+        BaseApplication.getBaseApplication().bleOperate.getKeyBoardStatus(object : OnCommBackDataListener{
+            override fun onIntDataBack(value: IntArray?) {
+               val code = value?.get(0)
+                if(code == 88){
+                    //startDialToDevice(imgByteArray,isGIf)
+                }
+            }
+
+            override fun onStrDataBack(vararg value: String?) {
+
+            }
+
+        })
+    }
+
+
+
     private fun startDialToDevice(imgByteArray: ByteArray,isGIf : Boolean){
 
 
@@ -259,6 +281,8 @@ class CustomDialActivity : AppActivity() {
         //  stringBuilder.append("发送3.11.3指令:$str"+"\n")
         Timber.e("-------表盘指令=" +str )
         showLogTv()
+
+
         BaseApplication.getBaseApplication().bleOperate.startFirstDial(resultArray
         ) { data -> //880000000000030f0904 02
             /**
@@ -308,6 +332,7 @@ class CustomDialActivity : AppActivity() {
                         data->
                     Timber.e("-----大塔="+Utils.formatBtArrayToString(data))
                     //880000000000030f090402
+                    //88 00 00 00 00 00 03 0e 08 04 02
                     if(data.size == 11 && data[0].toInt() == -120 && data[8].toInt() == 8 && data[9].toInt() == 4 && data[10].toInt() == 2 ){
 
                         /**
@@ -324,7 +349,27 @@ class CustomDialActivity : AppActivity() {
 
                         // stringBuilder.append("开始发送flash数据" +"\n")
                         showLogTv()
-                        toStartWriteDialFlash()
+
+                        //获取下装填，状态是3就继续进行
+                        BaseApplication.getBaseApplication().bleOperate.getKeyBoardStatus(object : OnCommBackDataListener{
+                            override fun onIntDataBack(value: IntArray?) {
+                                val code = value?.get(0)
+                                Timber.e("-------code=$code")
+                                if(code == 3){
+                                    toStartWriteDialFlash()
+                                }else{
+                                    hideDialog()
+                                    ToastUtils.show("设备正忙!")
+                                }
+                            }
+
+                            override fun onStrDataBack(vararg value: String?) {
+
+                            }
+
+                        })
+
+
 
                     }
 
@@ -378,6 +423,7 @@ class CustomDialActivity : AppActivity() {
 
 
     private fun toStartWriteDialFlash(){
+
         val start = Utils.toByteArrayLength(16777215, 4)
         val end = Utils.toByteArrayLength(16777215, 4)
 
@@ -730,17 +776,6 @@ class CustomDialActivity : AppActivity() {
     }
 
 
-
-    //gif取帧，拆分
-    private fun dealWidthWidthGif(){
-        Thread(Runnable {
-
-        })
-
-
-    }
-
-
     val dByteStr = StringBuilder()
 
     val cByteStr = StringBuilder()
@@ -753,10 +788,8 @@ class CustomDialActivity : AppActivity() {
             return
         }
         //将图片转换成byte集合,得到gif D的数据
-        val gifByteArray = mutableListOf<ByteArray>()
         dByteStr.delete(0,dByteStr.length)
         cByteStr.delete(0,cByteStr.length)
-
 
         gifLogTv?.text = ""
 
@@ -799,49 +832,6 @@ class CustomDialActivity : AppActivity() {
             handlers.sendMessageDelayed(msg,500)
 
         }
-/*
-        Thread(Runnable {
-            for(i in 0 until gifList.size){
-                val beforeSize = arraySize
-
-                val tempArray = Utils.intToByteArray(beforeSize)
-                val tempStr = Utils.getHexString(tempArray)
-                cByteStr.append(tempStr)
-
-                val bitmap = gifList[i]
-                val bitArray = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
-                arraySize+=bitArray.size
-                dByteStr.append(Utils.getHexString(bitArray))
-
-
-            }
-
-            Timber.e("-----111--c的内容="+cByteStr)
-            //得到D的数组
-            val resultDArray = Utils.hexStringToByte(dByteStr.toString())
-            //得到C的数组
-            val resultCArray = Utils.hexStringToByte(cByteStr.toString())
-            //得到B的数组
-            val resultBArray = KeyBoardConstant.dealWidthBData(gifList.size)
-
-            val resultAllArray = KeyBoardConstant.getGifAArrayData(gifList.size,resultBArray,resultCArray,resultDArray)
-
-             // val logStr = KeyBoardConstant.getStringBuffer()
-
-            //Timber.e("-------结果="+resultDArray.size)
-
-            val msg = handlers.obtainMessage()
-            msg.what = 0x00
-            msg.obj = resultAllArray
-            handlers.sendMessageDelayed(msg,500)
-
-//
-//            val msg2 = handlers.obtainMessage()
-//            msg2.what = 0x08
-//            msg2.obj = logStr
-//            handlers.sendMessage(msg2)
-
-        }).start()*/
 
         //得到C的内容
         Timber.e("----222---c的内容="+cByteStr)

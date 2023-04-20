@@ -109,7 +109,7 @@ public class ConnStatusService extends Service {
                 Timber.e("----onSearchStarted--");
                 isScanDevice = false;
 
-//                sendActionBroad(BleConstant.BLE_CONNECTED_ACTION,"");
+                sendActionBroad(BleConstant.BLE_START_SCAN_ACTION,"");
             }
 
             @Override

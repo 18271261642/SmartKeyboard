@@ -292,7 +292,7 @@ public class BleManager {
     private synchronized void connBleDevice(final String bleMac, final String bleName, final ConnStatusListener connectResponse){
         BleSpUtils.put(mContext,SAVE_BLE_MAC_KEY,bleMac);
         clearLog();
-        stringBuffer.append("连接"+"\n");
+        stringBuffer.append("连接"+"\n\n");
         int status = bluetoothClient.getConnectStatus(bleMac);
         sendCommBroadcast("ble_action",0);
         Log.e(TAG,"************连接处="+bleMac+"--连接状态="+status);
@@ -308,7 +308,7 @@ public class BleManager {
                 Log.e(TAG,"-----onResponse="+code+"\n"+new Gson().toJson(serviceList));
 
                 if(code == 0){  //连接成功了，开始设置通知
-                    stringBuffer.append("连接成功"+"\n");
+                    stringBuffer.append("连接成功"+"\n\n");
                     sendCommBroadcast("ble_action",0);
                     //判断是否是OTA升级状态，是OTA状态不保存地址
                     (new Handler(Looper.getMainLooper())).postDelayed(new Runnable() {
@@ -358,7 +358,7 @@ public class BleManager {
             public void onNotify(UUID uuid, UUID uuid1, byte[] bytes) {
                 String notifyStr = uuid1.toString()+" "+Utils.formatBtArrayToString(bytes);
                 Log.e(TAG,"------写入数据返回="+notifyStr);
-                stringBuffer.append("数据返回:"+notifyStr+"\n");
+                stringBuffer.append("数据返回:"+notifyStr+"\n\n");
                 sendCommBroadcast("ble_action",0);
                 if(interfaceManager.writeBackDataListener != null){
                     interfaceManager.writeBackDataListener.backWriteData(bytes);
@@ -433,7 +433,7 @@ public class BleManager {
         String bleMac = (String) BleSpUtils.get(mContext,SAVE_BLE_MAC_KEY,"");
         if(TextUtils.isEmpty(bleMac))
             return;
-        stringBuffer.append("写入数据:"+writeStr+"\n");
+        stringBuffer.append("写入数据:"+writeStr+"\n\n");
         sendCommBroadcast("ble_action",0);
         interfaceManager.setWriteBackDataListener(writeBackDataListener);
         bluetoothClient.write(bleMac,bleConstant.SERVICE_UUID,bleConstant.WRITE_UUID,data,bleWriteResponse);

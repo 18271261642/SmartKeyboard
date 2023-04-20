@@ -23,6 +23,7 @@ import com.blala.blalable.listener.BleConnStatusListener
 import com.inuker.bluetooth.library.search.SearchResult
 import com.inuker.bluetooth.library.search.response.SearchResponse
 import timber.log.Timber
+import java.util.*
 
 /**
  * Created by Admin
@@ -124,7 +125,7 @@ class DialogScanDeviceView : AppCompatDialog {
                 if(repeatList?.contains(p0.address) == true)
                     return
                 //030543
-                if(!BikeUtils.isEmpty(recordStr) && recordStr.contains("030543")){
+                if(!BikeUtils.isEmpty(recordStr) && recordStr.toLowerCase(Locale.ROOT).contains("c003")){
                     //判断少于40个设备就不添加了
                     if(repeatList?.size!! >40){
                         return

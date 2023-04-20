@@ -57,7 +57,7 @@ class BleKeyboardActivity : AppActivity(){
             super.handleMessage(msg)
             if(!activity.isFinishing){
                 val log = BleOperateManager.getInstance().getLog()
-                Timber.e("--------log="+log.toString())
+
                 lowTv?.text = log.toString()
             }
 
@@ -71,6 +71,7 @@ class BleKeyboardActivity : AppActivity(){
         intentFilter.addAction(BleConstant.BLE_CONNECTED_ACTION)
         intentFilter.addAction(BleConstant.BLE_DIS_CONNECT_ACTION)
         intentFilter.addAction(BleConstant.BLE_SCAN_COMPLETE_ACTION)
+        intentFilter.addAction(BleConstant.BLE_START_SCAN_ACTION)
         intentFilter.addAction("ble_action")
         registerReceiver(broadcastReceiver,intentFilter)
     }
@@ -304,6 +305,10 @@ class BleKeyboardActivity : AppActivity(){
 
             if(action == "ble_action"){
                 handlers.sendEmptyMessage(0x00)
+            }
+
+            if(action == BleConstant.BLE_START_SCAN_ACTION){
+                showDeviceStatus()
             }
         }
 

@@ -32,7 +32,7 @@ public class BleConstant {
 
     /**扫描完了的广播，一个扫描过程最多20秒**/
     public static final String BLE_SCAN_COMPLETE_ACTION = "com.blala.blalable.scan_complete";
-
+    public static final String BLE_START_SCAN_ACTION = "com.blala.blalable.scan_start";
 
 
     /**设置数据同步完成的广播**/
