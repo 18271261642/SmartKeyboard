@@ -947,14 +947,19 @@ public class BleOperateManager {
 //                    onCommBackDataListener.onIntDataBack(new int[]{88});
 //                }
 
-
-                if(data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 3 )){
-                    onCommBackDataListener.onIntDataBack(new int[]{3});
-                    BleOperateManager.getInstance().setClearListener();
-                }else{
-                    onCommBackDataListener.onIntDataBack(new int[]{0});
+                if(data.length == 14 && data[6] == 6 && data[9] == 20){
+                    int code = data[13] & 0xff;
+                    onCommBackDataListener.onIntDataBack(new int[]{code});
                     BleOperateManager.getInstance().setClearListener();
                 }
+
+//                if(data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 3 )){
+//                    onCommBackDataListener.onIntDataBack(new int[]{3});
+//                    BleOperateManager.getInstance().setClearListener();
+//                }else{
+//                    onCommBackDataListener.onIntDataBack(new int[]{0});
+//                    BleOperateManager.getInstance().setClearListener();
+//                }
 
 
 

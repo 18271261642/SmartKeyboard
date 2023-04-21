@@ -350,32 +350,47 @@ class CustomDialActivity : AppActivity() {
                         // stringBuilder.append("开始发送flash数据" +"\n")
                         showLogTv()
 
+                        count =5
                         //获取下装填，状态是3就继续进行
-                        BaseApplication.getBaseApplication().bleOperate.getKeyBoardStatus(object : OnCommBackDataListener{
-                            override fun onIntDataBack(value: IntArray?) {
-                                val code = value?.get(0)
-                                Timber.e("-------code=$code")
-                                if(code == 3){
-                                    toStartWriteDialFlash()
-                                }else{
-                                    hideDialog()
-                                    ToastUtils.show("设备正忙!")
-                                }
-                            }
-
-                            override fun onStrDataBack(vararg value: String?) {
-
-                            }
-
-                        })
-
-
+                        getDeviceStatus()
 
                     }
 
                 }
             }
         }
+    }
+
+    //次数
+    var count = 5
+    private fun getDeviceStatus(){
+        BaseApplication.getBaseApplication().bleOperate.setClearListener()
+        BaseApplication.getBaseApplication().bleOperate.getKeyBoardStatus(object : OnCommBackDataListener{
+            override fun onIntDataBack(value: IntArray?) {
+                val code = value?.get(0)
+                Timber.e("-------code=$code"+" "+count)
+                if(code == 3){
+                    count = 5
+                    toStartWriteDialFlash()
+                }else{
+                    if(count in 1..6){
+                        handlers.postDelayed(Runnable {
+                            count--
+                            getDeviceStatus()
+                        },100)
+                    }else{
+                        hideDialog()
+                        ToastUtils.show("设备正忙!")
+                        count = 5
+                    }
+                }
+            }
+
+            override fun onStrDataBack(vararg value: String?) {
+
+            }
+
+        })
     }
 
 
