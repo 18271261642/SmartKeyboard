@@ -58,7 +58,7 @@ class BleKeyboardActivity : AppActivity(){
             if(!activity.isFinishing){
                 val log = BleOperateManager.getInstance().getLog()
 
-                lowTv?.text = log.toString()
+               // lowTv?.text = log.toString()
             }
 
 

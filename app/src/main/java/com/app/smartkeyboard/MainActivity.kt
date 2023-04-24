@@ -55,9 +55,13 @@ class MainActivity : AppActivity() {
 
         setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
 
-        findViewById<ImageView>(R.id.titleImgView).setOnClickListener {
-          startActivity(LogActivity::class.java)
-        }
+        findViewById<ImageView>(R.id.titleImgView).setOnLongClickListener(object : View.OnLongClickListener{
+            override fun onLongClick(p0: View?): Boolean {
+                startActivity(LogActivity::class.java)
+
+                return true
+            }
+        })
         val intentFilter = IntentFilter()
         intentFilter.addAction(BleConstant.BLE_CONNECTED_ACTION)
         intentFilter.addAction(BleConstant.BLE_DIS_CONNECT_ACTION)
