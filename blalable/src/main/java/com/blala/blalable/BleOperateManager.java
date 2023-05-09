@@ -243,30 +243,22 @@ public class BleOperateManager {
 
     //获取版本信息
     public void getDeviceVersionData(OnCommBackDataListener onCommBackDataListener) {
-        bleManager.writeDataToDevice(bleConstant.getDeviceVersion(), new WriteBackDataListener() {
+        bleManager.writeDataToDevice(Utils.getFullPackage(new byte[]{0x00,0x01,0x00}), new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
-                if ((data[0] & 0xff) == 15 && (data[1] & 0xff) == 255 && data[2] == 1) {
-
-                    //有多少天24小时的数据
-                    int validDay = data[5] & 0xff;
-
-
-                    //硬件版本
-                    int hardVersion = data[8] & 0xff;
-                    //软件版本
-                    byte[] sortArray = new byte[8];
-                    System.arraycopy(data, 9, sortArray, 0, sortArray.length);
-                    try {
-                        String versionStr = new String(sortArray, "UTF-8");
-
-                        onCommBackDataListener.onStrDataBack(hardVersion + "", versionStr, String.valueOf(validDay));
-
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                //88 00 00 00 00 00 13 3e 00 02 c0 03   00 01 23   054373c2bd97ffffffffffff
+                Log.e(TAG,"------获取版本="+Utils.formatBtArrayToString(data));
+                if(data.length>19 && data[9] ==2){
+                    //版本
+                    int oneStr = data[12] & 0xff;
+                    int secondStr = data[13] & 0xff;
+                    int thirdStr = data[14] & 0xff;
+                    String version = "V"+oneStr+"."+secondStr+"."+thirdStr;
+                    if(onCommBackDataListener != null){
+                        onCommBackDataListener.onStrDataBack(version);
                     }
-
                 }
+
             }
         });
     }

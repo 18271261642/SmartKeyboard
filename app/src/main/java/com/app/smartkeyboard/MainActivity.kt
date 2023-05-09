@@ -12,6 +12,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.app.smartkeyboard.action.ActivityManager
@@ -24,6 +25,7 @@ import com.app.smartkeyboard.utils.BonlalaUtils
 import com.app.smartkeyboard.utils.MmkvUtils
 import com.app.smartkeyboard.utils.NotificationUtils
 import com.blala.blalable.BleConstant
+import com.blala.blalable.listener.OnCommBackDataListener
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
 import kotlinx.coroutines.GlobalScope
@@ -44,24 +46,30 @@ class MainActivity : AppActivity() {
 
     private var homeDialLayout: FrameLayout? = null
 
+    //APP版本
+    private var appVersionTv : TextView ?= null
+    //固件版本，连接成功后才显示，不连接䒑显示
+    private var firmwareVersionTv : TextView ?= null
+
+
     override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
 
     override fun initView() {
+        firmwareVersionTv = findViewById(R.id.firmwareVersionTv)
+        appVersionTv = findViewById(R.id.appVersionTv)
         homeNotebookLayout = findViewById(R.id.homeNotebookLayout)
         homeKeyboardLayout = findViewById(R.id.homeKeyboardLayout)
         homeDialLayout = findViewById(R.id.homeDialLayout)
 
         setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
 
-        findViewById<ImageView>(R.id.titleImgView).setOnLongClickListener(object : View.OnLongClickListener{
-            override fun onLongClick(p0: View?): Boolean {
-                startActivity(LogActivity::class.java)
+        findViewById<ImageView>(R.id.titleImgView).setOnLongClickListener {
+            startActivity(LogActivity::class.java)
 
-                return true
-            }
-        })
+            true
+        }
         val intentFilter = IntentFilter()
         intentFilter.addAction(BleConstant.BLE_CONNECTED_ACTION)
         intentFilter.addAction(BleConstant.BLE_DIS_CONNECT_ACTION)
@@ -72,7 +80,27 @@ class MainActivity : AppActivity() {
     }
 
 
+    //展示APP版本和设备的固件版本
+    private fun showVersion(){
+        val packageInfo = packageManager.getPackageInfo(packageName,0)
+        val versionName = packageInfo.versionName
+        appVersionTv?.text = String.format(resources.getString(R.string.string_app_version),versionName)
 
+        //判断最设备是否链接
+        val isConn = BaseApplication.getBaseApplication().connStatus == ConnStatus.CONNECTED
+        if(isConn){
+            BaseApplication.getBaseApplication().bleOperate.getDeviceVersionData(object : OnCommBackDataListener{
+                override fun onIntDataBack(value: IntArray?) {
+
+                }
+
+                override fun onStrDataBack(vararg value: String?) {
+                    firmwareVersionTv?.text =  String.format(resources.getString(R.string.string_firmware_version),value[0])
+                }
+
+            })
+        }
+    }
 
 
 
@@ -80,6 +108,7 @@ class MainActivity : AppActivity() {
     override fun onResume() {
         super.onResume()
         //showOpenNotifyDialog()
+        showVersion()
     }
 
 
@@ -319,6 +348,8 @@ class MainActivity : AppActivity() {
             if(action == BleConstant.BLE_CONNECTED_ACTION){
                 ToastUtils.show(resources.getString(R.string.string_conn_success))
                 BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
+
+                showVersion()
             }
             if(action == BleConstant.BLE_DIS_CONNECT_ACTION){
                 ToastUtils.show(resources.getString(R.string.string_conn_disconn))

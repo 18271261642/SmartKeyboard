@@ -122,7 +122,7 @@ public class ConnStatusService extends Service {
 //                    Timber.e("-------扫描到了，开始连接="+mac);
                     isScanDevice = true;
                     connDevice(bleName,mac);
-                    return;
+
                 }
             }
 
@@ -147,7 +147,7 @@ public class ConnStatusService extends Service {
             public void onSearchCanceled() {
 //                Timber.e("----onSearchCanceled--");
             }
-        },isScanClass,20 * 1000,1);
+        },isScanClass,2000 * 1000,1);
     }
 
 

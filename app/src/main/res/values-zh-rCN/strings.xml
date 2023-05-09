@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+    <string name="string_firmware_version">固件版本: %s</string>
+    <string name="string_app_version">APP版本: %s</string>
+
+
     <string name="string_gig_small">GIF过小，请选择合适的GIF!</string>
     <string name="string_is_unbind">是否确认解除绑定?</string>
 

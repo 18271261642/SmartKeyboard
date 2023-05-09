@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+    <string name="string_firmware_version">SCREEN FIRMWARE VERSION: %s</string>
+    <string name="string_app_version">APP VERSION: %s</string>
+
     <string name="string_gig_small">The GIF is too small, please choose a normal gif!</string>
     <string name="string_is_unbind">Do you want to unbind?</string>
 
@@ -57,7 +60,7 @@
     <string name="common_unknown_error">Unknown Error</string>
 
 
-    <string name="string_notify_desc">For message reminders, you need to turn on the notification function of your mobile phone. Click the confirmation button to find "Pocket Wuque" and turn on the notification switch. After turning it on, you can use the message push function normally. Is it turned on?</string>
+    <string name="string_notify_desc">This is to receive notification reminders. For the app to function properly you need to allow us to have notification access for your device. Please allow Pocket Wuque Notification access in your settings. After this option has been selected you can use the message push notifications feature. </string>
 
     <string name="comm_prompt">Remind</string>
     <string name="common_confirm">Confirm</string>
@@ -100,9 +103,9 @@
     <string name="string_double_click_exit">Press again to exit the program!</string>
 
 
-    <string name="user_agreement_tips">User Agreement</string>//User Agreement
+    <string name="user_agreement_tips">Service Agreement</string>//User Agreement
     <string name="privacy_agreement_tips">Privacy Policy</string>//Privacy Policy
-    <string name="privacy_agreement_2">By clicking "Agree", you are indicating your agreement to the most recent terms and conditions set forth in the "Service Agreement" and "Privacy Policy."</string>
+    <string name="privacy_agreement_2">By pressing the "Confirm" Button, you agree to the updated terms and conditions outlined in the Service Agreement and Privacy Policy.</string>
 
     <string name="string_confirm">Confirm</string>
     <string name="string_cancel">Cancel</string>
