@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+    <string name="string_click_bind">点击连接</string>
+    <string name="string_word">字</string>
     <string name="string_firmware_version">固件版本: %s</string>
     <string name="string_app_version">APP版本: %s</string>
 

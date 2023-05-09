@@ -19,6 +19,7 @@ import com.app.smartkeyboard.ShowWebViewActivity;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.hjq.shape.layout.ShapeLinearLayout;
 import com.hjq.shape.view.ShapeButton;
+import com.hjq.shape.view.ShapeTextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialog;
@@ -36,8 +37,8 @@ public class ShowPrivacyDialogView extends AppCompatDialog implements View.OnCli
     private TextView privacyAndAgreementTv;
     private TextView privacyTitleTv;
 
-    private ShapeButton privacyCancelBtn;
-    private ShapeButton privacyConfirmBtn;
+    private ShapeTextView privacyCancelBtn;
+    private ShapeTextView privacyConfirmBtn;
 
     private Activity activity;
 
@@ -86,9 +87,9 @@ public class ShowPrivacyDialogView extends AppCompatDialog implements View.OnCli
         privacyCancelBtn.setOnClickListener(this);
         privacyConfirmBtn.setOnClickListener(this);
 
-        String lastStr = getContext().getString(R.string.string_last_txt);
+        String lastStr = getContext().getString(R.string.string_last_txt)+"\n";
         String privacyStr = getContext().getString(R.string.user_agreement_tips);
-        String andStr = getContext().getString(R.string.string_and);
+        String andStr = " "+getContext().getString(R.string.string_and)+" ";
         String agreeStr = getContext().getString(R.string.privacy_agreement_tips);
 
 

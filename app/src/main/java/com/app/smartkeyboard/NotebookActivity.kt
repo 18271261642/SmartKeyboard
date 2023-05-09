@@ -224,7 +224,7 @@ class NotebookActivity : AppActivity() {
 
                 if (noteBean != null) {
 
-                    sendNotToDevice(noteBean.noteTitle, noteBean.noteTimeLong)
+                    sendNotToDevice(noteBean.noteTitle, noteBean.noteTimeLong,noteBean.noteContent)
                 }
             }
         }
@@ -241,7 +241,7 @@ class NotebookActivity : AppActivity() {
 
 
     //发送数据
-    private fun sendNotToDevice(title : String,timeLong : Long){
+    private fun sendNotToDevice(title : String,timeLong : Long,contentStr : String){
         if(BaseApplication.getBaseApplication().connStatus != ConnStatus.CONNECTED){
             return
         }
@@ -249,6 +249,6 @@ class NotebookActivity : AppActivity() {
         //时间戳
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timeLong
-        BaseApplication.getBaseApplication().bleOperate.sendKeyBoardNoteBook(title,calendar)
+        BaseApplication.getBaseApplication().bleOperate.sendKeyBoardNoteBook(title,contentStr,calendar)
     }
 }

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+    <string name="string_click_bind">click bind</string>
+    <string name="string_word">size</string>
     <string name="string_firmware_version">SCREEN FIRMWARE VERSION: %s</string>
     <string name="string_app_version">APP VERSION: %s</string>
 
@@ -110,6 +112,6 @@
     <string name="string_confirm">Confirm</string>
     <string name="string_cancel">Cancel</string>
     <string name="string_last_txt">Latest</string>
-    <string name="string_and">with</string>
+    <string name="string_and"> and </string>
 
 </resources>

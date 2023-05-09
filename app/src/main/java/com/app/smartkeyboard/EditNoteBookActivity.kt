@@ -95,7 +95,7 @@ class EditNoteBookActivity : AppActivity() {
 
         override fun afterTextChanged(p0: Editable?) {
             val length = p0?.length
-            editNoteBookNumberTv?.text = length.toString()+" 字"
+            editNoteBookNumberTv?.text = length.toString()+" "+resources.getString(R.string.string_word)
         }
 
     }

@@ -1032,13 +1032,16 @@ public class BleOperateManager {
     }
 
     //发送记事本
-    public void sendKeyBoardNoteBook(String title, Calendar noteCalendar) {
+    public void sendKeyBoardNoteBook(String title, String contentStr,Calendar noteCalendar) {
+        //标题
         String unitCode = Utils.getUnicode(title).replace("\\u", "");
-
+        //内容 最大40个长度
+        String tempContent = contentStr.length()>40 ? contentStr.substring(0,40) : contentStr;
+        String contentUnitCode = Utils.getUnicode(tempContent).replace("\\u", "");
         //  00 68 00 68 00 68 00 6a 00 6a 00 68
 
         byte[] titleArray = stringToByte(unitCode);
-
+        byte[] contentArray = stringToByte(contentUnitCode);
 
         Log.e(TAG, "-------标题=" + title + "\n" + unitCode + "\n" + Utils.formatBtArrayToString(titleArray));
 
@@ -1075,14 +1078,18 @@ public class BleOperateManager {
         int l1 = Utils.intToSecondByteArray(contentLength)[1];
         int l2 = Utils.intToSecondByteArray(contentLength)[0];
 
-        String conStr = "02" + String.format("%02x", l1) + String.format("%02x", l2) + Utils.getHexString(titleArray);
+        int c1 = Utils.intToSecondByteArray(contentArray.length)[1];
+        int c2 = Utils.intToSecondByteArray(contentArray.length)[0];
 
-        String resultStr = "040A" + timeStr + conStr;
+
+        String conStr = "02" + String.format("%02x", l1) + String.format("%02x", l2) + Utils.getHexString(titleArray);
+        String msgStr = "03"+String.format("%02x",c1)+String.format("%02x",c2)+Utils.getHexString(contentArray);
+        String resultStr = "040A" + timeStr + conStr+msgStr;
 
         byte[] tempContentArray = Utils.hexStringToByte(resultStr);
 
         //88 00 00 00 00 00 1c d1
-        Log.e(TAG, "-------内如=" + conStr + "\n" + resultStr);
+        Log.e(TAG, "-------标题" + conStr + "\n" + msgStr);
 
         String t = "8800000000001600 040A 0100 08  07E7 0106 0304 0504 02 0006  8B B0 4E 8B 67 2C";
         //8800000000001ccf0 040a 0100 08 07e7 01 0a 12 13 37 05 02 0120068  00680068006a006a0068

@@ -98,28 +98,35 @@
 
 
 
-        <com.hjq.shape.view.ShapeButton
+        <com.hjq.shape.view.ShapeTextView
             app:shape_solidColor="@color/white"
             app:shape_radius="@dimen/dp_8"
             android:id="@+id/privacyCancelBtn"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:padding="8dp"
+            android:padding="@dimen/dp_10"
             android:layout_gravity="center"
             android:gravity="center"
-          android:textColor="#D6D6DD"
+            android:textColor="@color/black90"
+            app:shape_solidPressedColor="@color/click_color"
+            android:textStyle="bold"
+            android:textSize="@dimen/sp_18"
+            app:shape_strokeWidth="@dimen/dp_1"
+            app:shape_strokeColor="@color/click_color"
             android:layout_margin="3dp"
             android:layout_height="wrap_content"
             android:text="@string/string_cancel"/>
 
 
-        <View
+      <!--  <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
             android:background="#DBDBDB"/>
+-->
 
-
-        <com.hjq.shape.view.ShapeButton
+        <com.hjq.shape.view.ShapeTextView
             app:shape_radius="@dimen/dp_8"
             app:shape_solidColor="@color/white"
             android:id="@+id/privacyConfirmBtn"
@@ -127,10 +134,15 @@
             android:layout_weight="1"
             android:gravity="center"
             android:layout_gravity="center"
-            android:padding="8dp"
+            android:textSize="@dimen/sp_18"
+            app:shape_solidPressedColor="@color/click_color"
+            android:padding="@dimen/dp_10"
+            app:shape_strokeWidth="@dimen/dp_1"
+            app:shape_strokeColor="@color/click_color"
             android:layout_margin="@dimen/dp_3"
             android:layout_height="wrap_content"
-            android:textColor="#4EDD7D"
+            android:textColor="#15A4FF"
+            android:textStyle="bold"
             android:text="@string/string_confirm"/>
 
 

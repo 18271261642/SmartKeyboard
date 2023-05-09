@@ -74,11 +74,12 @@
             android:id="@+id/editNoteBookTitleEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="标题"
+            android:hint="@string/string_title"
             android:textColor="#333333"
             android:maxLength="40"
             android:inputType="text"
             android:textSize="30sp"
+
             android:background="@null"/>
 
 
@@ -103,7 +104,7 @@
                 android:id="@+id/editNoteBookNumberTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0字"
+                android:text=""
                 android:textColor="#ff7c7c7c"
                 android:layout_gravity="center"
                 android:textSize="20sp"

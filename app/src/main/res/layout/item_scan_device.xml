@@ -44,7 +44,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="连接"/>
+        android:text="@string/string_click_bind"/>
 
 
 </com.hjq.shape.layout.ShapeConstraintLayout>
