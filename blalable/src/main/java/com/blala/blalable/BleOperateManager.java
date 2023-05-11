@@ -1036,14 +1036,14 @@ public class BleOperateManager {
         //标题
         String unitCode = Utils.getUnicode(title).replace("\\u", "");
         //内容 最大40个长度
-        String tempContent =  contentStr;
+        String tempContent =  contentStr.length()>100 ? contentStr.substring(0,100) :contentStr;
         String contentUnitCode = Utils.getUnicode(tempContent).replace("\\u", "");
         //  00 68 00 68 00 68 00 6a 00 6a 00 68
 
         byte[] titleArray = stringToByte(unitCode);
 
         //Log.e(TAG,"-------contentUnitCode="+contentUnitCode.length());
-        byte[] tempConArray = stringToByte(contentUnitCode.length()>400 ? contentUnitCode.substring(0,400):contentUnitCode);
+        byte[] tempConArray = stringToByte(contentUnitCode);
 
       //  Log.e(TAG, "-------标题=" + tempConArray.length + "\n" + Utils.formatBtArrayToString(Utils.intToSecondByteArray(tempConArray.length)) + "\n" + Utils.formatBtArrayToString(titleArray));
 
