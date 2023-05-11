@@ -1036,14 +1036,16 @@ public class BleOperateManager {
         //标题
         String unitCode = Utils.getUnicode(title).replace("\\u", "");
         //内容 最大40个长度
-        String tempContent = contentStr.length()>40 ? contentStr.substring(0,40) : contentStr;
+        String tempContent =  contentStr;
         String contentUnitCode = Utils.getUnicode(tempContent).replace("\\u", "");
         //  00 68 00 68 00 68 00 6a 00 6a 00 68
 
         byte[] titleArray = stringToByte(unitCode);
-        byte[] contentArray = stringToByte(contentUnitCode);
 
-        Log.e(TAG, "-------标题=" + title + "\n" + unitCode + "\n" + Utils.formatBtArrayToString(titleArray));
+        //Log.e(TAG,"-------contentUnitCode="+contentUnitCode.length());
+        byte[] tempConArray = stringToByte(contentUnitCode.length()>400 ? contentUnitCode.substring(0,400):contentUnitCode);
+
+      //  Log.e(TAG, "-------标题=" + tempConArray.length + "\n" + Utils.formatBtArrayToString(Utils.intToSecondByteArray(tempConArray.length)) + "\n" + Utils.formatBtArrayToString(titleArray));
 
         int year = noteCalendar.get(Calendar.YEAR);
         int month = noteCalendar.get(Calendar.MONTH) + 1;
@@ -1075,31 +1077,23 @@ public class BleOperateManager {
         //内容
 
         int contentLength = titleArray.length;
-        int l1 = Utils.intToSecondByteArray(contentLength)[1];
-        int l2 = Utils.intToSecondByteArray(contentLength)[0];
+        byte l1 = Utils.intToSecondByteArray(contentLength)[1];
+        byte l2 = Utils.intToSecondByteArray(contentLength)[0];
 
-        int c1 = Utils.intToSecondByteArray(contentArray.length)[1];
-        int c2 = Utils.intToSecondByteArray(contentArray.length)[0];
-
+        byte[] cBy = Utils.intToSecondByteArray(tempConArray.length);
 
         String conStr = "02" + String.format("%02x", l1) + String.format("%02x", l2) + Utils.getHexString(titleArray);
-        String msgStr = "03"+String.format("%02x",c1)+String.format("%02x",c2)+Utils.getHexString(contentArray);
+        String msgStr = "03"+String.format("%02x",cBy[1])+String.format("%02x",cBy[0])+Utils.getHexString(tempConArray);
         String resultStr = "040A" + timeStr + conStr+msgStr;
 
         byte[] tempContentArray = Utils.hexStringToByte(resultStr);
 
         //88 00 00 00 00 00 1c d1
-        Log.e(TAG, "-------标题" + conStr + "\n" + msgStr);
-
-        String t = "8800000000001600 040A 0100 08  07E7 0106 0304 0504 02 0006  8B B0 4E 8B 67 2C";
-        //8800000000001ccf0 040a 0100 08 07e7 01 0a 12 13 37 05 02 0120068  00680068006a006a0068
-        //88 00 00 00 00 00 1c cf 00 40 a0 10 00 80 7e 70 10 a1 21 33 70 50 20 12 00 68 00 68 00 68 00 6a 00 6a 00 68
-        //88 00 00 00 00 00 1c cf0 040a 0100 08 e707 01 0a 12 13 37 05 02 0120 06800680068006a006a0068
-        //8800000000001a2f0010008e707010a1213370502012006800680068006a006a0068
+       // Log.e(TAG, "-------标题" + conStr + "\n" + msgStr);
         byte[] noteArray = Utils.getFullPackage(tempContentArray);
 
 
-        Log.e(TAG, "---------记事本=" + Utils.formatBtArrayToString(noteArray));
+       // Log.e(TAG, "---------记事本=" + Utils.formatBtArrayToString(noteArray));
 
         bleManager.writeDataToDevice(noteArray, new WriteBackDataListener() {
             @Override

@@ -1,8 +1,9 @@
 package com.app.smartkeyboard
 
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.R.attr.textSize
+import android.graphics.Color
+import android.text.*
+import android.text.style.AbsoluteSizeSpan
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,6 +14,7 @@ import com.app.smartkeyboard.bean.DbManager
 import com.app.smartkeyboard.bean.NoteBookBean
 import com.app.smartkeyboard.utils.BikeUtils
 import com.hjq.toast.ToastUtils
+
 
 /**
  * 编辑笔记页面
@@ -53,6 +55,28 @@ class EditNoteBookActivity : AppActivity() {
         editNoteBookTimeTv = findViewById(R.id.editNoteBookTimeTv)
 
         setOnClickListener(editNoteBookBackImgView,editNoteBookSaveImgView)
+
+        //设置hit的颜色
+        // 新建一个可以添加属性的文本对象
+        val ss = SpannableString(resources.getString(R.string.string_title))
+        // 新建一个属性对象,设置文字的大小
+        val ass = AbsoluteSizeSpan(23, true)
+        // 附加属性到文本
+        ss.setSpan(ass, 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        editNoteBookTitleEdit?.setHintTextColor(Color.parseColor("#ff7c7c7c"))
+        editNoteBookTitleEdit?.hint = SpannedString(ss)
+
+
+        // 新建一个可以添加属性的文本对象
+        val ss2 = SpannableString(resources.getString(R.string.string_start_write))
+        // 新建一个属性对象,设置文字的大小
+        val ass2 = AbsoluteSizeSpan(23, true)
+        // 附加属性到文本
+        ss2.setSpan(ass2, 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        editNoteBookEditText?.setHintTextColor(Color.parseColor("#ff7c7c7c"))
+        editNoteBookEditText?.hint = SpannedString(ss2)
+
+
     }
 
     override fun initData() {

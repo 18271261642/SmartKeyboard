@@ -20,19 +20,13 @@ import com.app.smartkeyboard.img.CameraActivity
 import com.app.smartkeyboard.img.CameraActivity.OnCameraListener
 import com.app.smartkeyboard.img.ImageSelectActivity
 import com.app.smartkeyboard.listeners.OnGetImgWidthListener
-import com.app.smartkeyboard.utils.BitmapAndRgbByteUtil
-import com.app.smartkeyboard.utils.FileU
-import com.app.smartkeyboard.utils.GlideEngine
-import com.app.smartkeyboard.utils.ImageUtils
-import com.app.smartkeyboard.utils.ImgUtil
-import com.app.smartkeyboard.utils.ThreadUtils
+import com.app.smartkeyboard.utils.*
 import com.blala.blalable.Utils
 import com.blala.blalable.keyboard.DialCustomBean
 import com.blala.blalable.keyboard.KeyBoardConstant
 import com.blala.blalable.listener.OnCommBackDataListener
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
-import com.bumptech.glide.gifdecoder.GifDecoder
 import com.bumptech.glide.request.target.Target
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
@@ -163,6 +157,10 @@ class CustomDialActivity : AppActivity() {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE
             )
         ).request { permissions, all -> }
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            XXPermissions.with(this).permission(Manifest.permission.MANAGE_EXTERNAL_STORAGE).request{ per, all->}
+//        }
 
 //         cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
         cropImgPath = this.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath
@@ -504,11 +502,11 @@ class CustomDialActivity : AppActivity() {
     //选择图片，展示弹窗
     private fun showSelectDialog() {
 
-        if(XXPermissions.isGranted(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))){
+        if(XXPermissions.isGranted(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))){
             choosePick()
             return
         }
-        XXPermissions.with(this).permission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)).request(object : OnPermissionCallback{
+        XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)).request(object : OnPermissionCallback{
             override fun onGranted(permissions: MutableList<String>, all: Boolean) {
                 if(all){
                     choosePick()
@@ -533,7 +531,6 @@ class CustomDialActivity : AppActivity() {
             return
         }
 
-
         val uri: Uri
         uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             FileProvider.getUriForFile(this, "com.app.smartkeyboard.provider", File(localUrl))
@@ -552,6 +549,7 @@ class CustomDialActivity : AppActivity() {
     private fun startPhotoZoom(uri: Uri, code: Int) {
 //        cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
         cropImgPath = this.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath
+
         try {
             val intent = Intent("com.android.camera.action.CROP")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -564,9 +562,6 @@ class CustomDialActivity : AppActivity() {
             cropImgPath = "$cropImgPath/$date.jpg"
             Timber.e("--cropPath=$cropImgPath")
             val cutFile = File(cropImgPath)
-            //                if (!cutFile.exists()) {
-//                    FileUtil.createFile(cutFile.getAbsolutePath());
-//                }
             var cRui = Uri.fromFile(cutFile)
             Timber.e("----000--cRui=$cRui")
             if (Build.VERSION.SDK_INT >= 24) {
@@ -590,9 +585,6 @@ class CustomDialActivity : AppActivity() {
 
             //所有版本这里都这样调用
             intent.putExtra(MediaStore.EXTRA_OUTPUT, cRui)
-
-//               intent.putExtra(MediaStore.EXTRA_OUTPUT,  getUriForFile(NewShareActivity.this,cutFile));
-//                intent.putExtra(MediaStore.EXTRA_OUTPUT,  uri);
             //输入图片路径
             intent.setDataAndType(uri, "image/*")
             intent.putExtra("crop", "true")
@@ -605,7 +597,29 @@ class CustomDialActivity : AppActivity() {
             intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString())
             intent.putExtra("return-data", false)
 
-            grantPermissionFix(intent,cRui)
+            Timber.e("------Build.VERSION.SDK_INT="+Build.VERSION.SDK_INT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+             grantPermissionFix(intent,cRui)
+        }
+            // grantPermissionFix(intent, cRui);
+
+            //重要！！！添加权限，不然裁剪完后报 “保存时发生错误，保存失败” （我的小米10.0系统是这样）
+            val resInfoList =
+                packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (resolveInfo in resInfoList) {
+                //我用的小米手机 packageName 得到的是：com.miui.gallery
+                val packageName = resolveInfo.activityInfo.packageName
+                grantUriPermission(
+                    packageName,
+                    cRui,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+                //注意不是 getPackageName()！！ getPackageName()得到的是app的包名
+//            grantUriPermission(getPackageName(), cropUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+            val componentName = intent.resolveActivity(
+                packageManager
+            )
 
             startActivityForResult(intent, code)
         } catch (e: Exception) {
