@@ -14,8 +14,9 @@
 
     <color name="click_color">#F4F4F4</color>
 
-
     <!--记事本输入框标题-->
-    <color name="color_note_title_color">#999999</color>
-    <color name="color_note_content_color">#333333</color>
+    <color name="color_note_title_color">#C7C7C7</color>
+    <color name="color_note_content_color">#C7C7C7</color>
+
+
 </resources>

@@ -63,7 +63,7 @@ class EditNoteBookActivity : AppActivity() {
         val ass = AbsoluteSizeSpan(23, true)
         // 附加属性到文本
         ss.setSpan(ass, 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        editNoteBookTitleEdit?.setHintTextColor(Color.parseColor("#ff7c7c7c"))
+        editNoteBookTitleEdit?.setHintTextColor(resources.getColor(R.color.color_note_title_color))
         editNoteBookTitleEdit?.hint = SpannedString(ss)
 
 
@@ -73,7 +73,7 @@ class EditNoteBookActivity : AppActivity() {
         val ass2 = AbsoluteSizeSpan(23, true)
         // 附加属性到文本
         ss2.setSpan(ass2, 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        editNoteBookEditText?.setHintTextColor(Color.parseColor("#ff7c7c7c"))
+        editNoteBookEditText?.setHintTextColor(resources.getColor(R.color.color_note_title_color))
         editNoteBookEditText?.hint = SpannedString(ss2)
 
 

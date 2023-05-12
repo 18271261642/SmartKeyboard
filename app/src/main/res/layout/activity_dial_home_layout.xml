@@ -19,6 +19,7 @@
 
 
     <LinearLayout
+        android:id="@+id/midHomeLayout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -66,5 +67,40 @@
 
 
     </LinearLayout>
+
+
+    <LinearLayout
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/midHomeLayout"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/dp_30"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_20"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_15"
+            android:padding="@dimen/dp_10"
+            android:layout_gravity="center"
+            android:text="@string/string_gif_tips"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_15"
+            android:padding="@dimen/dp_5"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="@string/string_gif_tips_desc"/>
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

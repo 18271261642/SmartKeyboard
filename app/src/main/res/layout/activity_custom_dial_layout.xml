@@ -174,32 +174,6 @@
             android:orientation="vertical">
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sp_20"
-                    android:padding="@dimen/dp_10"
-                    android:layout_gravity="center"
-                    android:text="@string/string_gif_tips"/>
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sp_17"
-                    android:padding="@dimen/dp_5"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:text="@string/string_gif_tips_desc"/>
-
-            </LinearLayout>
 
 
 

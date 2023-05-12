@@ -90,7 +90,7 @@ public class BleOperateManager {
                     // sendWriteKeyBoardData(indexData);
                 } else { //发送完了
                     Log.e(TAG, "---------全部发送万了");
-                    if(keyBoardListener != null){
+                    if (keyBoardListener != null) {
                         keyBoardListener.onSyncFlash(0x02);
                     }
 
@@ -115,16 +115,13 @@ public class BleOperateManager {
     };
 
 
-    public String getLog(){
+    public String getLog() {
         return bleManager.getLog();
     }
 
-    public void clearLog(){
+    public void clearLog() {
         bleManager.clearLog();
     }
-
-
-
 
 
     //设置写入指令监听
@@ -243,18 +240,18 @@ public class BleOperateManager {
 
     //获取版本信息
     public void getDeviceVersionData(OnCommBackDataListener onCommBackDataListener) {
-        bleManager.writeDataToDevice(Utils.getFullPackage(new byte[]{0x00,0x01,0x00}), new WriteBackDataListener() {
+        bleManager.writeDataToDevice(Utils.getFullPackage(new byte[]{0x00, 0x01, 0x00}), new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
                 //88 00 00 00 00 00 13 3e 00 02 c0 03   00 01 23   054373c2bd97ffffffffffff
-                Log.e(TAG,"------获取版本="+Utils.formatBtArrayToString(data));
-                if(data.length>19 && data[9] ==2){
+                Log.e(TAG, "------获取版本=" + Utils.formatBtArrayToString(data));
+                if (data.length > 19 && data[9] == 2) {
                     //版本
                     int oneStr = data[12] & 0xff;
                     int secondStr = data[13] & 0xff;
                     int thirdStr = data[14] & 0xff;
-                    String version = "V"+oneStr+"."+secondStr+"."+thirdStr;
-                    if(onCommBackDataListener != null){
+                    String version = "V" + oneStr + "." + secondStr + "." + thirdStr;
+                    if (onCommBackDataListener != null) {
                         onCommBackDataListener.onStrDataBack(version);
                     }
                 }
@@ -763,8 +760,6 @@ public class BleOperateManager {
     }
 
 
-
-
     public void sendSelectDial(List<RawFileBean> list, OnWriteProgressListener onWriteProgressListener) {
 
 
@@ -848,43 +843,43 @@ public class BleOperateManager {
     /**
      * 同步键盘的时间
      */
-    public void syncKeyBoardTime(){
+    public void syncKeyBoardTime() {
 
         byte[] timeByte = bleConstant.syncTime();
         byte[] resultData = Utils.getFullPackage(timeByte);
-        bleManager.writeDataToDevice(resultData,writeBackDataListener);
+        bleManager.writeDataToDevice(resultData, writeBackDataListener);
 
     }
+
     /**
      * 同步键盘的时间
      */
-    public void syncKeyBoardTime(WriteBackDataListener writeBackDataListener){
+    public void syncKeyBoardTime(WriteBackDataListener writeBackDataListener) {
 
         byte[] timeByte = bleConstant.syncTime();
         byte[] resultData = Utils.getFullPackage(timeByte);
-        bleManager.writeDataToDevice(resultData,writeBackDataListener);
+        bleManager.writeDataToDevice(resultData, writeBackDataListener);
 
     }
-
 
 
     /**
      * 设置设备基本信息，连接成功后就设置
      */
-    public void setFirstDeviceInfo(boolean isChinese,WriteBackDataListener writeBackDataListener){
+    public void setFirstDeviceInfo(boolean isChinese, WriteBackDataListener writeBackDataListener) {
         byte[] data = KeyBoardConstant.deviceInfoData(isChinese);
 
         byte[] resultData = Utils.getFullPackage(data);
 
-        bleManager.writeDataToDevice(resultData,writeBackDataListener);
+        bleManager.writeDataToDevice(resultData, writeBackDataListener);
     }
 
 
     /**
      * 消息推送，目前只推送微信
      */
-    public void sendNotifyMsgData(int key,String title,String content){
-        bleManager.writeDataToDevice(KeyBoardConstant.getMsgNotifyData(key,title,content));
+    public void sendNotifyMsgData(int key, String title, String content) {
+        bleManager.writeDataToDevice(KeyBoardConstant.getMsgNotifyData(key, title, content));
     }
 
 
@@ -896,18 +891,18 @@ public class BleOperateManager {
         bleManager.writeDataToDevice(statusArray, new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
-                Log.e(TAG,"-----状态返回="+Utils.formatBtArrayToString(data)+" "+(data[10]));
+                Log.e(TAG, "-----状态返回=" + Utils.formatBtArrayToString(data) + " " + (data[10]));
                 //88 00 00 00 00 00 06 14 00 14 01 00 01 00
                 //88 00 00 00 00 00 06 14 00 14 01 00 01 00
                 /**
                  *
                  */
 
-                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 0 )) {
+                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 0)) {
                     sendKeyBoardScreen(1);
                 }
 
-                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 1 )) {
+                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 1)) {
                     sendKeyBoardScreen(1);
                 }
 
@@ -924,14 +919,14 @@ public class BleOperateManager {
      * 获取状态是否是2，不是2根据不同状态设置状态
      */
 
-    public void getKeyBoardStatus(OnCommBackDataListener onCommBackDataListener){
+    public void getKeyBoardStatus(OnCommBackDataListener onCommBackDataListener) {
         byte[] btArray = new byte[]{0x00, 0x13, 0x00};
         byte[] statusArray = Utils.getFullPackage(btArray);
 
         bleManager.writeDataToDevice(statusArray, new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
-                Log.e(TAG,"----222-状态返回="+Utils.formatBtArrayToString(data));
+                Log.e(TAG, "----222-状态返回=" + Utils.formatBtArrayToString(data));
                 //88 00 00 00 00 00 06 14 00 14 01 00 01 00
                 //88 00 00 00 00 00 06 16 00 14 01 00 01 02
                 //88 00 00 00 00 00 06 16 00 14 01 00 01 02
@@ -939,7 +934,7 @@ public class BleOperateManager {
 //                    onCommBackDataListener.onIntDataBack(new int[]{88});
 //                }
 
-                if(data.length == 14 && data[6] == 6 && data[9] == 20){
+                if (data.length == 14 && data[6] == 6 && data[9] == 20) {
                     int code = data[13] & 0xff;
                     onCommBackDataListener.onIntDataBack(new int[]{code});
                     BleOperateManager.getInstance().setClearListener();
@@ -952,7 +947,6 @@ public class BleOperateManager {
 //                    onCommBackDataListener.onIntDataBack(new int[]{0});
 //                    BleOperateManager.getInstance().setClearListener();
 //                }
-
 
 
 //                if (data.length == 14 && data[6] == 6 && data[9] == 20 && (data[13] == 0 )) {
@@ -986,8 +980,6 @@ public class BleOperateManager {
             }
         });
     }
-
-
 
 
     //亮屏
@@ -1032,11 +1024,11 @@ public class BleOperateManager {
     }
 
     //发送记事本
-    public void sendKeyBoardNoteBook(String title, String contentStr,Calendar noteCalendar) {
+    public void sendKeyBoardNoteBook(String title, String contentStr, Calendar noteCalendar) {
         //标题
         String unitCode = Utils.getUnicode(title).replace("\\u", "");
         //内容 最大40个长度
-        String tempContent =  contentStr.length()>100 ? contentStr.substring(0,100) :contentStr;
+        String tempContent = contentStr.length() > 100 ? contentStr.substring(0, 100) : contentStr;
         String contentUnitCode = Utils.getUnicode(tempContent).replace("\\u", "");
         //  00 68 00 68 00 68 00 6a 00 6a 00 68
 
@@ -1045,7 +1037,7 @@ public class BleOperateManager {
         //Log.e(TAG,"-------contentUnitCode="+contentUnitCode.length());
         byte[] tempConArray = stringToByte(contentUnitCode);
 
-      //  Log.e(TAG, "-------标题=" + tempConArray.length + "\n" + Utils.formatBtArrayToString(Utils.intToSecondByteArray(tempConArray.length)) + "\n" + Utils.formatBtArrayToString(titleArray));
+        //  Log.e(TAG, "-------标题=" + tempConArray.length + "\n" + Utils.formatBtArrayToString(Utils.intToSecondByteArray(tempConArray.length)) + "\n" + Utils.formatBtArrayToString(titleArray));
 
         int year = noteCalendar.get(Calendar.YEAR);
         int month = noteCalendar.get(Calendar.MONTH) + 1;
@@ -1083,22 +1075,33 @@ public class BleOperateManager {
         byte[] cBy = Utils.intToSecondByteArray(tempConArray.length);
 
         String conStr = "02" + String.format("%02x", l1) + String.format("%02x", l2) + Utils.getHexString(titleArray);
-        String msgStr = "03"+String.format("%02x",cBy[1])+String.format("%02x",cBy[0])+Utils.getHexString(tempConArray);
-        String resultStr = "040A" + timeStr + conStr+msgStr;
+        String msgStr = "03" + String.format("%02x", cBy[1]) + String.format("%02x", cBy[0]) + Utils.getHexString(tempConArray);
+        String resultStr = "040A" + timeStr+conStr;
 
         byte[] tempContentArray = Utils.hexStringToByte(resultStr);
 
         //88 00 00 00 00 00 1c d1
-       // Log.e(TAG, "-------标题" + conStr + "\n" + msgStr);
+        // Log.e(TAG, "-------标题" + conStr + "\n" + msgStr);
         byte[] noteArray = Utils.getFullPackage(tempContentArray);
 
 
-       // Log.e(TAG, "---------记事本=" + Utils.formatBtArrayToString(noteArray));
+        String noteMsgStr = "040A"+msgStr;
+        byte[] tempNoteMsgArray = Utils.hexStringToByte(noteMsgStr);
+        byte[] noteMsgArray = Utils.getFullPackage(tempNoteMsgArray);
 
         bleManager.writeDataToDevice(noteArray, new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
+                //88 00 00 00 00 00 05 0a 07 02 01 04 0a
+                Log.e(TAG,"-------记事本返回="+Utils.formatBtArrayToString(data));
+                if(data.length == 13 && (data[9] & 0xff) == 2 && data[11] == 4){
+                    bleManager.writeDataToDevice(noteMsgArray, new WriteBackDataListener() {
+                        @Override
+                        public void backWriteData(byte[] data) {
 
+                        }
+                    });
+                }
             }
         });
     }
@@ -1136,7 +1139,7 @@ public class BleOperateManager {
         bleManager.writeKeyBoardDialData(data, new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
-                Log.e(TAG, "---------4K包里面的内容返回=" + Utils.formatBtArrayToString(data)+" "+(data[10])+" "+(data[0]& 0xff));
+                Log.e(TAG, "---------4K包里面的内容返回=" + Utils.formatBtArrayToString(data) + " " + (data[10]) + " " + (data[0] & 0xff));
 //                handler.sendEmptyMessageDelayed(0x01,100);
                 //4K包里面的内容返回  880000000000030c080602
                 //                  88 00 00 00 00 00 03 0c 08 06 02
@@ -1149,7 +1152,7 @@ public class BleOperateManager {
                  * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
                  */
 
-                if (data.length == 11 && ((data[0]& 0xff) == 136) && data[8] == 8 && data[9] == 6) {
+                if (data.length == 11 && ((data[0] & 0xff) == 136) && data[8] == 8 && data[9] == 6) {
                     int code = data[10] & 0xff;
 
                     if (keyBoardListener != null) {
