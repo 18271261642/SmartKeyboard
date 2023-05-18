@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.ble.ConnStatus
+import com.app.smartkeyboard.dialog.ShowProgressDialog
 import com.app.smartkeyboard.img.CameraActivity
 import com.app.smartkeyboard.img.CameraActivity.OnCameraListener
 import com.app.smartkeyboard.img.ImageSelectActivity
@@ -91,7 +92,7 @@ class CustomDialActivity : AppActivity() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             if(msg.what == 0x00){
-                hideDialog()
+                cancelProgressDialog()
                 val array = msg.obj as ByteArray
                 val path = getExternalFilesDir(null)?.path
 
@@ -101,7 +102,7 @@ class CustomDialActivity : AppActivity() {
             }
 
             if(msg.what == 0x01){
-                hideDialog()
+                cancelProgressDialog()
                 val tempArray = msg.obj as ByteArray
                 startDialToDevice(tempArray,false)
 
@@ -188,6 +189,7 @@ class CustomDialActivity : AppActivity() {
         when (id) {
             //选择图片
             R.id.cusDialAlbumLayout -> {
+
 //                getDialForRaw()
                 showSelectDialog()
             }
@@ -265,7 +267,7 @@ class CustomDialActivity : AppActivity() {
     private fun startDialToDevice(imgByteArray: ByteArray,isGIf : Boolean){
 
 
-        showDialog("Loading...")
+        showProgressDialog("Loading...")
         grbByte = imgByteArray
 
         val uiFeature = 65533
@@ -305,7 +307,7 @@ class CustomDialActivity : AppActivity() {
 
                 val codeStatus = data[10].toInt()
                 if(codeStatus == 1){
-                    hideDialog()
+                    cancelProgressDialog()
                     ToastUtils.show("传入非法值!")
                     return@startFirstDial
                 }
@@ -316,7 +318,7 @@ class CustomDialActivity : AppActivity() {
                 }
 
                 if(codeStatus == 5){
-                    hideDialog()
+                    cancelProgressDialog()
                     ToastUtils.show(resources.getString(R.string.string_device_busy))
                     BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
                     return@startFirstDial
@@ -377,7 +379,7 @@ class CustomDialActivity : AppActivity() {
                             getDeviceStatus()
                         },100)
                     }else{
-                        hideDialog()
+                        cancelProgressDialog()
                         ToastUtils.show("设备正忙!")
                         count = 5
                     }
@@ -404,7 +406,7 @@ class CustomDialActivity : AppActivity() {
 
         val isSynGif = byteArray.isNotEmpty() && byteArray.size>10
 
-        showDialog(resources.getString(R.string.string_sync_ing))
+        showProgressDialog(resources.getString(R.string.string_sync_ing))
         BaseApplication.getBaseApplication().connStatus = ConnStatus.IS_SYNC_DIAL
         //stringBuilder.delete(0,stringBuilder.length)
         showLogTv()
@@ -435,6 +437,8 @@ class CustomDialActivity : AppActivity() {
     }
 
 
+
+
     private fun toStartWriteDialFlash(){
 
         val start = Utils.toByteArrayLength(16777215, 4)
@@ -449,16 +453,34 @@ class CustomDialActivity : AppActivity() {
         val resultArray = getDialContent(startByte, startByte, grbByte, 1000 + 701, -100, 0)
         Timber.e("-------reaulstArray="+resultArray.size+" "+resultArray[0].size)
 
-        resultArray.forEach {
+        //计算总的包数
+        var allPackSize =resultArray.size
 
-            Timber.e("-------内部的内容="+it.size)
-            it.forEach {
-                Timber.e("------里层="+it.size)
-            }
+//        resultArray.forEach {
+//
+//            Timber.e("-------内部的内容="+it.size)
+//            it.forEach {
+//                Timber.e("------里层="+it.size)
+//                allPackSize++
+//            }
+//
+//        }
 
-        }
+
+        //记录发送的包数
+        var sendPackSize = 0
+
         BaseApplication.getBaseApplication().bleOperate.writeDialFlash(resultArray
         ) { statusCode ->
+            sendPackSize++
+
+
+            //计算百分比
+            var percentValue = CalculateUtils.div(sendPackSize.toDouble(), allPackSize.toDouble(),2)
+            var showPercent = CalculateUtils.mul(percentValue,100.0)
+            //gifLogTv?.text = sendPackSize.toString()+"/"+allPackSize+" "+showPercent
+            showProgressDialog(resources.getString(R.string.string_sync_ing)+showPercent+"%")
+
             /**
              * 0x01：更新失败
              * 0x02：更新成功
@@ -477,17 +499,17 @@ class CustomDialActivity : AppActivity() {
              * 0x06：异常退出（含超时，或若干次 4K 数据错误，设备端处理）
              */
             if (statusCode == 1) {
-                hideDialog()
+                cancelProgressDialog()
                 ToastUtils.show(resources.getString(R.string.string_update_failed))
                 BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
             }
             if (statusCode == 2) {
-                hideDialog()
+                cancelProgressDialog()
                 ToastUtils.show(resources.getString(R.string.string_update_success))
                 BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
             }
             if (statusCode == 6) {
-                hideDialog()
+                cancelProgressDialog()
                 ToastUtils.show(resources.getString(R.string.string_error_exit))
                 BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
             }
@@ -823,7 +845,7 @@ class CustomDialActivity : AppActivity() {
         gifLogTv?.text = ""
 
         var arraySize = 0
-        showDialog("Loading...")
+        showProgressDialog("Loading...")
 
         GlobalScope.launch {
             for(i in 0 until gifList.size){
@@ -867,4 +889,24 @@ class CustomDialActivity : AppActivity() {
 
     }
 
+    private var progressDialog : ShowProgressDialog ?= null
+    //显示弹窗
+    fun showProgressDialog(msg : String){
+        if(progressDialog == null){
+            progressDialog = ShowProgressDialog(this, com.bonlala.base.R.style.BaseDialogTheme)
+        }
+        if(progressDialog?.isShowing == false){
+            progressDialog?.show()
+        }
+        progressDialog?.setCancelable(false)
+        progressDialog?.setShowMsg(msg)
+    }
+
+
+    //隐藏弹窗
+    fun cancelProgressDialog(){
+        if(progressDialog != null){
+            progressDialog?.dismiss()
+        }
+    }
 }
