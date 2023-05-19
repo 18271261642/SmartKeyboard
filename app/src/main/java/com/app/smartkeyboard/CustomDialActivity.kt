@@ -266,10 +266,9 @@ class CustomDialActivity : AppActivity() {
 
     private fun startDialToDevice(imgByteArray: ByteArray,isGIf : Boolean){
 
-
         showProgressDialog("Loading...")
         grbByte = imgByteArray
-
+        Timber.e("--------大小="+grbByte.size)
         val uiFeature = 65533
         dialBean.uiFeature = uiFeature.toLong()
         dialBean.binSize = grbByte.size.toLong()
@@ -425,7 +424,9 @@ class CustomDialActivity : AppActivity() {
                     Target.SIZE_ORIGINAL
                 ).get()
 
-            val  tempArray = BitmapAndRgbByteUtil.bitmap2RGBData(bitmap)
+            val tempBitmap = BitmapAndRgbByteUtil.compressImage(bitmap)
+            Timber.e("--------bitmap大小="+tempBitmap.byteCount+" "+bitmap.byteCount)
+            val  tempArray = BitmapAndRgbByteUtil.bitmap2RGBData(tempBitmap)
             val msg = handlers.obtainMessage()
             msg.what = 0x01
             msg.obj = tempArray
@@ -455,17 +456,6 @@ class CustomDialActivity : AppActivity() {
 
         //计算总的包数
         var allPackSize =resultArray.size
-
-//        resultArray.forEach {
-//
-//            Timber.e("-------内部的内容="+it.size)
-//            it.forEach {
-//                Timber.e("------里层="+it.size)
-//                allPackSize++
-//            }
-//
-//        }
-
 
         //记录发送的包数
         var sendPackSize = 0

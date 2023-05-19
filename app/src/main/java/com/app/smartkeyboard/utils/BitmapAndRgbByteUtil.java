@@ -2,11 +2,14 @@ package com.app.smartkeyboard.utils;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.view.View;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -319,6 +322,37 @@ public class BitmapAndRgbByteUtil {
         // v.layout(0, 0, w, h);
         v.draw(c);
         return bmp;
+    }
+
+
+
+    /**
+     * 图片压缩：质量压缩方法
+     * @param beforBitmap 要压缩的图片
+     * @return 压缩后的图片
+     */
+   public static  Bitmap compressImage(Bitmap beforeBitmap) {
+
+        // 可以捕获内存缓冲区的数据，转换成字节数组。
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        if (beforeBitmap != null) {
+            // 第一个参数：图片压缩的格式；第二个参数：压缩的比率；第三个参数：压缩的数据存放到bos中
+            beforeBitmap.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+
+            // 循环判断压缩后的图片大小是否满足要求，这里限制100kb，若不满足则继续压缩，每次递减10%压缩
+            int options = 100;
+            while (bos.toByteArray().length / 1024 > 100) {
+                bos.reset();// 置为空
+                beforeBitmap.compress(Bitmap.CompressFormat.JPEG, options, bos);
+                options -= 10;
+            }
+
+            // 从bos中将数据读出来 转换成图片
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            Bitmap afterBitmap = BitmapFactory.decodeStream(bis);
+            return afterBitmap;
+        }
+        return null;
     }
 
 }

@@ -26,6 +26,7 @@ import com.app.smartkeyboard.utils.MmkvUtils
 import com.app.smartkeyboard.utils.NotificationUtils
 import com.blala.blalable.BleConstant
 import com.blala.blalable.listener.OnCommBackDataListener
+import com.hjq.permissions.Permission.POST_NOTIFICATIONS
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
 import kotlinx.coroutines.GlobalScope
@@ -164,6 +165,10 @@ class MainActivity : AppActivity() {
             ).request { permissions, all ->
                 //verifyScanFun()
             }
+        }
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.S_V2){
+            XXPermissions.with(this).permission(arrayOf(POST_NOTIFICATIONS)).request { permissions, allGranted ->  }
         }
 
 
@@ -348,7 +353,7 @@ class MainActivity : AppActivity() {
             if(action == BleConstant.BLE_CONNECTED_ACTION){
                 ToastUtils.show(resources.getString(R.string.string_conn_success))
                 BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
-
+                BaseApplication.getBaseApplication().bleOperate.stopScanDevice()
                 showVersion()
             }
             if(action == BleConstant.BLE_DIS_CONNECT_ACTION){
