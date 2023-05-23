@@ -107,6 +107,7 @@ class DialogScanDeviceView : AppCompatDialog {
 
     //开始扫描
      fun startScan(){
+
         BaseApplication.getBaseApplication().bleOperate.scanBleDevice(object : SearchResponse{
 
             override fun onSearchStarted() {
@@ -114,7 +115,8 @@ class DialogScanDeviceView : AppCompatDialog {
             }
 
             override fun onDeviceFounded(p0: SearchResult) {
-
+                if(p0.getScanRecord() == null || p0.getScanRecord().isEmpty())
+                    return
                 Timber.e("--------扫描="+p0.name+" "+Utils.formatBtArrayToString(p0.getScanRecord()))
 
                     val recordStr = Utils.formatBtArrayToString(p0.getScanRecord())

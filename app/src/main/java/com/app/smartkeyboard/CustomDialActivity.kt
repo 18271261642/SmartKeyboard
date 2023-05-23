@@ -159,9 +159,16 @@ class CustomDialActivity : AppActivity() {
             )
         ).request { permissions, all -> }
 
+
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+//            XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_MEDIA_IMAGES)).request { permissions, all -> }
+//        }
+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //            XXPermissions.with(this).permission(Manifest.permission.MANAGE_EXTERNAL_STORAGE).request{ per, all->}
 //        }
+
+
 
 //         cropImgPath = Environment.getExternalStorageDirectory().path + "/Download"
         cropImgPath = this.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath

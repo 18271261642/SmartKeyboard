@@ -77,7 +77,9 @@ class MainActivity : AppActivity() {
         intentFilter.addAction(BleConstant.BLE_SCAN_COMPLETE_ACTION)
         intentFilter.addAction(BleConstant.BLE_START_SCAN_ACTION)
         registerReceiver(broadcastReceiver,intentFilter)
-//        XXPermissions.with(this).permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)).request { permissions, all ->  }
+//        if (Build.VERSION.SDK_INT >= 33) {
+//            XXPermissions.with(this).permission(arrayOf(Manifest.permission.POST_NOTIFICATIONS)).request { permissions, all ->  }
+//        }
     }
 
 
@@ -100,6 +102,8 @@ class MainActivity : AppActivity() {
                 }
 
             })
+        }else{
+            firmwareVersionTv?.text =  ""
         }
     }
 
@@ -167,9 +171,9 @@ class MainActivity : AppActivity() {
             }
         }
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.S_V2){
-            XXPermissions.with(this).permission(arrayOf(POST_NOTIFICATIONS)).request { permissions, allGranted ->  }
-        }
+//        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.S_V2){
+//            XXPermissions.with(this).permission(arrayOf(POST_NOTIFICATIONS)).request { permissions, allGranted ->  }
+//        }
 
 
         //判断蓝牙是否打开
@@ -282,9 +286,9 @@ class MainActivity : AppActivity() {
                 dialog.dismiss()
                 startToNotificationListenSetting(this@MainActivity)
 //                NotificationUtils.gotoSet(this)
-                XXPermissions.with(this)
-                    .permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE))
-                    .request { permissions, all -> }
+//                XXPermissions.with(this)
+//                    .permission(arrayOf(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE))
+//                    .request { permissions, all -> }
             }
             if (position == 0x01) {
                 dialog.dismiss()

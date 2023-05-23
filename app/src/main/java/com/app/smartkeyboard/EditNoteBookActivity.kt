@@ -70,7 +70,7 @@ class EditNoteBookActivity : AppActivity() {
         // 新建一个可以添加属性的文本对象
         val ss2 = SpannableString(resources.getString(R.string.string_start_write))
         // 新建一个属性对象,设置文字的大小
-        val ass2 = AbsoluteSizeSpan(23, true)
+        val ass2 = AbsoluteSizeSpan(20, true)
         // 附加属性到文本
         ss2.setSpan(ass2, 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         editNoteBookEditText?.setHintTextColor(resources.getColor(R.color.color_note_title_color))

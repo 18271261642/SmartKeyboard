@@ -1,7 +1,13 @@
 package com.app.smartkeyboard
 
 import android.Manifest
-import android.content.*
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.*
 import android.util.DisplayMetrics
@@ -22,6 +28,7 @@ import com.hjq.permissions.XXPermissions
 import com.hjq.shape.layout.ShapeConstraintLayout
 import com.hjq.shape.view.ShapeTextView
 import timber.log.Timber
+import java.util.*
 
 /**
  * 设置表盘页面
@@ -51,6 +58,8 @@ class BleKeyboardActivity : AppActivity(){
 
     private var lowTv : TextView ?= null
 
+    private var bluetoothAdapter : BluetoothAdapter ?= null
+
 
     private val handlers : Handler = object : Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message) {
@@ -74,6 +83,8 @@ class BleKeyboardActivity : AppActivity(){
         intentFilter.addAction(BleConstant.BLE_START_SCAN_ACTION)
         intentFilter.addAction("ble_action")
         registerReceiver(broadcastReceiver,intentFilter)
+
+
     }
 
     override fun getLayoutId(): Int {
@@ -111,7 +122,8 @@ class BleKeyboardActivity : AppActivity(){
     }
 
     override fun initData() {
-
+        val bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bluetoothAdapter = bleManager.adapter
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 
             XXPermissions.with(this).permission(arrayOf(
@@ -136,8 +148,15 @@ class BleKeyboardActivity : AppActivity(){
         keyBoardStatusTv?.setOnClickListener {
             reConnect()
         }
-    }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
+                0x88
+            )
+        }
 
+    }
 
     private fun reConnect(){
         if(BaseApplication.getBaseApplication().connStatus == ConnStatus.CONNECTED){
@@ -246,6 +265,7 @@ class BleKeyboardActivity : AppActivity(){
             BaseApplication.getBaseApplication().connStatusService.autoConnDevice(mac,false)
             keyBoardStatusTv?.text = resources.getString(R.string.string_connecting)
         }else{
+
             showScanDialog()
         }
 
@@ -253,7 +273,19 @@ class BleKeyboardActivity : AppActivity(){
 
 
     //开始搜索，显示dialog
+    @SuppressLint("MissingPermission")
     private fun showScanDialog(){
+        val bindArray   =bluetoothAdapter?.bondedDevices
+       // Timber.e("----22-绑定="+bindArray?.size+" "+(bluetoothAdapter == null))
+        bindArray?.forEach {
+            //Timber.e("-----绑定="+it.name)
+            if(it != null && !BikeUtils.isEmpty(it.name) && it.name.toLowerCase(Locale.ROOT).contains("zoom")){
+               // Timber.e("---取消配对--绑定="+it.name)
+                BikeUtils.unpairDevice(it)
+            }
+        }
+
+
         val dialog = DialogScanDeviceView(this@BleKeyboardActivity, com.bonlala.base.R.style.BaseDialogTheme)
         dialog.show()
         dialog.startScan()

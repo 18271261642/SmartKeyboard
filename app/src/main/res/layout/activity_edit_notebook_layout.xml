@@ -115,7 +115,7 @@
             android:id="@+id/editNoteBookEditText"
             android:layout_width="match_parent"
             android:hint="@string/string_start_write"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:layout_marginTop="@dimen/dp_8"
             android:textColor="@color/color_note_content_color"
             android:background="@null"
