@@ -29,6 +29,8 @@ import com.blala.blalable.listener.OnCommBackDataListener
 import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
+import com.hjq.bar.OnTitleBarListener
+import com.hjq.bar.TitleBar
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
 import com.hjq.shape.layout.ShapeConstraintLayout
@@ -50,6 +52,7 @@ class CustomDialActivity : AppActivity() {
 
     private val tags = "CustomDialActivity"
 
+    private var customDialTitleBar : TitleBar ?= null
 
     private var gifLogTv : TextView ?= null
 
@@ -124,6 +127,7 @@ class CustomDialActivity : AppActivity() {
     }
 
     override fun initView() {
+        customDialTitleBar = findViewById(R.id.customDialTitleBar)
         gifLogTv = findViewById(R.id.gifLogTv)
         cusDialAlbumLayout = findViewById(R.id.cusDialAlbumLayout)
         cusDialCameraLayout = findViewById(R.id.cusDialCameraLayout)
@@ -138,17 +142,33 @@ class CustomDialActivity : AppActivity() {
 
             val array = byteArrayOf(0x09,0x01,0x00)
             val resultArray = Utils.getFullPackage(array)
-            BaseApplication.getBaseApplication().bleOperate.writeCommonByte(resultArray,object : WriteBackDataListener{
-                override fun backWriteData(data: ByteArray?) {
-                    Timber.e("-------result="+Utils.formatBtArrayToString(data))
-                }
-
-            })
+//            BaseApplication.getBaseApplication().bleOperate.writeCommonByte(resultArray,object : WriteBackDataListener{
+//                override fun backWriteData(data: ByteArray?) {
+//                    Timber.e("-------result="+Utils.formatBtArrayToString(data))
+//                }
+//
+//            })
         }
 
         customShowImgView?.setOnClickListener {
 
         }
+
+        customDialTitleBar?.setOnTitleBarListener(object : OnTitleBarListener{
+            override fun onLeftClick(view: View?) {
+               finish()
+            }
+
+            override fun onTitleClick(view: View?) {
+                BaseApplication.getBaseApplication().logStr = getLogTxt()
+               startActivity(LogActivity::class.java)
+            }
+
+            override fun onRightClick(view: View?) {
+
+            }
+
+        })
     }
 
     override fun initData() {
@@ -159,7 +179,7 @@ class CustomDialActivity : AppActivity() {
             )
         ).request { permissions, all -> }
 
-
+        clearLog()
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
 //            XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_MEDIA_IMAGES)).request { permissions, all -> }
 //        }
@@ -284,7 +304,7 @@ class CustomDialActivity : AppActivity() {
 
         val resultArray = KeyBoardConstant.getDialByte(dialBean)
         val str = Utils.formatBtArrayToString(resultArray)
-        //  stringBuilder.append("发送3.11.3指令:$str"+"\n")
+          stringBuilder.append("send 3.11.3 protocol:$str"+"\n"+"fileSize="+grbByte.size)
         Timber.e("-------表盘指令=" +str )
         showLogTv()
 
@@ -306,7 +326,7 @@ class CustomDialActivity : AppActivity() {
             0x05：其他高优先级数据在处理
              */
 
-            //  stringBuilder.append("设备端返回指定非固化表盘概要信息状态指令: " + Utils.formatBtArrayToString(data)+"\n")
+              stringBuilder.append("设备端返回指定非固化表盘概要信息状态指令: " + Utils.formatBtArrayToString(data)+"\n")
             showLogTv()
 
             if (data.size == 11 && data[8].toInt() == 9 && data[9].toInt() == 4 ) {
@@ -314,7 +334,7 @@ class CustomDialActivity : AppActivity() {
                 val codeStatus = data[10].toInt()
                 if(codeStatus == 1){
                     cancelProgressDialog()
-                    ToastUtils.show("传入非法值!")
+                    ToastUtils.show(resources.getString(R.string.string_invalid_value))
                     return@startFirstDial
                 }
                 //设备存储空间不够
@@ -905,5 +925,13 @@ class CustomDialActivity : AppActivity() {
         if(progressDialog != null){
             progressDialog?.dismiss()
         }
+    }
+
+    private fun clearLog(){
+        stringBuilder.delete(0,stringBuilder.length)
+    }
+
+    private fun getLogTxt() : String{
+        return stringBuilder.toString()
     }
 }

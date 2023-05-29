@@ -362,6 +362,7 @@ class MainActivity : AppActivity() {
             }
             if(action == BleConstant.BLE_DIS_CONNECT_ACTION){
                 ToastUtils.show(resources.getString(R.string.string_conn_disconn))
+                showVersion()
             }
 
         }

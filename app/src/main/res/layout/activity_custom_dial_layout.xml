@@ -9,6 +9,7 @@
 
 
     <com.hjq.bar.TitleBar
+        android:id="@+id/customDialTitleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/string_custom"

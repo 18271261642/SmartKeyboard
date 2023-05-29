@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
-
+    <string name="string_invalid_value">传入非法值!</string>
+    <string name="string_upload_animat">上传动画</string>
     <string name="string_gif_tips_desc">更换单图和GIF图片尺寸分辨率均需大于320*172，无大小限制</string>
     <string name="string_gif_tips">温馨提示</string>
     <string name="string_click_bind">点击连接</string>

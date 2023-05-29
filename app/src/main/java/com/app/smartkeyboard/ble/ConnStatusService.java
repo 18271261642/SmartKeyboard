@@ -18,12 +18,15 @@ import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.utils.BikeUtils;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.blala.blalable.BleConstant;
+import com.blala.blalable.BleManager;
 import com.blala.blalable.BleOperateManager;
 import com.blala.blalable.Utils;
 import com.blala.blalable.listener.BleConnStatusListener;
 import com.blala.blalable.listener.ConnStatusListener;
 import com.blala.blalable.listener.WriteBackDataListener;
+import com.inuker.bluetooth.library.BluetoothClient;
 import com.inuker.bluetooth.library.Constants;
+import com.inuker.bluetooth.library.connect.listener.BluetoothStateListener;
 import com.inuker.bluetooth.library.search.SearchResult;
 import com.inuker.bluetooth.library.search.response.SearchResponse;
 
@@ -73,7 +76,18 @@ public class ConnStatusService extends Service {
         intentFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
         registerReceiver(broadcastReceiver,intentFilter);
 
-
+        BluetoothClient bluetoothClient = BleManager.getInstance(this).getBluetoothClient();
+        if(bluetoothClient != null){
+            bluetoothClient.registerBluetoothStateListener(new BluetoothStateListener() {
+                @Override
+                public void onBluetoothStateChanged(boolean b) {
+                    if(!b){
+                        BaseApplication.getBaseApplication().setConnStatus(ConnStatus.NOT_CONNECTED);
+                        sendActionBroad(BleConstant.BLE_DIS_CONNECT_ACTION);
+                    }
+                }
+            });
+        }
     }
 
 

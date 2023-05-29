@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+    <string name="string_invalid_value">Invalid value passed in!</string>
+    <string name="string_upload_animat">Upload Animation</string>
     <string name="string_gif_tips_desc">When uploading static images and GIFs,please ensure that the dimension is lager than 320px X 172px.There are no specific restrictions on the iage size.</string>
     <string name="string_gif_tips">Tip</string>
     <string name="string_click_bind">click bind</string>

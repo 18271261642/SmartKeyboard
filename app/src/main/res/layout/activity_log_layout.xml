@@ -8,13 +8,13 @@
     <com.hjq.bar.TitleBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="日志"/>
+        app:title="Log"/>
 
   <Button
       android:id="@+id/clearBtn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="清空"/>
+      android:text="clear"/>
 
    <androidx.core.widget.NestedScrollView
        android:layout_width="match_parent"

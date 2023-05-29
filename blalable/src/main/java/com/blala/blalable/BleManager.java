@@ -130,6 +130,10 @@ public class BleManager {
 
 
 
+    public BluetoothClient getBluetoothClient(){
+        return bluetoothClient;
+    }
+
 
     /**
      * 搜索设备

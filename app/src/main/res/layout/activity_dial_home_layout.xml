@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         app:lineVisible="false"
-        app:title="上传动画"
+        app:title="@string/string_upload_animat"
         app:titleColor="@color/white"
         app:leftIcon="@drawable/ic_white_left_back"/>
 

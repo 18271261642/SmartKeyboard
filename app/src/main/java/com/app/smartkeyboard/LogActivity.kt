@@ -25,13 +25,16 @@ class LogActivity : AppActivity() {
         logTv = findViewById(R.id.logTv)
         clearBtn = findViewById(R.id.clearBtn)
         clearBtn?.setOnClickListener{
-            BaseApplication.getInstance().bleManager.clearLog()
+            BaseApplication.getBaseApplication().logStr = "--"
             logTv?.text = ""
         }
     }
 
     override fun initData() {
-        val logStr = BaseApplication.getBaseApplication().bleOperate.log.toString()
+       // val logStr = BaseApplication.getBaseApplication().bleOperate.log.toString()
+
+        val logStr = BaseApplication.getBaseApplication().logStr
+
         logTv?.text = logStr
     }
 }

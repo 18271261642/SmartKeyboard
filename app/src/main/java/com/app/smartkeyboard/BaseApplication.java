@@ -31,6 +31,8 @@ public class BaseApplication extends BleApplication {
 
     private ConnStatusService connStatusService;
 
+    private String logStr;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -95,5 +97,14 @@ public class BaseApplication extends BleApplication {
     //设置连接状态
     public void setConnStatus(ConnStatus connStatus){
         this.connStatus = connStatus;
+    }
+
+
+    public String getLogStr() {
+        return logStr;
+    }
+
+    public void setLogStr(String logStr) {
+        this.logStr = logStr;
     }
 }
