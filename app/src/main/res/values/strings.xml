@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+    <string name="string_clock_style">时钟样式</string>
+    <string name="string_alarm_clock">闹钟</string>
+    <string name="string_setting_screen_style">屏保样式</string>
+    <string name="string_setting_note">备忘录</string>
+
+    <string name="string_no_device_added">No device connection</string>
+    <string name="string_add_device">Add device</string>
     <string name="string_invalid_value">Invalid value passed in!</string>
     <string name="string_upload_animat">Upload Animation</string>
     <string name="string_gif_tips_desc">When uploading static images and GIFs,please ensure that the dimension is lager than 320px X 172px.There are no specific restrictions on the iage size.</string>
@@ -118,4 +125,14 @@
     <string name="string_last_txt">Latest</string>
     <string name="string_and"> and </string>
 
+    <string name="http_loading">Loading&#8230;</string>
+
+    <string name="http_unknown_error">request failed,unknown error</string>
+    <string name="http_token_error">login failed,please try again</string>
+    <string name="http_data_explain_error">Data parsing exception,please wait</string>
+    <string name="http_server_out_time">timeout error ,please wait and try again</string>
+    <string name="http_network_error">request failed,check net</string>
+    <string name="http_response_error">response error,please wait and try again</string>
+    <string name="http_server_error">Connect server error</string>
+    <string name="http_request_cancel">request interrupt</string>
 </resources>

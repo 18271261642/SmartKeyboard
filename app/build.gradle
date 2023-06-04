@@ -83,4 +83,10 @@ dependencies {
     implementation 'me.relex:circleindicator:2.1.6'
 
     implementation 'com.github.Baseflow:PhotoView:2.3.0'
+
+    implementation 'com.squareup.okhttp3:okhttp:3.12.13'
+
+    implementation 'com.github.getActivity:EasyHttp:11.0'
+    // Gson 解析容错：https://github.com/getActivity/GsonFactory
+    implementation 'com.github.getActivity:GsonFactory:5.2'
 }

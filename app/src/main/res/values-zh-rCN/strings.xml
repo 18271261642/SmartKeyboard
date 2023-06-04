@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+    <string name="string_clock_style">时钟样式</string>
+    <string name="string_alarm_clock">闹钟</string>
+    <string name="string_setting_screen_style">屏保样式</string>
+    <string name="string_setting_note">备忘录</string>
+    <string name="string_no_device_added">当前暂无设备连接</string>
+    <string name="string_add_device">添加设备</string>
     <string name="string_invalid_value">传入非法值!</string>
     <string name="string_upload_animat">上传动画</string>
     <string name="string_gif_tips_desc">更换单图和GIF图片尺寸分辨率均需大于320*172，无大小限制</string>
@@ -118,5 +124,17 @@
     <string name="string_cancel">取消</string>
     <string name="string_last_txt">最新的</string>
     <string name="string_and">和</string>
+
+    <string name="http_loading">加载中&#8230;</string>
+
+    <string name="http_unknown_error">请求出错，未知错误</string>
+    <string name="http_token_error">登录失效，请重新登录</string>
+    <string name="http_data_explain_error">数据解析异常，请稍后</string>
+    <string name="http_server_out_time">服务器请求超时，请稍后再试</string>
+    <string name="http_network_error">请求失败，请检查网络设置</string>
+    <string name="http_response_error">服务器响应异常，请稍后再试</string>
+    <string name="http_server_error">服务器连接异常，请稍后再试</string>
+    <string name="http_request_cancel">请求被中断，请重试</string>
+
 
 </resources>

@@ -18,4 +18,8 @@
     <!--记事本输入框标题-->
     <color name="color_note_title_color">#999999</color>
     <color name="color_note_content_color">#333333</color>
+
+
+    <!--二代主题颜色-->
+    <color name="second_theme_color">#191C24</color>
 </resources>

@@ -20,6 +20,7 @@ import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.dialog.NoticeDialog
 import com.app.smartkeyboard.dialog.ShowPrivacyDialogView
+import com.app.smartkeyboard.second.SecondHomeActivity
 import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.utils.BonlalaUtils
 import com.app.smartkeyboard.utils.MmkvUtils
@@ -67,8 +68,8 @@ class MainActivity : AppActivity() {
         setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
 
         findViewById<ImageView>(R.id.titleImgView).setOnLongClickListener {
-            startActivity(LogActivity::class.java)
-
+           // startActivity(LogActivity::class.java)
+            startActivity(SecondHomeActivity::class.java)
             true
         }
         val intentFilter = IntentFilter()
