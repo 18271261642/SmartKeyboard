@@ -17,6 +17,7 @@ class DialHomeActivity : AppActivity() {
     //自定义
     private var dialHomeCustomizeTv : ShapeTextView ?= null
 
+
     override fun getLayoutId(): Int {
         return R.layout.activity_dial_home_layout
     }

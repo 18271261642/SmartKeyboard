@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+
+    <string name="string_playback_speed">Playback speed</string>
+    <string name="string_fast">Fast</string>
+    <string name="string_slowest">Slowest</string>
+    <string name="string_custom_speed">Custom speed</string>
     <string name="string_clock_style">时钟样式</string>
     <string name="string_alarm_clock">闹钟</string>
     <string name="string_setting_screen_style">屏保样式</string>

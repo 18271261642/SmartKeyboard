@@ -164,6 +164,20 @@
 
             </com.hjq.shape.layout.ShapeConstraintLayout>
 
+            <com.hjq.shape.view.ShapeTextView
+                android:id="@+id/dialHomeCustomSpeedTv"
+                android:layout_width="@dimen/dp_200"
+                android:layout_height="wrap_content"
+                android:text="@string/string_custom_speed"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                app:shape_radius="@dimen/dp_15"
+                android:gravity="center"
+                android:padding="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_20"
+                app:shape_solidColor="#77CBE5"
+                app:shape_solidPressedColor="#5077CBE5"/>
+
         </LinearLayout>
 
 

@@ -70,6 +70,8 @@ class CustomDialActivity : AppActivity() {
     //相册
     private var cusDialAlbumLayout : ShapeConstraintLayout ?= null
 
+    private var dialHomeCustomSpeedTv : ShapeTextView ?= null
+
 
     //对象
     private var dialBean = DialCustomBean()
@@ -127,6 +129,7 @@ class CustomDialActivity : AppActivity() {
     }
 
     override fun initView() {
+        dialHomeCustomSpeedTv = findViewById(R.id.dialHomeCustomSpeedTv)
         customDialTitleBar = findViewById(R.id.customDialTitleBar)
         gifLogTv = findViewById(R.id.gifLogTv)
         cusDialAlbumLayout = findViewById(R.id.cusDialAlbumLayout)
@@ -136,7 +139,8 @@ class CustomDialActivity : AppActivity() {
         customSetDialTv = findViewById(R.id.customSetDialTv)
       //  logTv = findViewById(R.id.logTv)
 
-        setOnClickListener(customSelectImgView, customSetDialTv,cusDialAlbumLayout,cusDialCameraLayout)
+        setOnClickListener(customSelectImgView, customSetDialTv,cusDialAlbumLayout
+            ,cusDialCameraLayout,dialHomeCustomSpeedTv)
 
         findViewById<TextView>(R.id.tmpTv1).setOnClickListener {
 
@@ -229,6 +233,10 @@ class CustomDialActivity : AppActivity() {
             //相机
             R.id.cusDialCameraLayout->{
                 checkCamera()
+            }
+
+            R.id.dialHomeCustomSpeedTv->{
+                startActivity(CustomSpeedActivity::class.java)
             }
         }
     }

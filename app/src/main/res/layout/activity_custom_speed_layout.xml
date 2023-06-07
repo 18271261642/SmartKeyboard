@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/ic_home_bg"
+    android:layout_height="match_parent">
+
+
+    <com.hjq.bar.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        app:leftIcon="@drawable/ic_white_left_back"/>
+
+
+    <ImageView
+        android:id="@+id/previewGifImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/dp_50"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_20"
+        android:layout_height="wrap_content">
+
+
+
+        <TextView
+            android:id="@+id/customSpeedSlowestTv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16"
+            android:text="@string/string_slowest"/>
+
+
+        <TextView
+            android:layout_marginTop="@dimen/dp_10"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:text="@string/string_fast"/>
+
+
+        <TextView
+            android:id="@+id/seekBarValueTv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="@dimen/sp_20"
+            android:text="5"/>
+
+
+        <SeekBar
+            android:id="@+id/customSeekBar"
+            app:layout_constraintTop_toBottomOf="@id/customSpeedSlowestTv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="match_parent"
+            android:thumb="@drawable/seekbar_thumb"
+            android:progressDrawable="@drawable/seekbar_progress"
+            android:layout_height="@dimen/dp_30"/>
+
+
+
+
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@id/customSeekBar"
+           app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/dp_30"
+
+            android:textSize="@dimen/sp_20"
+            android:text="@string/string_playback_speed"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

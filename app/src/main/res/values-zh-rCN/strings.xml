@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+    <string name="string_playback_speed">播放速度</string>
+    <string name="string_fast">最快</string>
+    <string name="string_slowest">最慢</string>
+    <string name="string_custom_speed">自定义速度</string>
     <string name="string_clock_style">时钟样式</string>
     <string name="string_alarm_clock">闹钟</string>
     <string name="string_setting_screen_style">屏保样式</string>
