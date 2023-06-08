@@ -1,9 +1,15 @@
 package com.app.smartkeyboard.utils;
 
+import android.graphics.Color;
+
+import com.app.smartkeyboard.gif.AnimatedGifEncoder;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileU {
 
@@ -45,6 +51,8 @@ public class FileU {
             }
         }
     }
+
+
 
 
 }

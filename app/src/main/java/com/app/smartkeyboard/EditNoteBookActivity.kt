@@ -97,7 +97,7 @@ class EditNoteBookActivity : AppActivity() {
     private fun queryNoteBookData(timeStr : String){
         val dataBean = DbManager.getInstance().queryNoteBookByTime(timeStr)
         if(dataBean != null){
-            editNoteBookTitleTv?.text = "编辑"
+            editNoteBookTitleTv?.text =resources.getString(R.string.string_edit)
             editNoteBookTitleEdit?.setText(dataBean.noteTitle.toString())
             editNoteBookTimeTv?.text = BikeUtils.formatKeyboardTime(dataBean.noteTimeLong,this)
             editNoteBookEditText?.setText(dataBean.noteContent)

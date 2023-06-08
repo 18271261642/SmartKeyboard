@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+    <string name="string_edit">Edit</string>
     <string name="string_playback_speed">Playback speed</string>
     <string name="string_fast">Fast</string>
     <string name="string_slowest">Slowest</string>

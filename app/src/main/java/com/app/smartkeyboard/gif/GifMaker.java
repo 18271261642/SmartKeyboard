@@ -78,7 +78,7 @@ public class GifMaker {
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         encoder.start(bos);
-        encoder.setRepeat(1);
+        encoder.setRepeat(0);
         encoder.setDelay(delay);
         final int length = source.size();
         for (int i = 0; i < length; i++) {
@@ -86,9 +86,9 @@ public class GifMaker {
             if (bmp == null) {
                 continue;
             }
-            Bitmap thumb = ThumbnailUtils.extractThumbnail(bmp, bmp.getWidth() / mScale, bmp.getHeight() / mScale, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+           // Bitmap thumb = ThumbnailUtils.extractThumbnail(bmp, bmp.getWidth() / mScale, bmp.getHeight() / mScale, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
             try {
-                encoder.addFrame(thumb);
+                encoder.addFrame(bmp);
                 if (mGifListener != null) {
                     mGifListener.onMake(i, length);
                 }
