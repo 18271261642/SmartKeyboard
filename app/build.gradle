@@ -89,4 +89,6 @@ dependencies {
     implementation 'com.github.getActivity:EasyHttp:11.0'
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
     implementation 'com.github.getActivity:GsonFactory:5.2'
+
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
 }

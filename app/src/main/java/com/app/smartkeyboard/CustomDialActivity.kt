@@ -38,6 +38,7 @@ import com.hjq.shape.view.ShapeTextView
 import com.hjq.toast.ToastUtils
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -894,7 +895,8 @@ class CustomDialActivity : AppActivity() {
             //得到C的数组
             val resultCArray = Utils.hexStringToByte(cByteStr.toString())
             //得到B的数组
-            val resultBArray = KeyBoardConstant.dealWidthBData(gifList.size)
+            val gifSpeed = MmkvUtils.getGifSpeed()
+            val resultBArray = KeyBoardConstant.dealWidthBData(gifList.size,gifSpeed)
 
             val resultAllArray = KeyBoardConstant.getGifAArrayData(gifList.size,resultBArray,resultCArray,resultDArray)
 

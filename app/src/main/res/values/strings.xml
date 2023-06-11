@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+    <string name="string_ota_state">State:</string>
+    <string name="string_firmware_upgrade">Firmware Upgrade</string>
+    <string name="string_last_version">Last Version: %s</string>
+    <string name="string_current_version">Current Version: %s</string>
+    <string name="string_edit">Edit</string>
     <string name="string_playback_speed">Playback speed</string>
     <string name="string_fast">Fast</string>
     <string name="string_slowest">Slowest</string>
