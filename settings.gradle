@@ -10,6 +10,7 @@ pluginManagement {
         maven { url 'https://repo.huaweicloud.com/repository/maven/' }
         // JitPack 远程仓库：https://jitpack.io
         maven { url 'https://jitpack.io' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
 dependencyResolutionManagement {
@@ -24,6 +25,7 @@ dependencyResolutionManagement {
         maven { url 'https://repo.huaweicloud.com/repository/maven/' }
         // JitPack 远程仓库：https://jitpack.io
         maven { url 'https://jitpack.io' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
 rootProject.name = "SmartKeyboard"

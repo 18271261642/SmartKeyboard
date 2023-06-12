@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -18,6 +19,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.app.smartkeyboard.action.ActivityManager
 import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.ble.ConnStatus
+import com.app.smartkeyboard.ble.ota.OtaDialogView
 import com.app.smartkeyboard.dialog.NoticeDialog
 import com.app.smartkeyboard.dialog.ShowPrivacyDialogView
 import com.app.smartkeyboard.second.SecondHomeActivity
@@ -115,6 +117,8 @@ class MainActivity : AppActivity() {
         super.onResume()
         //showOpenNotifyDialog()
         showVersion()
+
+       // showOtaDialog()
     }
 
 
@@ -377,5 +381,20 @@ class MainActivity : AppActivity() {
         }catch (e : Exception){
             e.printStackTrace()
         }
+    }
+
+
+    //显示升级的弹窗
+    private fun showOtaDialog(){
+        val dialog = OtaDialogView(this, com.bonlala.base.R.style.BaseDialogTheme)
+        dialog.show()
+        val window = dialog.window
+        val windowLayout = window?.attributes
+        val metrics2: DisplayMetrics = resources.displayMetrics
+        val widthW: Int = (metrics2.widthPixels * 0.9f).toInt()
+        val height : Int = (metrics2.heightPixels * 0.6f).toInt()
+        windowLayout?.width = widthW
+        windowLayout?.height = height
+        window?.attributes = windowLayout
     }
 }

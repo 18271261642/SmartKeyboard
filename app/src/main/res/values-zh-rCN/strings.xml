@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+
+    <string name="string_ota_state">状态:</string>
+    <string name="string_firmware_upgrade">固件升级</string>
+    <string name="string_last_version">最新版本: %s</string>
+    <string name="string_current_version">当前版本: %s</string>
+    <string name="string_edit">编辑</string>
     <string name="string_edit">编辑</string>
     <string name="string_playback_speed">播放速度</string>
     <string name="string_fast">最快</string>

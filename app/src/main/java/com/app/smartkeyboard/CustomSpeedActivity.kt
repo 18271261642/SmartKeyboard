@@ -1,23 +1,30 @@
 package com.app.smartkeyboard
 
-import android.net.Uri
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.widget.*
+import android.util.Log
+import android.widget.ImageView
+import android.widget.MediaController
+import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
 import com.app.smartkeyboard.action.AppActivity
-import com.app.smartkeyboard.gif.GIFEncoder
 import com.app.smartkeyboard.gif.GifMaker
 import com.app.smartkeyboard.utils.ImageUtils
+import com.app.smartkeyboard.utils.MmkvUtils
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import pl.droidsonroids.gif.GifDrawable
+import pl.droidsonroids.gif.GifImageView
 import timber.log.Timber
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
-
 
 class CustomSpeedActivity : AppActivity() {
 
@@ -27,17 +34,41 @@ class CustomSpeedActivity : AppActivity() {
 
     private var seekBarValueTv: TextView? = null
 
+    private var gifImageView : GifImageView ?= null
+
+
     var gifPath: String? = null
 
-    private var inputEdit : EditText ?= null
+    private val handlers : Handler = object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if(msg.what == 0x00){
+//                val previewFile = File(gifPath + "/previews.gif")
+//                Timber.e("-----路径="+previewFile.path)
+//                Glide.with(this@CustomSpeedActivity).asGif().load(previewFile).into(previewGifImageView!!)
 
+                val previewFile = File(gifPath + "/previews.gif")
+                Timber.e("-----previewFile="+previewFile.path)
+                val gifDrawable = GifDrawable(previewFile)
+               // gifDrawable.stop()
+                gifImageView?.setImageDrawable(gifDrawable)
+//                gifDrawable.start()
+                Timber.e("-------次数="+gifDrawable.loopCount)
+            }
+
+            if(msg.what == 0x01){
+                val progress = msg.obj as Int
+                saveBitmap(progress)
+            }
+        }
+    }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_custom_speed_layout
     }
 
     override fun initView() {
-        inputEdit = findViewById(R.id.inputEdit)
+        gifImageView = findViewById(R.id.gifImageView)
         seekBarValueTv = findViewById(R.id.seekBarValueTv)
         gifPath = getExternalFilesDir(null)?.path
 
@@ -53,103 +84,88 @@ class CustomSpeedActivity : AppActivity() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 Timber.e("-------prgr="+progress+" "+fromUser)
                 if (fromUser) {
-                    seekBarValueTv?.text = progress.toString()
-                    GlobalScope.launch {
-                        reChangeGif(progress * 30)
-                    }
+
 
                 }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
+                Timber.e("-----onStartTrackingTouch---="+seekBar?.progress)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                Timber.e("-----onStopTrackingTouch---="+seekBar?.progress)
+                val progress = seekBar?.progress
+                seekBarValueTv?.text = progress.toString()
+                GlobalScope.launch {
+                    if (progress != null) {
+                      //  reChangeGif(progress * 30)
 
+                      //  saveBitmap(progress)
+                        val message = handlers.obtainMessage()
+                        message.what = 0x01;
+                        message.obj = progress
+                        handlers.sendMessage(message)
+                    }
+                }
             }
 
         })
-
-        findViewById<Button>(R.id.setEdit).setOnClickListener {
-
-            val input = inputEdit?.text.toString()
-            val number = input.toInt()
-
-            //createGif(number * 30)
-
-            reChangeGif(number * 30)
-        }
     }
 
 
-    private val handlers : Handler = object : Handler(Looper.myLooper()!!){
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-
-            Glide.with(this@CustomSpeedActivity).clear(previewGifImageView!!)
-            val previewFile = gifPath + "/previews.gif"
-            val uri = Uri.fromFile(File(previewFile))
-            Glide.with(this@CustomSpeedActivity).asGif().load(uri).into(previewGifImageView!!)
-
-        }
-    }
 
 
-    private fun createGif(delay : Int){
-        val gifFile = File(gifPath+"/gif.gif")
-        val filePath: String =
-            gifPath+"/1.gif"
-
-        val bitmapList = ImageUtils.getGifDataBitmapNoClip(gifFile)
-
-        val encoder = GIFEncoder()
-        encoder.init(bitmapList.get(0))
-        encoder.start(filePath)
-        encoder.setFrameRate(delay.toFloat())
-        for (i in 1 until bitmapList.size) {
-            encoder.addFrame(bitmapList.get(i))
-        }
-        encoder.finish()
 
 
-        Glide.with(this@CustomSpeedActivity).clear(previewGifImageView!!)
 
-        Glide.with(this@CustomSpeedActivity).asGif().load(gifFile).into(previewGifImageView!!)
 
-    }
 
+    var gifMaker :GifMaker ?= null
 
     //重新生成gif，根据间隔
     private fun reChangeGif( delay :Int) {
-        val gifFile = File(gifPath+"/gif.gif")
-        Timber.e("------gifFIle="+(gifFile?.exists())+" "+delay)
-        if (gifFile.exists() == true) {
+      //  saveBitmap()
+
+        //判断文件是否存在
+        val gifFile = File(gifPath + "/gif.gif")
+        Timber.e("------gifFIle="+(gifFile.exists())+" "+delay)
+        if (gifFile.exists()) {
+
+
+            val tempFile = File(gifPath + "/previews.gif")
+//            if(tempFile.exists()){
+//                tempFile.delete()
+//            }
+
             val bitmapList = ImageUtils.getGifDataBitmapNoClip(gifFile)
+            Timber.e("-------=bitmapList="+bitmapList.size)
 
-            Timber.e("-------=bitmapList="+bitmapList?.size)
-            val perviewFile = File(gifPath + "/previews.gif")
-            if(perviewFile.exists()){
-                val delete = perviewFile.delete()
-                Timber.e("----delete="+delete)
-            }
+            gifMaker = GifMaker(1)
+            gifMaker?.setOnGifListener { current, total ->
+                Log.e("tags", "---22---处理成gif了=" + current + " total=" + total)
+               // handlers.sendEmptyMessageDelayed()
+                if(current+1 == total){
+                    GlobalScope.launch {
+                       // Glide.get(this@CustomSpeedActivity).clearDiskCache()
+                        handlers.sendEmptyMessageDelayed(0x00,300)
+                    }
+                }
 
 
-            val gifMaker = GifMaker(1)
-            gifMaker.setOnGifListener { current, total ->
-                Timber.tag("tags").e("---22---处理成gif了=" + current + " total=" + total)
-
+//                runOnUiThread {
+//                    if (current+1 == total) {
+//                        val previewFile = File(gifPath + "/previews.gif")
+//                        Timber.e("-----previewFile="+previewFile.path)
+//                        val gifDrawable = GifDrawable(previewFile)
+//                        gifImageView?.setImageDrawable(gifDrawable)
+//
+//                    }
+//                }
 
             }
             GlobalScope.launch {
-                val isSuccess = gifMaker.makeGif(bitmapList, gifPath + "/previews.gif",delay)
-                Timber.e("-------isSuccess="+isSuccess+" "+delay)
-                runOnUiThread {
-                    if (isSuccess == true) {
-                        handlers.sendEmptyMessageDelayed(0x00,500)
-
-                    }
-                }
+                gifMaker?.makeGif(bitmapList, gifPath + "/previews.gif",delay)
 
             }
 
@@ -158,63 +174,40 @@ class CustomSpeedActivity : AppActivity() {
 
     override fun initData() {
 
+      val speed = MmkvUtils.getGifSpeed()
+        customSeekBar?.max = 10
+        customSeekBar?.progress = speed
+        saveBitmap(speed)
 
-        saveBitmap()
-
-
-//        reChangeGif(150)
-
-//        //判断文件是否存在
-//        val gifFile = File(gifPath + "/gif.gif")
-//        if (gifFile.exists()) {
-//
-//            val bitmapList = ImageUtils.getGifDataBitmapNoClip(gifFile)
-//
-//
-//            val gifMaker = GifMaker(1)
-//            gifMaker.setOnGifListener { current, total ->
-//                Log.e("tags", "------处理成gif了=" + current + " total=" + total)
-//                runOnUiThread {
-//                    if (total == bitmapList.size) {
-////                        Glide.with(this).clear(previewGifImageView!!)
-////                        val previewFile = gifPath + "/preview.gif"
-////                        Glide.with(this).asGif().load(previewFile).into(previewGifImageView!!)
-//
-//                    }
-//                }
-//
-//
-//            }
-//            GlobalScope.launch {
-//                gifMaker.makeGif(bitmapList, gifPath + "/preview.gif")
-//
-//            }
-//
-//        }
+       // reChangeGif(1 * 30)
     }
 
 
-    private fun saveBitmap() {
+    private fun saveBitmap(speed : Int) {
         //val bitmap = BitmapFactory.decodeResource(resources,R.drawable.gif_speed)
+        seekBarValueTv?.text = speed.toString()
+        val drawable = GifDrawable(resources,R.drawable.gif_preview)
+        drawable.setSpeed(speed.toFloat())
+//        gifImageView?.maxWidth = 1000
+//        gifImageView?.minimumWidth = 1000
+        gifImageView?.setImageDrawable(drawable)
+
+        MmkvUtils.saveGifSpeed(speed)
 
 
-        val file = File(gifPath + "/gif.gif")
-        val assetManager = assets
-
-        val inputStream = assetManager.open("gif_preview.gif")
-
-        val outputStream = FileOutputStream(file)
-        val buffer = ByteArray(1024)
-        while (true) {
-            val bytesRead = inputStream.read(buffer)
-
-            if (bytesRead == -1)
-                break
-            outputStream.write(buffer, 0, bytesRead)
-
-        }
-        inputStream.close()
-        outputStream.close()
+//
+//        val outputStream = FileOutputStream(file)
+//        val buffer = ByteArray(1024)
+//        while (true) {
+//            val bytesRead = inputStream.read(buffer)
+//
+//            if (bytesRead == -1)
+//                break
+//            outputStream.write(buffer, 0, bytesRead)
+//
+//        }
+//        inputStream.close()
+//        outputStream.close()
 
     }
 

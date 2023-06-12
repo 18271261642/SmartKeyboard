@@ -12,6 +12,10 @@ public class MmkvUtils {
     //地址，test环境或preview环境
     private static final String NET_SERVER_KEY = "net_server_key";
 
+
+    //保存设置的gif的速度，整数型
+    private static final String SET_GIF_SPEED = "set_gif_speed";
+
     private final static String SAVE_FILE_KEY = "bonlala_key";
     public static final String TOKEN_KEY = "token_key";
 
@@ -287,5 +291,14 @@ public class MmkvUtils {
     /**保存用户最大心率**/
     public static void saveUserMaxHeart(int heart){
         setSaveObjParams(USER_MAX_HR_KEY,heart);
+    }
+
+
+    public static void saveGifSpeed(int speed){
+        setSaveObjParams(SET_GIF_SPEED,speed);
+    }
+
+    public static int getGifSpeed(){
+        return (int) getSaveParams(SET_GIF_SPEED,1);
     }
 }
