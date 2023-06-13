@@ -17,6 +17,7 @@ import com.app.smartkeyboard.gif.GifMaker
 import com.app.smartkeyboard.utils.ImageUtils
 import com.app.smartkeyboard.utils.MmkvUtils
 import com.bumptech.glide.Glide
+import com.hjq.shape.view.ShapeTextView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
@@ -36,6 +37,8 @@ class CustomSpeedActivity : AppActivity() {
 
     private var gifImageView : GifImageView ?= null
 
+
+    private var cusSpeedSaveTv : ShapeTextView ?= null
 
     var gifPath: String? = null
 
@@ -68,6 +71,7 @@ class CustomSpeedActivity : AppActivity() {
     }
 
     override fun initView() {
+        cusSpeedSaveTv = findViewById(R.id.cusSpeedSaveTv)
         gifImageView = findViewById(R.id.gifImageView)
         seekBarValueTv = findViewById(R.id.seekBarValueTv)
         gifPath = getExternalFilesDir(null)?.path

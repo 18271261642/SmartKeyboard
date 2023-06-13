@@ -6,14 +6,18 @@ import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.app.smartkeyboard.action.ActivityManager
@@ -27,6 +31,7 @@ import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.utils.BonlalaUtils
 import com.app.smartkeyboard.utils.MmkvUtils
 import com.app.smartkeyboard.utils.NotificationUtils
+import com.app.smartkeyboard.viewmodel.KeyBoardViewModel
 import com.blala.blalable.BleConstant
 import com.blala.blalable.listener.OnCommBackDataListener
 import com.hjq.permissions.Permission.POST_NOTIFICATIONS
@@ -41,6 +46,8 @@ import timber.log.Timber
  * 首页面
  */
 class MainActivity : AppActivity() {
+
+    private val viewModel by viewModels<KeyBoardViewModel>()
 
     //记事本
     private var homeNotebookLayout: FrameLayout? = null
@@ -83,6 +90,8 @@ class MainActivity : AppActivity() {
 //        if (Build.VERSION.SDK_INT >= 33) {
 //            XXPermissions.with(this).permission(arrayOf(Manifest.permission.POST_NOTIFICATIONS)).request { permissions, all ->  }
 //        }
+        
+        XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)).request { permissions, allGranted ->  }
     }
 
 
@@ -97,11 +106,17 @@ class MainActivity : AppActivity() {
         if(isConn){
             BaseApplication.getBaseApplication().bleOperate.getDeviceVersionData(object : OnCommBackDataListener{
                 override fun onIntDataBack(value: IntArray?) {
-
+                    Timber.e("------版本好="+ (value?.get(0) ?: 0))
+                   val code = value?.get(0)
+                    if(code != null){
+                        viewModel.checkVersion(this@MainActivity,code)
+                    }
                 }
 
                 override fun onStrDataBack(vararg value: String?) {
                     firmwareVersionTv?.text =  String.format(resources.getString(R.string.string_firmware_version),value[0])
+
+
                 }
 
             })
@@ -117,6 +132,7 @@ class MainActivity : AppActivity() {
         super.onResume()
         //showOpenNotifyDialog()
         showVersion()
+
 
        // showOtaDialog()
     }
@@ -213,6 +229,13 @@ class MainActivity : AppActivity() {
         }
 
         retryConn()
+
+
+        viewModel.firmwareData.observe(this){
+            if(it != null){
+              showUpgradeDialog(it.ota,it.fileName)
+            }
+        }
     }
 
     //显示隐私弹窗
@@ -383,12 +406,64 @@ class MainActivity : AppActivity() {
         }
     }
 
+    private val handlers : Handler = object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if(msg.what == 0x00){
+                val bundle = msg.obj as Bundle
+                val url = bundle.getString("url")
+                val name = bundle.getString("name")
+                val mac = bundle.getString("mac")
+
+                if (url != null) {
+                    showOtaDialog(url,name!!,mac!!)
+                }
+            }
+        }
+    }
+
+    private fun showUpgradeDialog(url : String ,name : String){
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle(resources.getString(R.string.comm_prompt))
+            .setMessage("有新的固件版本，是否升级?")
+            .setCancelable(false)
+            .setPositiveButton(resources.getString(R.string.common_confirm)
+            ) { dialog, which ->
+                dialog?.dismiss()
+                val mac = MmkvUtils.getConnDeviceMac()
+                MmkvUtils.saveConnDeviceMac(null)
+                BaseApplication.getBaseApplication().bleOperate.disConnYakDevice()
+
+                val msg = handlers.obtainMessage()
+                val bundle = Bundle()
+                bundle.putString("url",url)
+                bundle.putString("name",name)
+                bundle.putString("mac",mac)
+                msg.what = 0x00
+                msg.obj = bundle
+                handlers.sendMessageDelayed(msg,1000)
+
+            }
+            .setNegativeButton(resources.getString(R.string.string_cancel)) { dialog, which ->
+                dialog.dismiss()
+            }
+        alertDialog.create().show()
+
+    }
+
+    private var dialog : OtaDialogView ?= null
 
     //显示升级的弹窗
-    private fun showOtaDialog(){
-        val dialog = OtaDialogView(this, com.bonlala.base.R.style.BaseDialogTheme)
-        dialog.show()
-        val window = dialog.window
+    private fun showOtaDialog(url : String ,fileName :String,mac : String){
+        if(dialog == null){
+            dialog = OtaDialogView(this, com.bonlala.base.R.style.BaseDialogTheme)
+        }
+
+        dialog?.show()
+        dialog?.downloadFile(url,fileName)
+        dialog?.startScanDevice(mac)
+
+        val window = dialog?.window
         val windowLayout = window?.attributes
         val metrics2: DisplayMetrics = resources.displayMetrics
         val widthW: Int = (metrics2.widthPixels * 0.9f).toInt()
