@@ -16,7 +16,7 @@ class KeyBoardViewModel : ViewModel() {
 
 
     //升级的内容
-    var firmwareData = SingleLiveEvent<OtaBean>()
+    var firmwareData = SingleLiveEvent<OtaBean?>()
 
 
     //检查版本

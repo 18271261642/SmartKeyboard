@@ -460,8 +460,8 @@ class MainActivity : AppActivity() {
         }
 
         dialog?.show()
-        dialog?.downloadFile(url,fileName)
-        dialog?.startScanDevice(mac)
+        dialog?.downloadFile(url,fileName,mac)
+      //  dialog?.startScanDevice(mac)
 
         val window = dialog?.window
         val windowLayout = window?.attributes
