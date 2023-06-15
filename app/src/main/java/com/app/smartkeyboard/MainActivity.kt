@@ -387,6 +387,8 @@ class MainActivity : AppActivity() {
                 BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
                 BaseApplication.getBaseApplication().bleOperate.stopScanDevice()
                 showVersion()
+
+                setDialogTxtShow(resources.getString(R.string.string_upgrade_success))
             }
             if(action == BleConstant.BLE_DIS_CONNECT_ACTION){
                 ToastUtils.show(resources.getString(R.string.string_conn_disconn))
@@ -422,10 +424,14 @@ class MainActivity : AppActivity() {
         }
     }
 
+    private var alertDialog : AlertDialog.Builder ?= null
     private fun showUpgradeDialog(url : String ,name : String){
-        val alertDialog = AlertDialog.Builder(this)
-            .setTitle(resources.getString(R.string.comm_prompt))
-            .setMessage("有新的固件版本，是否升级?")
+        if(alertDialog == null){
+            alertDialog = AlertDialog.Builder(this)
+        }
+
+        alertDialog!!.setTitle(resources.getString(R.string.comm_prompt))
+            .setMessage(resources.getString(R.string.string_has_new_ota))
             .setCancelable(false)
             .setPositiveButton(resources.getString(R.string.common_confirm)
             ) { dialog, which ->
@@ -447,7 +453,7 @@ class MainActivity : AppActivity() {
             .setNegativeButton(resources.getString(R.string.string_cancel)) { dialog, which ->
                 dialog.dismiss()
             }
-        alertDialog.create().show()
+        alertDialog?.create()?.show()
 
     }
 
@@ -455,7 +461,8 @@ class MainActivity : AppActivity() {
     //设置弹窗显示的文字
     private fun setDialogTxtShow(txt : String){
         if(dialog != null && dialog!!.isShowing){
-
+            dialog?.setStateShow(txt)
+            dialog?.visibilityOrGone(true)
         }
     }
 

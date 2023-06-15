@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,6 @@ public class ImageUtils {
 
 
     public static List<Bitmap> getGifDataBitmap(File gifFile) {
-        com.bumptech.glide.load.resource.gif.GifDrawable g;
         List<Bitmap> lt = new ArrayList<>();
         try {
             GifDrawable gifDrawable = new GifDrawable(gifFile);
@@ -107,7 +107,19 @@ public class ImageUtils {
             return lt;
         }
 
+    }
 
+
+
+    public static int getGifAnimationDuration(File gifFile){
+        try {
+            GifDrawable gifDrawable = new GifDrawable(gifFile);
+            int duration = gifDrawable.getDuration();
+            return duration;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
 

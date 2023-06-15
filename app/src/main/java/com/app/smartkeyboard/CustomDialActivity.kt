@@ -575,7 +575,11 @@ class CustomDialActivity : AppActivity() {
     private fun setSelectImg(localUrl: String, code: Int) {
         Timber.e("--------选择图片=$localUrl")
         if(localUrl.contains(".gif")){
-            dealWidthGif(localUrl)
+           // dealWidthGif(localUrl)
+
+            val intent = Intent(this@CustomDialActivity,CustomSpeedActivity::class.java)
+            intent.putExtra("file_url",localUrl)
+            startActivityForResult(intent,1001)
             return
         }
 
@@ -713,6 +717,11 @@ class CustomDialActivity : AppActivity() {
                     }
 
                 })
+
+            }
+
+
+            if(requestCode == 1001){
 
             }
         }

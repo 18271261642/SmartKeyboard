@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+
+    <string name="string_has_new_ota">There is a new firmware, upgrade or not?</string>
+    <string name="string_downloading">Downloading</string>
+    <string name="string_start_download">Start downloading file</string>
     <string name="string_upgrade_conning">connecting..</string>
     <string name="string_upgrade_restart">Upgrade completed,restarting..</string>
 

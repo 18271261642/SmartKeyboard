@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +21,11 @@ import androidx.appcompat.app.AppCompatDialog;
 import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.R;
 import com.app.smartkeyboard.utils.BikeUtils;
+import com.app.smartkeyboard.widget.CusScheduleView;
 import com.hjq.http.EasyHttp;
 import com.hjq.http.listener.OnDownloadListener;
+import com.hjq.shape.view.ShapeTextView;
+import com.hjq.toast.ToastUtils;
 import com.inuker.bluetooth.library.search.SearchResult;
 import com.inuker.bluetooth.library.search.response.SearchResponse;
 import java.io.BufferedInputStream;
@@ -79,8 +83,13 @@ public class OtaDialogView extends AppCompatDialog {
 
     private int writePrecent;
 
+    private ShapeTextView dialogUpgradeCancelTv;
+    private CusScheduleView cusScheduleView;
 
     private String connMac;
+
+    //是否是升级中的断开，升级中的断开不关闭弹窗
+    private boolean isUpgradeDisConn = false;
 
     private final Handler handler = new Handler(Looper.myLooper()){
         @Override
@@ -91,23 +100,25 @@ public class OtaDialogView extends AppCompatDialog {
                 BaseApplication.getBaseApplication().getBleOperate().stopScanDevice();
             }
 
-            if(msg.what == 0x66){
+            if(msg.what == 0x81){
                 upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_conning));
             }
 
             if(msg.what == 0){
                 Timber.e("---------写入成功");
+                isUpgradeDisConn = true;
                 upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_success));
                 BaseApplication.getBaseApplication().getConnStatusService().autoConnDevice(connMac,false);
 
                 upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_restart));
-                handler.sendEmptyMessageDelayed(0x66,3000);
+                handler.sendEmptyMessageDelayed(0x81,4000);
             }
 
             if(msg.what == 1){  //发送进度
                 Timber.e("-------发送进度="+writePrecent);
                 if(upgradeSeekBar != null){
                     upgradeSeekBar.setProgress(writePrecent);
+                    cusScheduleView.setCurrScheduleValue(writePrecent);
                     upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrading)+":"+writePrecent+"%");
                 }
             }
@@ -124,11 +135,17 @@ public class OtaDialogView extends AppCompatDialog {
 
 
             if(msg.what == 7){  //断开连接
-                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed)+7);
-                dismiss();
+                if(!isUpgradeDisConn){
+                    upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed)+7);
+                    ToastUtils.show(getContext().getResources().getString(R.string.string_upgrade_failed)+7);
+
+                    dismiss();
+                }
+
             }
             if(msg.what == 8){  //未找到对应的ota端口
                 upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed)+8);
+                ToastUtils.show(getContext().getResources().getString(R.string.string_upgrade_failed)+8);
                 dismiss();
             }
 
@@ -181,12 +198,22 @@ public class OtaDialogView extends AppCompatDialog {
     }
 
     protected void initViews(){
+        cusScheduleView = findViewById(R.id.cusScheduleView);
+        dialogUpgradeCancelTv = findViewById(R.id.dialogUpgradeCancelTv);
         upgradeStateTv = findViewById(R.id.upgradeStateTv);
         lastVersionTv = findViewById(R.id.lastVersionTv);
         currentVersionTv = findViewById(R.id.currentVersionTv);
         upgradeSeekBar = findViewById(R.id.upgradeSeekBar);
         assert upgradeSeekBar != null;
         upgradeSeekBar.setMax(100);
+        cusScheduleView.setAllScheduleValue(100);
+
+        dialogUpgradeCancelTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
     }
 
 
@@ -197,6 +224,18 @@ public class OtaDialogView extends AppCompatDialog {
     }
 
 
+    public void setStateShow(String txt){
+        if(upgradeStateTv != null){
+            upgradeStateTv.setText(txt);
+        }
+
+    }
+
+
+    //显示或隐隐藏按钮
+    public void visibilityOrGone(boolean isShow){
+        dialogUpgradeCancelTv.setVisibility(isShow ? View.VISIBLE : View.GONE);
+    }
 
 
     //开启扫描，断开后开启扫描，扫描到了使用ota的连接
@@ -327,15 +366,17 @@ public class OtaDialogView extends AppCompatDialog {
 
     //下载文件
     public void downloadFile(String downUrl,String fileName,String mac){
+        isUpgradeDisConn = false;
         sdFile = null;
-        upgradeStateTv.setText("开始下载固件包..");
+        upgradeStateTv.setText(getContext().getResources().getString(R.string.string_start_download));
+        visibilityOrGone(false);
         EasyHttp.download(this).url(downUrl)
                 .file(downloadFileUrl+fileName)
                 .listener(new OnDownloadListener() {
                     @Override
                     public void onStart(File file) {
                         Timber.e("----onStart-----");
-                        upgradeStateTv.setText("固件包下载中..");
+                        upgradeStateTv.setText(getContext().getResources().getString(R.string.string_downloading)+"..");
                     }
 
                     @Override
@@ -354,6 +395,7 @@ public class OtaDialogView extends AppCompatDialog {
                     @Override
                     public void onError(File file, Exception e) {
                         upgradeStateTv.setText("固件包下载失败"+e.getMessage());
+                        visibilityOrGone(true);
                         Timber.e("----onError-----=%s", e.getMessage());
                         sdFile = null;
                     }

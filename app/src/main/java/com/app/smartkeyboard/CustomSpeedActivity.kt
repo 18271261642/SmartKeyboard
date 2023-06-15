@@ -40,6 +40,8 @@ class CustomSpeedActivity : AppActivity() {
 
     private var gifImageView : GifImageView ?= null
 
+    //是否是自定义的速度，选择gif后的自定义速度
+    private var isCustomSped = false
 
     private var cusSpeedSaveTv : ShapeTextView ?= null
 
@@ -57,6 +59,12 @@ class CustomSpeedActivity : AppActivity() {
                 Timber.e("-----previewFile="+previewFile.path)
                 val gifDrawable = GifDrawable(previewFile)
                // gifDrawable.stop()
+                val m = resources.displayMetrics
+                val width = m.widthPixels
+                val height = m.heightPixels
+                Timber.e("-----widht="+width)
+                gifImageView?.minimumWidth = 800
+                gifImageView?.minimumHeight = 300
                 gifImageView?.setImageDrawable(gifDrawable)
 //                gifDrawable.start()
                 Timber.e("-------次数="+gifDrawable.loopCount)
@@ -90,11 +98,7 @@ class CustomSpeedActivity : AppActivity() {
         customSeekBar?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                Timber.e("-------prgr="+progress+" "+fromUser)
-                if (fromUser) {
-
-
-                }
+             
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -185,37 +189,60 @@ class CustomSpeedActivity : AppActivity() {
       val speed = MmkvUtils.getGifSpeed()
         customSeekBar?.max = 10
         customSeekBar?.progress = speed
-        saveBitmap(speed)
+
+        val url = intent.getSerializableExtra("file_url")
+        if(url != null){
+            isCustomSped = true
+            //生成gif
+            createGif(url as String)
+
+        }else{
+            isCustomSped = false
+            saveBitmap(speed)
+        }
+
+
+
 
        // reChangeGif(1 * 30)
+    }
+
+
+    //生成gif
+    private fun createGif(url : String){
+        val gifList = ImageUtils.getGifDataBitmap(File(url))
+        val duration = ImageUtils.getGifAnimationDuration(File(url))
+        Timber.e("------duraing="+duration)
+        gifMaker = GifMaker(1)
+        gifMaker?.setOnGifListener { current, total ->
+            if (current + 1 == total) {
+                GlobalScope.launch {
+                    // Glide.get(this@CustomSpeedActivity).clearDiskCache()
+                    handlers.sendEmptyMessageDelayed(0x00, 300)
+                }
+            }
+        }
+        GlobalScope.launch {
+            gifMaker?.makeGif(gifList, gifPath + "/previews.gif",300)
+        }
     }
 
 
     private fun saveBitmap(speed : Int) {
         //val bitmap = BitmapFactory.decodeResource(resources,R.drawable.gif_speed)
         seekBarValueTv?.text = speed.toString()
-        val drawable = GifDrawable(resources,R.drawable.gif_preview)
+        var drawable : GifDrawable ?= null
+        if(isCustomSped){
+            val file = File(gifPath + "/previews.gif")
+            drawable = GifDrawable(file)
+        }else{
+            drawable = GifDrawable(resources,R.drawable.gif_preview)
+        }
+
         drawable.setSpeed(speed.toFloat())
-//        gifImageView?.maxWidth = 1000
-//        gifImageView?.minimumWidth = 1000
         gifImageView?.setImageDrawable(drawable)
 
         MmkvUtils.saveGifSpeed(speed)
-
-
-//
-//        val outputStream = FileOutputStream(file)
-//        val buffer = ByteArray(1024)
-//        while (true) {
-//            val bytesRead = inputStream.read(buffer)
-//
-//            if (bytesRead == -1)
-//                break
-//            outputStream.write(buffer, 0, bytesRead)
-//
-//        }
-//        inputStream.close()
-//        outputStream.close()
 
     }
 
