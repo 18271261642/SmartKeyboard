@@ -2,7 +2,6 @@ package com.app.smartkeyboard.ble.ota;
 
 import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
 import static android.content.ContentValues.TAG;
-
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
@@ -15,11 +14,9 @@ import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialog;
-
 import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.R;
 import com.app.smartkeyboard.utils.BikeUtils;
@@ -27,18 +24,14 @@ import com.hjq.http.EasyHttp;
 import com.hjq.http.listener.OnDownloadListener;
 import com.inuker.bluetooth.library.search.SearchResult;
 import com.inuker.bluetooth.library.search.response.SearchResponse;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Timer;
 import java.util.UUID;
-
 import timber.log.Timber;
-
 public class OtaDialogView extends AppCompatDialog {
 
     //固件包下载的地址
@@ -120,26 +113,31 @@ public class OtaDialogView extends AppCompatDialog {
             }
 
             if(msg.what == 5){  //找到端口
-
+                upgradeStateTv.setText("找到端口");
             }
 
             if(msg.what == 0x06){   //使能成功
-                if(sdFile != null && sdFile.exists()){
-                    File otaFile = sdFile;
-                    startUpgrade(otaFile);
-                }
+                upgradeStateTv.setText("使能成功");
+               handler.sendEmptyMessageDelayed(0x66,1000);
 
             }
 
 
             if(msg.what == 7){  //断开连接
-                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed));
+                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed)+7);
+                dismiss();
+            }
+            if(msg.what == 8){  //未找到对应的ota端口
+                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed)+8);
                 dismiss();
             }
 
-            if(msg.what == 8){  //未找到对应的ota端口
-                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed));
-                dismiss();
+            if(msg.what == 0x66){
+                if(sdFile != null ){
+
+                    File otaFile = sdFile;
+                    startUpgrade(otaFile);
+                }
             }
         }
     };
@@ -218,8 +216,10 @@ public class OtaDialogView extends AppCompatDialog {
                 Timber.e("--------扫描的mac="+mac);
                 if(!BikeUtils.isEmpty(mac) && mac.equals(goalMac)){
                     Timber.e("---------扫描到了mac="+mac);
+                    upgradeStateTv.setText("扫描到了目标设备，开始连接");
                    boolean isConn =  bleclass.connect(mac);
                     Timber.e("------连接状态="+isConn);
+
                     handler.sendEmptyMessageDelayed(0x88,500);
                     return;
                 }
@@ -326,14 +326,16 @@ public class OtaDialogView extends AppCompatDialog {
 
 
     //下载文件
-    public void downloadFile(String downUrl,String fileName){
+    public void downloadFile(String downUrl,String fileName,String mac){
         sdFile = null;
+        upgradeStateTv.setText("开始下载固件包..");
         EasyHttp.download(this).url(downUrl)
                 .file(downloadFileUrl+fileName)
                 .listener(new OnDownloadListener() {
                     @Override
                     public void onStart(File file) {
                         Timber.e("----onStart-----");
+                        upgradeStateTv.setText("固件包下载中..");
                     }
 
                     @Override
@@ -344,11 +346,14 @@ public class OtaDialogView extends AppCompatDialog {
                     @Override
                     public void onComplete(File file) {
                         Timber.e("------onComplete---=%s",file.getPath());
+                        upgradeStateTv.setText("固件包下载完成，连接中..");
                         sdFile = file;
+                        startScanDevice(mac);
                     }
 
                     @Override
                     public void onError(File file, Exception e) {
+                        upgradeStateTv.setText("固件包下载失败"+e.getMessage());
                         Timber.e("----onError-----=%s", e.getMessage());
                         sdFile = null;
                     }
@@ -365,10 +370,12 @@ public class OtaDialogView extends AppCompatDialog {
     //开始升级
     protected void startUpgrade(File file){
         Timber.e("-------开始升级=%s",file.getPath());
+        upgradeStateTv.setText("开始升级"+bleclass.isDisconnected);
         if(bleclass.isDisconnected) {
             Toast.makeText(getContext(), "未连接", Toast.LENGTH_SHORT).show();
             return;
         }
+        Timber.e("-------开始升级=file.exists()"+file.exists());
         if(!file.exists()){
             return;
         }
@@ -392,7 +399,7 @@ public class OtaDialogView extends AppCompatDialog {
 
     public void doSendFileByBluetooth(String filePath)
             throws FileNotFoundException {
-        if (!filePath.equals(null)) {
+        if (filePath != null) {
             int read_count;
             int i = 0;
             int addr;
