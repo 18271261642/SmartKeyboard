@@ -78,7 +78,7 @@
         android:layout_width="match_parent"
         android:thumb="@null"
         android:progressDrawable="@drawable/upgrade_seekbar"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_20"
         android:layout_height="@dimen/dp_15"/>
     </LinearLayout>
 

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+    <string name="string_upgrade_conning">connecting..</string>
+    <string name="string_upgrade_restart">Upgrade completed,restarting..</string>
+
     <string name="string_upgrade_failed">Upgrade failed, please upgrade again</string>
     <string name="string_upgrade_success">Upgrade successful</string>
     <string name="string_upgrading">Upgrading</string>

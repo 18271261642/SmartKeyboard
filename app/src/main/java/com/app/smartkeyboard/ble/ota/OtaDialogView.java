@@ -98,12 +98,17 @@ public class OtaDialogView extends AppCompatDialog {
                 BaseApplication.getBaseApplication().getBleOperate().stopScanDevice();
             }
 
+            if(msg.what == 0x66){
+                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_conning));
+            }
+
             if(msg.what == 0){
                 Timber.e("---------写入成功");
                 upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_success));
                 BaseApplication.getBaseApplication().getConnStatusService().autoConnDevice(connMac,false);
-                dismiss();
 
+                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_restart));
+                handler.sendEmptyMessageDelayed(0x66,3000);
             }
 
             if(msg.what == 1){  //发送进度

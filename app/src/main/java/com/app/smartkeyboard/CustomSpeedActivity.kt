@@ -7,6 +7,9 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
 import android.widget.ImageView
 import android.widget.MediaController
 import android.widget.SeekBar
@@ -82,6 +85,7 @@ class CustomSpeedActivity : AppActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             customSeekBar?.min = 1
         }
+
 
         customSeekBar?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+
+    <string name="string_upgrade_conning">连接中..</string>
+    <string name="string_upgrade_restart">升级完成,正在重启,请稍后..</string>
+    
     <string name="string_upgrade_failed">升级失败，请重新升级</string>
     <string name="string_upgrade_success">升级成功</string>
     <string name="string_upgrading">升级中</string>

@@ -451,6 +451,15 @@ class MainActivity : AppActivity() {
 
     }
 
+
+    //设置弹窗显示的文字
+    private fun setDialogTxtShow(txt : String){
+        if(dialog != null && dialog!!.isShowing){
+
+        }
+    }
+
+
     private var dialog : OtaDialogView ?= null
 
     //显示升级的弹窗
