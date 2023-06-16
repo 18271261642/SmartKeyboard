@@ -22,10 +22,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.app.smartkeyboard.action.ActivityManager
 import com.app.smartkeyboard.action.AppActivity
+import com.app.smartkeyboard.adapter.OnCommItemClickListener
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.ble.ota.OtaDialogView
 import com.app.smartkeyboard.dialog.NoticeDialog
 import com.app.smartkeyboard.dialog.ShowPrivacyDialogView
+import com.app.smartkeyboard.dialog.UpgradeDialogView
 import com.app.smartkeyboard.second.SecondHomeActivity
 import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.utils.BonlalaUtils
@@ -37,6 +39,7 @@ import com.blala.blalable.listener.OnCommBackDataListener
 import com.hjq.permissions.Permission.POST_NOTIFICATIONS
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
+import kotlinx.android.synthetic.main.dialog_show_upgrade_layout.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -424,36 +427,34 @@ class MainActivity : AppActivity() {
         }
     }
 
-    private var alertDialog : AlertDialog.Builder ?= null
-    private fun showUpgradeDialog(url : String ,name : String){
-        if(alertDialog == null){
-            alertDialog = AlertDialog.Builder(this)
-        }
+    private var upgradeDialogView : UpgradeDialogView  ?= null
 
-        alertDialog!!.setTitle(resources.getString(R.string.comm_prompt))
-            .setMessage(resources.getString(R.string.string_has_new_ota))
-            .setCancelable(false)
-            .setPositiveButton(resources.getString(R.string.common_confirm)
-            ) { dialog, which ->
-                dialog?.dismiss()
+
+    private fun showUpgradeDialog(url : String ,name : String){
+        if(upgradeDialogView == null){
+            upgradeDialogView = UpgradeDialogView(this, com.bonlala.base.R.style.BaseDialogTheme)
+        }
+        if(!upgradeDialogView!!.isShowing){
+            upgradeDialogView?.show()
+        }
+        upgradeDialogView?.setOnDialogClickListener { position ->
+            upgradeDialogView?.dismiss()
+            if (position == 0x01) {
                 val mac = MmkvUtils.getConnDeviceMac()
                 MmkvUtils.saveConnDeviceMac(null)
                 BaseApplication.getBaseApplication().bleOperate.disConnYakDevice()
 
                 val msg = handlers.obtainMessage()
                 val bundle = Bundle()
-                bundle.putString("url",url)
-                bundle.putString("name",name)
-                bundle.putString("mac",mac)
+                bundle.putString("url", url)
+                bundle.putString("name", name)
+                bundle.putString("mac", mac)
                 msg.what = 0x00
                 msg.obj = bundle
-                handlers.sendMessageDelayed(msg,1000)
+                handlers.sendMessageDelayed(msg, 1000)
+            }
+        }
 
-            }
-            .setNegativeButton(resources.getString(R.string.string_cancel)) { dialog, which ->
-                dialog.dismiss()
-            }
-        alertDialog?.create()?.show()
 
     }
 

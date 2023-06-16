@@ -577,6 +577,12 @@ class CustomDialActivity : AppActivity() {
         if(localUrl.contains(".gif")){
            // dealWidthGif(localUrl)
 
+            val gifList = ImageUtils.getGifDataBitmap(File(localUrl))
+            if(gifList.size<1){
+                ToastUtils.show(resources.getString(R.string.string_gig_small))
+                return
+            }
+
             val intent = Intent(this@CustomDialActivity,CustomSpeedActivity::class.java)
             intent.putExtra("file_url",localUrl)
             startActivityForResult(intent,1001)
@@ -682,7 +688,7 @@ class CustomDialActivity : AppActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
+        Timber.e("-----onActivityResult="+requestCode +" "+resultCode)
         if (resultCode == RESULT_OK) {
             if ((requestCode == 0x01 || requestCode == 0x00) && resultCode == RESULT_OK) {
                 if (data == null) return
@@ -719,12 +725,17 @@ class CustomDialActivity : AppActivity() {
                 })
 
             }
-
-
             if(requestCode == 1001){
+                val url = data?.getStringExtra("url")
+                Timber.e("------url="+url)
+                if(url != null){
+                    dealWidthGif(url)
+                }
 
             }
         }
+
+
     }
 
 

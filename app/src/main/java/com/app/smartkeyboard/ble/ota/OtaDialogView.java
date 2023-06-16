@@ -124,11 +124,11 @@ public class OtaDialogView extends AppCompatDialog {
             }
 
             if(msg.what == 5){  //找到端口
-                upgradeStateTv.setText("找到端口");
+               // upgradeStateTv.setText("找到端口");
             }
 
             if(msg.what == 0x06){   //使能成功
-                upgradeStateTv.setText("使能成功");
+              //  upgradeStateTv.setText("使能成功");
                handler.sendEmptyMessageDelayed(0x66,1000);
 
             }
@@ -255,7 +255,7 @@ public class OtaDialogView extends AppCompatDialog {
                 Timber.e("--------扫描的mac="+mac);
                 if(!BikeUtils.isEmpty(mac) && mac.equals(goalMac)){
                     Timber.e("---------扫描到了mac="+mac);
-                    upgradeStateTv.setText("扫描到了目标设备，开始连接");
+                   // upgradeStateTv.setText("扫描到了目标设备，开始连接");
                    boolean isConn =  bleclass.connect(mac);
                     Timber.e("------连接状态="+isConn);
 
@@ -387,7 +387,7 @@ public class OtaDialogView extends AppCompatDialog {
                     @Override
                     public void onComplete(File file) {
                         Timber.e("------onComplete---=%s",file.getPath());
-                        upgradeStateTv.setText("固件包下载完成，连接中..");
+                        upgradeStateTv.setText(getContext().getString(R.string.string_upgrading)+"..");
                         sdFile = file;
                         startScanDevice(mac);
                     }
@@ -412,7 +412,7 @@ public class OtaDialogView extends AppCompatDialog {
     //开始升级
     protected void startUpgrade(File file){
         Timber.e("-------开始升级=%s",file.getPath());
-        upgradeStateTv.setText("开始升级"+bleclass.isDisconnected);
+       // upgradeStateTv.setText("开始升级"+bleclass.isDisconnected);
         if(bleclass.isDisconnected) {
             Toast.makeText(getContext(), "未连接", Toast.LENGTH_SHORT).show();
             return;

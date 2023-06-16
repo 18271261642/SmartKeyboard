@@ -299,6 +299,6 @@ public class MmkvUtils {
     }
 
     public static int getGifSpeed(){
-        return (int) getSaveParams(SET_GIF_SPEED,1);
+        return (int) getSaveParams(SET_GIF_SPEED,5);
     }
 }

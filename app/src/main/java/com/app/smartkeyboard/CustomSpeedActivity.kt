@@ -1,5 +1,7 @@
 package com.app.smartkeyboard
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -44,6 +46,10 @@ class CustomSpeedActivity : AppActivity() {
     private var isCustomSped = false
 
     private var cusSpeedSaveTv : ShapeTextView ?= null
+
+    //传递过来的文件地址
+    private var dialFileUrl : String ?= null
+
 
     var gifPath: String? = null
 
@@ -92,6 +98,18 @@ class CustomSpeedActivity : AppActivity() {
         customSeekBar?.max = 10
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             customSeekBar?.min = 1
+        }
+
+        cusSpeedSaveTv?.setOnClickListener {
+
+            if(isCustomSped){
+                val intent = Intent()
+                intent.putExtra("url",dialFileUrl)
+                this.setResult(Activity.RESULT_OK,intent)
+                finish()
+            }else{
+                finish()
+            }
         }
 
 
@@ -193,6 +211,7 @@ class CustomSpeedActivity : AppActivity() {
         val url = intent.getSerializableExtra("file_url")
         if(url != null){
             isCustomSped = true
+            this.dialFileUrl = url as String?
             //生成gif
             createGif(url as String)
 
@@ -212,6 +231,7 @@ class CustomSpeedActivity : AppActivity() {
     private fun createGif(url : String){
         val gifList = ImageUtils.getGifDataBitmap(File(url))
         val duration = ImageUtils.getGifAnimationDuration(File(url))
+        val speed = MmkvUtils.getGifSpeed()
         Timber.e("------duraing="+duration)
         gifMaker = GifMaker(1)
         gifMaker?.setOnGifListener { current, total ->
@@ -223,7 +243,7 @@ class CustomSpeedActivity : AppActivity() {
             }
         }
         GlobalScope.launch {
-            gifMaker?.makeGif(gifList, gifPath + "/previews.gif",300)
+            gifMaker?.makeGif(gifList, gifPath + "/previews.gif",speed*30)
         }
     }
 
