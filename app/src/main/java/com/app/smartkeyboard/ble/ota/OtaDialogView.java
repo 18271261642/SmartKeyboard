@@ -101,17 +101,23 @@ public class OtaDialogView extends AppCompatDialog {
             }
 
             if(msg.what == 0x81){
+                BaseApplication.getBaseApplication().getConnStatusService().autoConnDevice(connMac,false);
                 upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_conning));
             }
 
             if(msg.what == 0){
-                Timber.e("---------写入成功");
-                isUpgradeDisConn = true;
-                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_success));
-                BaseApplication.getBaseApplication().getConnStatusService().autoConnDevice(connMac,false);
+                try {
+                    Timber.e("---------写入成功");
+                    isUpgradeDisConn = true;
+                    upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_success));
 
-                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_restart));
-                handler.sendEmptyMessageDelayed(0x81,4000);
+                    bleclass.disconnect();
+                    upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_restart));
+                    handler.sendEmptyMessageDelayed(0x81,4000);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
 
             if(msg.what == 1){  //发送进度

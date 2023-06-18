@@ -57,6 +57,7 @@ class CustomSpeedActivity : AppActivity() {
 //                Glide.with(this@CustomSpeedActivity).asGif().load(previewFile).into(previewGifImageView!!)
 
                 val previewFile = File(gifPath + "/previews.gif")
+                dialFileUrl = previewFile.path
                 Timber.e("-----previewFile="+previewFile.path)
                 val gifDrawable = GifDrawable(previewFile)
                // gifDrawable.stop()
@@ -126,17 +127,23 @@ class CustomSpeedActivity : AppActivity() {
                     MmkvUtils.saveGifSpeed(progress)
                 }
                 seekBarValueTv?.text = progress.toString()
-                GlobalScope.launch {
-                    if (progress != null) {
-                      //  reChangeGif(progress * 30)
 
-                      //  saveBitmap(progress)
-                        val message = handlers.obtainMessage()
-                        message.what = 0x01;
-                        message.obj = progress
-                        handlers.sendMessage(message)
-                    }
+
+                if (progress != null) {
+                    changeGifSpeed(progress)
                 }
+
+//                GlobalScope.launch {
+//                    if (progress != null) {
+//                      //  reChangeGif(progress * 30)
+//
+//                      //  saveBitmap(progress)
+//                        val message = handlers.obtainMessage()
+//                        message.what = 0x01;
+//                        message.obj = progress
+//                        handlers.sendMessage(message)
+//                    }
+//                }
             }
 
         })
@@ -185,14 +192,14 @@ class CustomSpeedActivity : AppActivity() {
         val gifList = ImageUtils.getGifDataBitmap(File(url))
         val duration = ImageUtils.getGifAnimationDuration(File(url))
         val speed = MmkvUtils.getGifSpeed()
-        Timber.e("------duraing="+duration)
+        Timber.e("------duraing="+duration+" "+speed)
         gifMaker = GifMaker(1)
         gifMaker?.setOnGifListener { current, total ->
             if (current + 1 == total) {
                 GlobalScope.launch {
                     // Glide.get(this@CustomSpeedActivity).clearDiskCache()
                     val message = handlers.obtainMessage()
-                    message.what = 0x01;
+                    message.what = 0x00
                     message.obj = speed
                     handlers.sendMessageDelayed(message,300)
                    // handlers.sendEmptyMessageDelayed(0x01, 300)
@@ -202,6 +209,27 @@ class CustomSpeedActivity : AppActivity() {
         GlobalScope.launch {
             gifMaker?.makeGif(gifList, gifPath + "/previews.gif",speed*30)
         }
+    }
+
+
+
+    private fun changeGifSpeed(speed : Int){
+        Timber.e("------速度+"+speed)
+        val pickList = ImageUtils.getGifDataBitmap(File(dialFileUrl))
+        val markGif = GifMaker(1)
+        markGif.setOnGifListener { current, total ->
+            if(current+1 == total){
+                val message = handlers.obtainMessage()
+                message.what = 0x00
+                message.obj = speed
+                handlers.sendMessageDelayed(message,300)
+            }
+        }
+        GlobalScope.launch {
+            markGif.makeGif(pickList,gifPath + "/previews.gif",speed*30)
+        }
+
+        MmkvUtils.saveGifSpeed(speed)
     }
 
 
@@ -220,7 +248,7 @@ class CustomSpeedActivity : AppActivity() {
 //            drawable = GifDrawable(resources,R.drawable.gif_preview)
 //        }
         Timber.e("-----速度="+speed+" "+speed*30)
-        drawable.setSpeed(speed.toFloat())
+       drawable.setSpeed(speed.toFloat())
         gifImageView?.minimumWidth = 800
         gifImageView?.minimumHeight = 300
         gifImageView?.setImageDrawable(drawable)

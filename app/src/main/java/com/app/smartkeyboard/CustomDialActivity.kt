@@ -506,7 +506,7 @@ class CustomDialActivity : AppActivity() {
 
             //计算百分比
             var percentValue = CalculateUtils.div(sendPackSize.toDouble(), allPackSize.toDouble(),2)
-            var showPercent = CalculateUtils.mul(percentValue,100.0)
+            var showPercent = CalculateUtils.mul(percentValue,100.0).toInt()
             //gifLogTv?.text = sendPackSize.toString()+"/"+allPackSize+" "+showPercent
             showProgressDialog(resources.getString(R.string.string_sync_ing)+showPercent+"%")
 
@@ -881,6 +881,11 @@ class CustomDialActivity : AppActivity() {
     val cByteStr = StringBuilder()
     //处理gif的图片
     private fun dealWidthGif(gifPath : String ){
+        if(BaseApplication.getBaseApplication().connStatus != ConnStatus.CONNECTED){
+            hideDialog()
+            ToastUtils.show(resources.getString(R.string.string_device_not_connect))
+            return
+        }
         val gifList = ImageUtils.getGifDataBitmap(File(gifPath))
         Timber.e("-------gifList="+gifList.size)
         if(gifList.size == 0){

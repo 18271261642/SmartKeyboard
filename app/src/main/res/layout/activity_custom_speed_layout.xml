@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_10"
             android:layout_marginTop="@dimen/dp_10"
-            android:text="@string/string_slowest"
+            android:text="@string/string_fast"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -53,7 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_10"
             android:layout_marginEnd="@dimen/dp_10"
-            android:text="@string/string_fast"
+
+            android:text="@string/string_slowest"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16"
             app:layout_constraintRight_toRightOf="parent"
@@ -64,7 +65,6 @@
             android:id="@+id/seekBarValueTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_20"
 

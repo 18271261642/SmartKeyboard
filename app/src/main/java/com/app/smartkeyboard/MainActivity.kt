@@ -422,6 +422,10 @@ class MainActivity : AppActivity() {
                     showOtaDialog(url,name!!,mac!!)
                 }
             }
+
+            if(msg.what == 0x02){
+                dialog?.dismiss()
+            }
         }
     }
 
@@ -461,7 +465,8 @@ class MainActivity : AppActivity() {
     private fun setDialogTxtShow(txt : String){
         if(dialog != null && dialog!!.isShowing){
             dialog?.setStateShow(txt)
-            dialog?.visibilityOrGone(true)
+            dialog?.visibilityOrGone(false)
+            handlers.sendEmptyMessageDelayed(0x02,3000)
         }
     }
 
