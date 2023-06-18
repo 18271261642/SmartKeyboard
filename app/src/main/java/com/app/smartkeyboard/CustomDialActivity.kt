@@ -237,7 +237,10 @@ class CustomDialActivity : AppActivity() {
             }
 
             R.id.dialHomeCustomSpeedTv->{
-                startActivity(CustomSpeedActivity::class.java)
+                val intent = Intent(this@CustomDialActivity,CustomSpeedActivity::class.java)
+               // intent.putExtra("file_url",localUrl)
+                startActivityForResult(intent,1001)
+              //  startActivity(CustomSpeedActivity::class.java)
             }
         }
     }
@@ -492,7 +495,7 @@ class CustomDialActivity : AppActivity() {
 
         //计算总的包数
         var allPackSize =resultArray.size
-
+        Timber.e("------总的包数="+allPackSize)
         //记录发送的包数
         var sendPackSize = 0
 

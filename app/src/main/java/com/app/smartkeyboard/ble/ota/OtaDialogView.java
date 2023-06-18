@@ -135,6 +135,10 @@ public class OtaDialogView extends AppCompatDialog {
 
 
             if(msg.what == 7){  //断开连接
+                if(bleclass != null){
+                    bleclass.disconnect();
+                }
+
                 if(!isUpgradeDisConn){
                     upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed)+7);
                     ToastUtils.show(getContext().getResources().getString(R.string.string_upgrade_failed)+7);
@@ -142,10 +146,14 @@ public class OtaDialogView extends AppCompatDialog {
                     dismiss();
                 }
 
+
             }
             if(msg.what == 8){  //未找到对应的ota端口
                 upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_failed)+8);
                 ToastUtils.show(getContext().getResources().getString(R.string.string_upgrade_failed)+8);
+                if(bleclass != null){
+                    bleclass.disconnect();
+                }
                 dismiss();
             }
 

@@ -2,18 +2,11 @@ package com.app.smartkeyboard
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.util.Log
-import android.view.MotionEvent
-import android.view.View
-import android.view.View.OnTouchListener
 import android.widget.ImageView
-import android.widget.MediaController
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
@@ -21,16 +14,18 @@ import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.gif.GifMaker
 import com.app.smartkeyboard.utils.ImageUtils
 import com.app.smartkeyboard.utils.MmkvUtils
-import com.bumptech.glide.Glide
 import com.hjq.shape.view.ShapeTextView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
 import pl.droidsonroids.gif.GifImageView
 import timber.log.Timber
-import java.io.BufferedOutputStream
+import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+
 
 class CustomSpeedActivity : AppActivity() {
 
@@ -80,6 +75,11 @@ class CustomSpeedActivity : AppActivity() {
                 val progress = msg.obj as Int
                 saveBitmap(progress)
             }
+
+            if(msg.what == 0x99){
+                val previewFile = File(gifPath + "/previews.gif")
+                createGif(previewFile.path)
+            }
         }
     }
 
@@ -102,14 +102,10 @@ class CustomSpeedActivity : AppActivity() {
 
         cusSpeedSaveTv?.setOnClickListener {
 
-            if(isCustomSped){
-                val intent = Intent()
-                intent.putExtra("url",dialFileUrl)
-                this.setResult(Activity.RESULT_OK,intent)
-                finish()
-            }else{
-                finish()
-            }
+            val intent = Intent()
+            intent.putExtra("url",dialFileUrl)
+            this.setResult(Activity.RESULT_OK,intent)
+            finish()
         }
 
 
@@ -126,6 +122,9 @@ class CustomSpeedActivity : AppActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 Timber.e("-----onStopTrackingTouch---="+seekBar?.progress)
                 val progress = seekBar?.progress
+                if (progress != null) {
+                    MmkvUtils.saveGifSpeed(progress)
+                }
                 seekBarValueTv?.text = progress.toString()
                 GlobalScope.launch {
                     if (progress != null) {
@@ -145,82 +144,36 @@ class CustomSpeedActivity : AppActivity() {
 
 
 
-
-
-
-
-
-
     var gifMaker :GifMaker ?= null
 
-    //重新生成gif，根据间隔
-    private fun reChangeGif( delay :Int) {
-      //  saveBitmap()
 
-        //判断文件是否存在
-        val gifFile = File(gifPath + "/gif.gif")
-        Timber.e("------gifFIle="+(gifFile.exists())+" "+delay)
-        if (gifFile.exists()) {
-
-
-            val tempFile = File(gifPath + "/previews.gif")
-//            if(tempFile.exists()){
-//                tempFile.delete()
-//            }
-
-            val bitmapList = ImageUtils.getGifDataBitmapNoClip(gifFile)
-            Timber.e("-------=bitmapList="+bitmapList.size)
-
-            gifMaker = GifMaker(1)
-            gifMaker?.setOnGifListener { current, total ->
-                Log.e("tags", "---22---处理成gif了=" + current + " total=" + total)
-               // handlers.sendEmptyMessageDelayed()
-                if(current+1 == total){
-                    GlobalScope.launch {
-                       // Glide.get(this@CustomSpeedActivity).clearDiskCache()
-                        handlers.sendEmptyMessageDelayed(0x00,300)
-                    }
-                }
-
-
-//                runOnUiThread {
-//                    if (current+1 == total) {
-//                        val previewFile = File(gifPath + "/previews.gif")
-//                        Timber.e("-----previewFile="+previewFile.path)
-//                        val gifDrawable = GifDrawable(previewFile)
-//                        gifImageView?.setImageDrawable(gifDrawable)
-//
-//                    }
-//                }
-
-            }
-            GlobalScope.launch {
-                gifMaker?.makeGif(bitmapList, gifPath + "/previews.gif",delay)
-
-            }
-
-        }
-    }
 
     override fun initData() {
 
       val speed = MmkvUtils.getGifSpeed()
         customSeekBar?.max = 10
         customSeekBar?.progress = speed
+        seekBarValueTv?.text = speed.toString()
 
-        val url = intent.getSerializableExtra("file_url")
-        if(url != null){
-            isCustomSped = true
-            this.dialFileUrl = url as String?
+        val url = intent.getStringExtra("file_url")
+        Timber.e("-----url="+url)
+        //先判断一下已经选择过的是否存在，存在就显示
+        val historyFile = File(gifPath + "/previews.gif")
+        if( url != null){   //存在
+            this.dialFileUrl = url
             //生成gif
-            createGif(url as String)
+            createGif(url)
+        }else{  //不存在
+            if(historyFile.exists()){
+                this.dialFileUrl = historyFile.path
+                createGif(historyFile.path)
+            }else{
+                copyGifToSd()
+            }
+            val speed = MmkvUtils.getGifSpeed()
 
-        }else{
-            isCustomSped = false
-            saveBitmap(speed)
+
         }
-
-
 
 
        // reChangeGif(1 * 30)
@@ -238,7 +191,11 @@ class CustomSpeedActivity : AppActivity() {
             if (current + 1 == total) {
                 GlobalScope.launch {
                     // Glide.get(this@CustomSpeedActivity).clearDiskCache()
-                    handlers.sendEmptyMessageDelayed(0x00, 300)
+                    val message = handlers.obtainMessage()
+                    message.what = 0x01;
+                    message.obj = speed
+                    handlers.sendMessageDelayed(message,300)
+                   // handlers.sendEmptyMessageDelayed(0x01, 300)
                 }
             }
         }
@@ -252,18 +209,82 @@ class CustomSpeedActivity : AppActivity() {
         //val bitmap = BitmapFactory.decodeResource(resources,R.drawable.gif_speed)
         seekBarValueTv?.text = speed.toString()
         var drawable : GifDrawable ?= null
-        if(isCustomSped){
-            val file = File(gifPath + "/previews.gif")
-            drawable = GifDrawable(file)
-        }else{
-            drawable = GifDrawable(resources,R.drawable.gif_preview)
-        }
+        val file = File(gifPath + "/previews.gif")
+        this.dialFileUrl = file.path
+        drawable = GifDrawable(file)
 
+//        if(isCustomSped){
+//            val file = File(gifPath + "/previews.gif")
+//            drawable = GifDrawable(file)
+//        }else{
+//            drawable = GifDrawable(resources,R.drawable.gif_preview)
+//        }
+        Timber.e("-----速度="+speed+" "+speed*30)
         drawable.setSpeed(speed.toFloat())
+        gifImageView?.minimumWidth = 800
+        gifImageView?.minimumHeight = 300
         gifImageView?.setImageDrawable(drawable)
 
         MmkvUtils.saveGifSpeed(speed)
 
     }
 
+
+    //将gif放到sd卡本地
+    private fun copyGifToSd(){
+        GlobalScope.launch {
+
+            val assets = getAssets()
+            val inputStream = assets.open("gif_preview.gif")
+            copyFile2Local(inputStream,gifPath + "/previews.gif")
+
+        }
+
+    }
+
+    /**
+     * 拷贝文件至本地
+     *
+     * @param srcInputStream 源文件输入流
+     * @param destFilePath   目标文件路径
+     */
+    @Throws(IOException::class)
+    private fun copyFile2Local(srcInputStream: InputStream, destFilePath: String) {
+        val destFile = File(destFilePath)
+//        if (!destFile.isFile || !destFile.canRead()) {
+//            return
+//        }
+//        if (destFile.exists() && destFile.length() == srcInputStream.available().toLong()) {
+//            return
+//        }
+//        try {
+//            destFile.createNewFile()
+//        } catch (e: IOException) {
+//            e.printStackTrace()
+//        }
+        val fos = FileOutputStream(destFile, false)
+        val buffer = ByteArray(1024)
+        var len: Int
+        while (srcInputStream.read(buffer).also { len = it } > 0) {
+            fos.write(buffer, 0, len)
+        }
+        fos.flush()
+        closeStream(fos)
+        closeStream(srcInputStream)
+
+        handlers.sendEmptyMessage(0x99)
+    }
+
+    /**
+     * 关闭输入输出流
+     *
+     * @param stream 流
+     */
+    private fun closeStream(stream: Closeable?) {
+        try {
+            stream?.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
 }

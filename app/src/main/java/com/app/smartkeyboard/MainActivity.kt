@@ -118,8 +118,6 @@ class MainActivity : AppActivity() {
 
                 override fun onStrDataBack(vararg value: String?) {
                     firmwareVersionTv?.text =  String.format(resources.getString(R.string.string_firmware_version),value[0])
-
-
                 }
 
             })
