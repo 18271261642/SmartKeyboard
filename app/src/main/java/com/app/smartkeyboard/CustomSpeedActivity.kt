@@ -192,6 +192,7 @@ class CustomSpeedActivity : AppActivity() {
         val gifList = ImageUtils.getGifDataBitmap(File(url))
         val duration = ImageUtils.getGifAnimationDuration(File(url))
         val speed = MmkvUtils.getGifSpeed()
+        val realSpeed = 11-speed
         Timber.e("------duraing="+duration+" "+speed)
         gifMaker = GifMaker(1)
         gifMaker?.setOnGifListener { current, total ->
@@ -207,7 +208,7 @@ class CustomSpeedActivity : AppActivity() {
             }
         }
         GlobalScope.launch {
-            gifMaker?.makeGif(gifList, gifPath + "/previews.gif",speed*30)
+            gifMaker?.makeGif(gifList, gifPath + "/previews.gif",realSpeed*30)
         }
     }
 
@@ -217,6 +218,7 @@ class CustomSpeedActivity : AppActivity() {
         Timber.e("------速度+"+speed)
         val pickList = ImageUtils.getGifDataBitmap(File(dialFileUrl))
         val markGif = GifMaker(1)
+        val realSpeed = 11-speed
         markGif.setOnGifListener { current, total ->
             if(current+1 == total){
                 val message = handlers.obtainMessage()
@@ -226,7 +228,7 @@ class CustomSpeedActivity : AppActivity() {
             }
         }
         GlobalScope.launch {
-            markGif.makeGif(pickList,gifPath + "/previews.gif",speed*30)
+            markGif.makeGif(pickList,gifPath + "/previews.gif",realSpeed*30)
         }
 
         MmkvUtils.saveGifSpeed(speed)

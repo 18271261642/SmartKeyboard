@@ -101,8 +101,8 @@ public class OtaDialogView extends AppCompatDialog {
             }
 
             if(msg.what == 0x81){
-                BaseApplication.getBaseApplication().getConnStatusService().autoConnDevice(connMac,false);
-                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_conning));
+                upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_success));
+                dismiss();
             }
 
             if(msg.what == 0){
@@ -113,6 +113,7 @@ public class OtaDialogView extends AppCompatDialog {
 
                     bleclass.disconnect();
                     upgradeStateTv.setText(getContext().getResources().getString(R.string.string_upgrade_restart));
+                    BaseApplication.getBaseApplication().getConnStatusService().autoConnDevice(connMac,false);
                     handler.sendEmptyMessageDelayed(0x81,4000);
                 }catch (Exception e){
                     e.printStackTrace();
