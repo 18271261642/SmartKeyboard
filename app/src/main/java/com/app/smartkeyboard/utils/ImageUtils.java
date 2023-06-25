@@ -1,7 +1,11 @@
 package com.app.smartkeyboard.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 
 
 import java.io.File;
@@ -110,8 +114,7 @@ public class ImageUtils {
     }
 
 
-
-    public static int getGifAnimationDuration(File gifFile){
+    public static int getGifAnimationDuration(File gifFile) {
         try {
             GifDrawable gifDrawable = new GifDrawable(gifFile);
             int duration = gifDrawable.getDuration();
@@ -172,6 +175,16 @@ public class ImageUtils {
         }
 
 
+    }
+
+
+    public static String getPathToUri(Activity activity, Uri uri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = activity.managedQuery(uri, proj, null, null, null);
+        int actual_image_column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        //游标跳到首位，防止越界
+        cursor.moveToFirst();
+        return cursor.getString(actual_image_column_index);
     }
 
 }
