@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
@@ -20,26 +21,21 @@ import com.app.smartkeyboard.dialog.ShowProgressDialog
 import com.app.smartkeyboard.img.CameraActivity
 import com.app.smartkeyboard.img.CameraActivity.OnCameraListener
 import com.app.smartkeyboard.img.ImageSelectActivity
-import com.app.smartkeyboard.listeners.OnGetImgWidthListener
 import com.app.smartkeyboard.utils.*
 import com.blala.blalable.Utils
 import com.blala.blalable.keyboard.DialCustomBean
 import com.blala.blalable.keyboard.KeyBoardConstant
 import com.blala.blalable.listener.OnCommBackDataListener
-import com.blala.blalable.listener.WriteBackDataListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.hjq.bar.OnTitleBarListener
 import com.hjq.bar.TitleBar
 import com.hjq.permissions.OnPermissionCallback
-import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.hjq.shape.layout.ShapeConstraintLayout
 import com.hjq.shape.view.ShapeTextView
 import com.hjq.toast.ToastUtils
-import com.luck.picture.lib.PictureSelector
-import com.luck.picture.lib.config.PictureConfig
-import com.tencent.mmkv.MMKV
+import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -93,6 +89,8 @@ class CustomDialActivity : AppActivity() {
     //裁剪图片
     private var cropImgPath: String? = null
     private var resultCropUri: Uri? = null
+
+    private var saveCropPath : String ?= null
 
 
     private val handlers: Handler = object : Handler(Looper.getMainLooper()) {
@@ -586,13 +584,12 @@ class CustomDialActivity : AppActivity() {
     //选择图片
     private fun choosePick() {
 
-//        ImageSelectActivity.start(this@CustomDialActivity
-//        ) { data -> setSelectImg(data.get(0), 0) }
+        ImageSelectActivity.start(this@CustomDialActivity
+        ) { data -> setSelectImg(data.get(0), 0) }
 
-        val photoPickerIntent = Intent(Intent.ACTION_PICK)
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, 1002)
-
+//        val photoPickerIntent = Intent(Intent.ACTION_PICK)
+//        photoPickerIntent.setType("image/*");
+//        startActivityForResult(photoPickerIntent, 1002)
 
     }
 
@@ -621,7 +618,24 @@ class CustomDialActivity : AppActivity() {
             Uri.fromFile(File(localUrl))
         }
         Timber.e("-----uri=$uri")
-        startPhotoZoom(uri, code)
+
+        val date = System.currentTimeMillis()/1000
+        val path = "$cropImgPath/$date.jpg"
+        this.saveCropPath = path
+        val cropFile = File(path)
+        val destinationUri = Uri.fromFile(cropFile)
+        val uOPtions = UCrop.Options()
+        uOPtions.withAspectRatio(16F,9F)
+        uOPtions.withMaxResultSize(340,192)
+
+        uOPtions.setFreeStyleCropEnabled(false)
+        uOPtions.setHideBottomControls(true)
+        UCrop.of(uri, destinationUri)
+            .withOptions(uOPtions)
+            .start(this)
+
+
+//        startPhotoZoom(uri, code)
     }
 
 
@@ -716,6 +730,35 @@ class CustomDialActivity : AppActivity() {
         Timber.e("-----onActivityResult=" + requestCode + " " + resultCode)
         if (resultCode == RESULT_OK) {
 
+            if(requestCode == UCrop.REQUEST_CROP){
+                //裁剪后的图片地址
+
+                val cropFile = File(saveCropPath)
+                if(cropFile != null){
+                    val b = BitmapFactory.decodeFile(cropFile.path)
+
+                    //计算偏移量
+                    val x: Int =  b.width / 2 - 160
+                    val y: Int = b.height / 2 - 81
+                    val resultBitmap = Bitmap.createBitmap(b, x, y, 320, 172)
+
+                    ImageUtils.saveMyBitmap(resultBitmap,saveCropPath)
+
+                    Glide.with(this@CustomDialActivity).load(saveCropPath).into(customShowImgView!!)
+
+                    Timber.e("-------裁剪后的图片=" + (File(saveCropPath)).path)
+                    val url = File(saveCropPath).path
+                    dialBean.imgUrl = url
+
+
+                    setDialToDevice(byteArrayOf(0x00))
+
+                }
+
+            }
+
+
+
             if(requestCode == 1002){
                 val uri = data?.data
                 Timber.e("--ri="+uri.toString())
@@ -736,35 +779,16 @@ class CustomDialActivity : AppActivity() {
                 val cropUri = data.data
                 Timber.e("--------后的图片=" + (cropUri == null) + " " + (resultCropUri == null))
 
-                Glide.with(this@CustomDialActivity).load(cropUri).into(customShowImgView!!)
-
-                Timber.e("-------裁剪后的图片=" + (File(cropImgPath)).path)
-                val url = File(cropImgPath).path
-                dialBean.imgUrl = url
-
-
-                setDialToDevice(byteArrayOf(0x00))
+//                Glide.with(this@CustomDialActivity).load(cropUri).into(customShowImgView!!)
+//
+//                Timber.e("-------裁剪后的图片=" + (File(cropImgPath)).path)
+//                val url = File(cropImgPath).path
+//                dialBean.imgUrl = url
+//
+//
+//                setDialToDevice(byteArrayOf(0x00))
             }
 
-
-            if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-                // 图片选择结果回调
-                val selectList = PictureSelector.obtainMultipleResult(data)
-                val url = selectList[0].cutPath
-                Timber.e("--------图片的url=" + url)
-                ImgUtil.loadHead(customShowImgView!!, url, object : OnGetImgWidthListener {
-                    override fun backImgWidthAndHeight(width: Int, height: Int) {
-                        if (width < 320 && height < 172) {
-                            return
-                        }
-                        dialBean?.imgUrl = url
-                        GlideEngine.createGlideEngine()
-                            .loadImage(this@CustomDialActivity, url, customShowImgView!!)
-                    }
-
-                })
-
-            }
             if (requestCode == 1001) {
                 val url = data?.getStringExtra("url")
                 Timber.e("------url=" + url)

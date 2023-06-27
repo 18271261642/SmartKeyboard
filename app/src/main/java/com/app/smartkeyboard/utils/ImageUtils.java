@@ -9,6 +9,8 @@ import android.provider.MediaStore;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,6 +187,28 @@ public class ImageUtils {
         //游标跳到首位，防止越界
         cursor.moveToFirst();
         return cursor.getString(actual_image_column_index);
+    }
+
+
+    public static void saveMyBitmap(Bitmap mBitmap,String fileName)  {
+        File f = new File( fileName);
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        mBitmap.compress(Bitmap.CompressFormat.JPEG, 70, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

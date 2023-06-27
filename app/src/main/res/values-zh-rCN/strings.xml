@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">掌上悟确</string>
 
+    <string name="string_please_input_title">请输入标题!</string>
     <string name="string_has_new_ota">有新的固件版本，是否升级?</string>
     <string name="string_downloading">下载中</string>
     <string name="string_start_download">开始下载固件包</string>

@@ -152,7 +152,7 @@ class EditNoteBookActivity : AppActivity() {
         val inputContent = editNoteBookEditText?.text.toString()
 
         if(TextUtils.isEmpty(inputTitle)){
-            ToastUtils.show("请输入标题！")
+            ToastUtils.show(resources.getString(R.string.string_please_input_title))
             return
         }
 

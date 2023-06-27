@@ -81,6 +81,13 @@
         <activity android:name=".CustomSpeedActivity"
             android:screenOrientation="portrait"/>
 
+
+        <!--裁剪-->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+           />
+
         <service android:name=".ble.SNNotificationService"
             android:enabled="true"
             android:exported="true"

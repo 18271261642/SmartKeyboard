@@ -119,9 +119,9 @@ public class BikeUtils {
         //上午还是下午
         String dayStatus = getDayOfStatus(hour,context);
         if(isToday){
-            return context.getResources().getString(R.string.string_today)+" "+dayStatus+hourAndMinute;
+            return context.getResources().getString(R.string.string_today)+" "+dayStatus+" "+hourAndMinute;
         }else{
-            return str+" "+dayStatus+hourAndMinute;
+            return str+" "+dayStatus+" "+hourAndMinute;
         }
 
     }
