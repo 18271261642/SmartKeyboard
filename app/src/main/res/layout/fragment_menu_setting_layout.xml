@@ -39,6 +39,7 @@
             android:orientation="vertical">
 
             <com.app.smartkeyboard.widget.CheckButtonView
+                android:id="@+id/settingNoteLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:right_back_img="true"

@@ -514,9 +514,9 @@ class CustomDialActivity : AppActivity() {
             //计算百分比
             var percentValue =
                 CalculateUtils.div(sendPackSize.toDouble(), allPackSize.toDouble(), 2)
-            var showPercent = CalculateUtils.mul(percentValue, 100.0).toInt()
+            val showPercent = CalculateUtils.mul(percentValue, 100.0).toInt()
             //gifLogTv?.text = sendPackSize.toString()+"/"+allPackSize+" "+showPercent
-            showProgressDialog(resources.getString(R.string.string_sync_ing) + showPercent + "%")
+            showProgressDialog(resources.getString(R.string.string_sync_ing) + (if(showPercent>=100) 100 else showPercent ) + "%")
 
             /**
              * 0x01：更新失败

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Timer;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.BitmapKt;
 
 
 /**
@@ -245,6 +246,7 @@ public class BleOperateManager {
 
         byte[] timeByte = bleConstant.syncTime();
         byte[] resultData = Utils.getFullPackage(timeByte);
+        Log.e(TAG,"---------同步键盘时间="+Utils.formatBtArrayToString(resultData));
         bleManager.writeDataToDevice(resultData, writeBackDataListener);
 
     }
@@ -412,16 +414,17 @@ public class BleOperateManager {
 
     //发送记事本
     public void sendKeyBoardNoteBook(String title, String contentStr, Calendar noteCalendar) {
+        Log.e(TAG,"--------内容="+contentStr);
         //标题
         String unitCode = Utils.getUnicode(title).replace("\\u", "");
         //内容 最大40个长度
         String tempContent = contentStr.length() > 100 ? contentStr.substring(0, 100) : contentStr;
-        String contentUnitCode = Utils.getUnicode(tempContent).replace("\\u", "");
+        String contentUnitCode = (tempContent.length()==0) ? "00" : Utils.getUnicode(tempContent).replace("\\u", "");
         //  00 68 00 68 00 68 00 6a 00 6a 00 68
 
         byte[] titleArray = stringToByte(unitCode);
 
-        //Log.e(TAG,"-------contentUnitCode="+contentUnitCode.length());
+        Log.e(TAG,"-------contentUnitCode="+contentUnitCode.length());
         byte[] tempConArray = stringToByte(contentUnitCode);
 
         //  Log.e(TAG, "-------标题=" + tempConArray.length + "\n" + Utils.formatBtArrayToString(Utils.intToSecondByteArray(tempConArray.length)) + "\n" + Utils.formatBtArrayToString(titleArray));

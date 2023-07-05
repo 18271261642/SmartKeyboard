@@ -1,7 +1,5 @@
 package com.app.smartkeyboard
 
-import android.R.attr.textSize
-import android.graphics.Color
 import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.view.View
@@ -119,7 +117,12 @@ class EditNoteBookActivity : AppActivity() {
         }
 
         override fun afterTextChanged(p0: Editable?) {
-            val length = p0?.length
+            val str = p0.toString()
+            if(BikeUtils.isEmpty(str)){
+                editNoteBookNumberTv?.text = "0 "+resources.getString(R.string.string_word)
+                return
+            }
+            val length = str.length
             editNoteBookNumberTv?.text = length.toString()+" "+resources.getString(R.string.string_word)
         }
 
@@ -156,9 +159,14 @@ class EditNoteBookActivity : AppActivity() {
             return
         }
 
+//        if(TextUtils.isEmpty(inputContent)){
+//            ToastUtils.show(resources.getString(R.string.string_please_input_title))
+//            return
+//        }
+
         val noteBookBean = NoteBookBean()
         noteBookBean.noteTitle = inputTitle
-        noteBookBean.noteContent = inputContent
+        noteBookBean.noteContent = inputContent.trim()
         noteBookBean.noteTimeLong = System.currentTimeMillis()
         noteBookBean.saveTime = BikeUtils.getCurrDate()
         noteBookBean.saveTime = if(timeStr != null ) timeStr else BikeUtils.getFormatDate(System.currentTimeMillis(),"yyyy-MM-dd HH:mm:ss")

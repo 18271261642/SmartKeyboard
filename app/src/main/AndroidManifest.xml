@@ -88,6 +88,14 @@
             android:screenOrientation="portrait"
            />
 
+
+        <!--二代记事本-->
+        <activity android:name=".second.NotePadActivity"
+            android:screenOrientation="portrait"/>
+        <!--二代编辑添加-->
+        <activity android:name=".second.SecondAddEditActivity"
+            android:screenOrientation="portrait"/>
+
         <service android:name=".ble.SNNotificationService"
             android:enabled="true"
             android:exported="true"

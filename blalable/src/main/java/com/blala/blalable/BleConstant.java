@@ -116,8 +116,8 @@ public class BleConstant {
         byte[] timeByte = new byte[9];
         timeByte[0] = 0x04;
         timeByte[1] = 0x01;
-        timeByte[2] = (byte) (year & 0x00ff);
-        timeByte[3] = (byte) ((year>>8) & 0xff);
+        timeByte[2] = (byte) ((year>>8) & 0xff);
+        timeByte[3] = (byte) (year & 0xff);
         timeByte[4] = (byte) (month & 0xff);
         timeByte[5] = (byte) (day & 0xff);
         timeByte[6] = (byte) (hour & 0xff);

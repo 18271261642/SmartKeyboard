@@ -2,10 +2,14 @@ package com.app.smartkeyboard.second
 
 import android.view.View
 import androidx.activity.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.smartkeyboard.R
 import com.app.smartkeyboard.action.AppActivity
+import com.app.smartkeyboard.adapter.SecondNotePadAdapter
+import com.app.smartkeyboard.bean.NoteBookBean
 import com.app.smartkeyboard.viewmodel.NoteBookViewModel
+
 
 /**
  * Created by Admin
@@ -16,6 +20,8 @@ class NotePadActivity : AppActivity() {
     private val viewModel by viewModels<NoteBookViewModel>()
 
     private var secondNoteRecyclerView : RecyclerView ?= null
+    private var adapter : SecondNotePadAdapter ?= null
+    private var list : MutableList<NoteBookBean> ?= null
 
 
 
@@ -25,11 +31,16 @@ class NotePadActivity : AppActivity() {
 
     override fun initView() {
         secondNoteRecyclerView = findViewById(R.id.secondNoteRecyclerView)
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        list = ArrayList<NoteBookBean>()
+
+
     }
 
     override fun initData() {
         viewModel.allNoteBookData.observe(this){
-          
+
         }
     }
 
