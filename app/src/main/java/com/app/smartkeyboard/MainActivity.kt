@@ -17,12 +17,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.app.smartkeyboard.action.ActivityManager
 import com.app.smartkeyboard.action.AppActivity
-import com.app.smartkeyboard.adapter.OnCommItemClickListener
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.ble.ota.OtaDialogView
 import com.app.smartkeyboard.dialog.NoticeDialog
@@ -36,13 +34,9 @@ import com.app.smartkeyboard.utils.NotificationUtils
 import com.app.smartkeyboard.viewmodel.KeyBoardViewModel
 import com.blala.blalable.BleConstant
 import com.blala.blalable.listener.OnCommBackDataListener
-import com.hjq.permissions.Permission.POST_NOTIFICATIONS
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
 import kotlinx.android.synthetic.main.dialog_show_upgrade_layout.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**

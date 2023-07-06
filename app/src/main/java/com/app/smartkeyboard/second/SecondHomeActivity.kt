@@ -2,7 +2,6 @@ package com.app.smartkeyboard.second
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.app.smartkeyboard.R
 import com.app.smartkeyboard.action.AppActivity

@@ -1,14 +1,16 @@
 package com.app.smartkeyboard.second
 
-import android.view.View
+import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.smartkeyboard.EditNoteBookActivity
 import com.app.smartkeyboard.R
 import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.adapter.SecondNotePadAdapter
 import com.app.smartkeyboard.bean.NoteBookBean
 import com.app.smartkeyboard.viewmodel.NoteBookViewModel
+
 
 
 /**
@@ -33,14 +35,23 @@ class NotePadActivity : AppActivity() {
         secondNoteRecyclerView = findViewById(R.id.secondNoteRecyclerView)
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        secondNoteRecyclerView?.layoutManager = linearLayoutManager
         list = ArrayList<NoteBookBean>()
 
+        adapter = SecondNotePadAdapter(this, list as ArrayList<NoteBookBean>)
+        secondNoteRecyclerView?.adapter = adapter
 
+        findViewById<ImageView>(R.id.secondAddNoteImg).setOnClickListener {
+            startActivity(SecondAddEditActivity::class.java)
+        }
     }
 
     override fun initData() {
         viewModel.allNoteBookData.observe(this){
-
+            list?.clear()
+            list?.addAll(it)
+            list?.sortByDescending { it.noteTimeLong }
+            adapter?.notifyDataSetChanged()
         }
     }
 

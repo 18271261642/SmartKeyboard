@@ -3,7 +3,7 @@ package com.app.smartkeyboard
 import android.webkit.WebView
 import com.app.smartkeyboard.action.AppActivity
 
- class ShowWebViewActivity : AppActivity() {
+class ShowWebViewActivity : AppActivity() {
 
 
   private var webView : WebView ?= null

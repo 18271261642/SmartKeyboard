@@ -11,11 +11,14 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         app:title="备忘录"
+        app:lineVisible="false"
+        app:leftIcon="@drawable/ic_white_left_back"
         app:titleColor="@color/white" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/secondNoteRecyclerView"
@@ -24,6 +27,7 @@
 
 
         <ImageView
+            android:id="@+id/secondAddNoteImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_30"

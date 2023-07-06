@@ -85,6 +85,7 @@ public class BaseApplication extends BleApplication {
 
 
     private void initNet(){
+
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .build();
         //是否是中文

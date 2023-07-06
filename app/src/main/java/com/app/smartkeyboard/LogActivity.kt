@@ -1,6 +1,5 @@
 package com.app.smartkeyboard
 
-import android.app.Application
 import android.widget.Button
 import android.widget.TextView
 import com.app.smartkeyboard.action.AppActivity

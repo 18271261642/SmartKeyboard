@@ -2,7 +2,6 @@ package com.app.smartkeyboard.second
 
 import android.view.View
 import com.app.smartkeyboard.R
-import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.action.TitleBarFragment
 import com.app.smartkeyboard.widget.CheckButtonView
 
