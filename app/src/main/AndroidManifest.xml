@@ -4,27 +4,28 @@
     package="com.app.smartkeyboard">
 
 
-
-   <!-- <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>-->
-    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+    <!-- <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>-->
+    <uses-permission
+        android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
         tools:ignore="ProtectedPermissions" />
 
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <!--位置权限-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!--蓝牙权限-->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-        android:usesPermissionFlags="neverForLocation"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <application
         android:name="com.app.smartkeyboard.BaseApplication"
@@ -33,13 +34,15 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/icon_app_logo"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.SmartKeyboard"
         tools:targetApi="31">
 
-        <meta-data android:name="ScopedStorage" android:value="true" />
+        <meta-data
+            android:name="ScopedStorage"
+            android:value="true" />
 
         <activity
             android:name=".MainActivity"
@@ -52,51 +55,64 @@
         </activity>
 
         <!--记事本页面-->
-        <activity android:name=".NotebookActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".NotebookActivity"
+            android:screenOrientation="portrait" />
         <!--编辑记事本-->
-        <activity android:name=".EditNoteBookActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".EditNoteBookActivity"
+            android:screenOrientation="portrait" />
         <!--键盘页面-->
-        <activity android:name=".BleKeyboardActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".DialHomeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".CustomDialActivity"
+        <activity
+            android:name=".BleKeyboardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DialHomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CustomDialActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ShowWebViewActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".img.ImagePreviewActivity" />
+        <activity android:name=".img.ImageSelectActivity" />
+        <activity android:name=".img.CameraActivity" />
+        <activity android:name=".LogActivity" />
+
+        <service android:name="com.app.smartkeyboard.ble.ConnStatusService" />
+
+        <activity
+            android:name=".second.SecondHomeActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".CustomSpeedActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".second.AlarmListActivity"
             android:screenOrientation="portrait"/>
-
-        <activity android:name=".ShowWebViewActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".img.ImagePreviewActivity"/>
-        <activity android:name=".img.ImageSelectActivity"/>
-        <activity android:name=".img.CameraActivity"/>
-        <activity android:name=".LogActivity"/>
-        <service android:name="com.app.smartkeyboard.ble.ConnStatusService"/>
-
-        <activity android:name=".second.SecondHomeActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".CustomSpeedActivity"
-            android:screenOrientation="portrait"/>
-
 
         <!--裁剪-->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
-           />
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".second.NotifyOpenActivity"/>
         <!--二代记事本-->
-        <activity android:name=".second.NotePadActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".second.NotePadActivity"
+            android:screenOrientation="portrait" />
         <!--二代编辑添加-->
-        <activity android:name=".second.SecondAddEditActivity"
+        <activity
+            android:name=".second.SecondAddEditActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".second.NotifyOpenActivity"
             android:screenOrientation="portrait"/>
 
-        <service android:name=".ble.SNNotificationService"
+        <service
+            android:name=".ble.SNNotificationService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

@@ -60,6 +60,7 @@
                 app:left_txt_name="@string/string_setting_screen_style"/>
 
             <com.app.smartkeyboard.widget.CheckButtonView
+                android:id="@+id/settingAlarmLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_10"

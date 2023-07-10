@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Pocket Wuque</string>
 
+
+    <string name="string_alarm_edit">Alarm Editing</string>
+    <string name="string_save">Save</string>
     <string name="string_please_input_title">Please enter title!</string>
     <string name="string_has_new_ota">There is a new firmware, upgrade or not?</string>
     <string name="string_downloading">Downloading</string>
@@ -155,5 +158,13 @@
     <string name="http_response_error">response error,please wait and try again</string>
     <string name="http_server_error">Connect server error</string>
     <string name="http_request_cancel">request interrupt</string>
+
+    <string name="string_monday">mon</string>
+    <string name="string_tuesday">tues</string>
+    <string name="string_wednesday">wed</string>
+    <string name="string_thursday">thur</string>
+    <string name="string_friday">fri</string>
+    <string name="string_saturday">sat</string>
+    <string name="string_sunday">sun</string>
 
 </resources>

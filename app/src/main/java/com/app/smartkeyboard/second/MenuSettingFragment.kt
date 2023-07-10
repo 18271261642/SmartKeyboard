@@ -12,7 +12,7 @@ import com.app.smartkeyboard.widget.CheckButtonView
 class MenuSettingFragment : TitleBarFragment<SecondHomeActivity>() {
 
     private var settingNoteLayout : CheckButtonView ?= null
-
+    private var settingAlarmLayout : CheckButtonView ?= null
 
 
     companion object{
@@ -28,8 +28,11 @@ class MenuSettingFragment : TitleBarFragment<SecondHomeActivity>() {
 
     override fun initView() {
         settingNoteLayout = findViewById(R.id.settingNoteLayout)
+        settingAlarmLayout = findViewById(R.id.settingAlarmLayout)
+
 
         settingNoteLayout?.setOnClickListener(this)
+        settingAlarmLayout?.setOnClickListener(this)
     }
 
     override fun initData() {
@@ -44,6 +47,9 @@ class MenuSettingFragment : TitleBarFragment<SecondHomeActivity>() {
         when(id){
             R.id.settingNoteLayout->{
                 startActivity(NotePadActivity::class.java)
+            }
+            R.id.settingAlarmLayout->{
+                startActivity(AlarmListActivity::class.java)
             }
         }
     }

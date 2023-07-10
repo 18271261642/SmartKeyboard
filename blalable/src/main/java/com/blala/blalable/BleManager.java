@@ -296,7 +296,7 @@ public class BleManager {
     private synchronized void connBleDevice(final String bleMac, final String bleName, final ConnStatusListener connectResponse){
         BleSpUtils.put(mContext,SAVE_BLE_MAC_KEY,bleMac);
         clearLog();
-        stringBuffer.append("连接"+"\n\n");
+        stringBuffer.append("连接"+System.currentTimeMillis()/1000+"\n\n");
         int status = bluetoothClient.getConnectStatus(bleMac);
         sendCommBroadcast("ble_action",0);
         Log.e(TAG,"************连接处="+bleMac+"--连接状态="+status);
@@ -453,18 +453,6 @@ public class BleManager {
 
 
 
-
-    /**写入设备数据,24小时的数据**/
-    public synchronized void write24HourDataToDevice(byte[] data, WriteBack24HourDataListener writeBackDataListener){
-        Log.e(TAG,"-----写入数据="+Arrays.toString(data));
-        String bleMac = (String) BleSpUtils.get(mContext,SAVE_BLE_MAC_KEY,"");
-        if(TextUtils.isEmpty(bleMac))
-            return;
-        interfaceManager.setWriteBack24HourDataListener(writeBackDataListener);
-        bluetoothClient.write(bleMac,bleConstant.SERVICE_UUID,bleConstant.WRITE_UUID,data,bleWriteResponse);
-    }
-
-
     /**
      * 键盘写入表盘数据
      */
@@ -476,27 +464,6 @@ public class BleManager {
             return;
         interfaceManager.setWriteBackDataListener(writeBackDataListener);
         bluetoothClient.write(bleMac, bleConstant.SERVICE_UUID,bleConstant.KEYBOARD_DIAL_WRITE_UUID,data,bleWriteResponse);
-    }
-
-
-
-    //写入设备数据
-    public synchronized void writeExcDataToDevice(byte[] data, WriteBackDataListener writeBackDataListener){
-        Log.e(TAG,"-----写入数据="+Arrays.toString(data));
-        String bleMac = (String) BleSpUtils.get(mContext,SAVE_BLE_MAC_KEY,"");
-        if(TextUtils.isEmpty(bleMac))
-            return;
-        interfaceManager.setWriteBackDataListener(writeBackDataListener);
-        bluetoothClient.write(bleMac, bleConstant.SERVICE_UUID,bleConstant.SAVE_DATA_SEND_UUID,data,bleWriteResponse);
-    }
-
-    public synchronized void writeWatchFaceData(byte[] data,WriteBackDataListener writeBackDataListener){
-        Log.e(TAG,"-----写入表盘数据="+Arrays.toString(data));
-        String bleMac = (String) BleSpUtils.get(mContext,SAVE_BLE_MAC_KEY,"");
-        if(TextUtils.isEmpty(bleMac))
-            return;
-        interfaceManager.setWriteBackDataListener(writeBackDataListener);
-        bluetoothClient.write(bleMac, bleConstant.SERVICE_UUID,bleConstant.WATCH_FACE_UUID,data,bleWriteResponse);
     }
 
 

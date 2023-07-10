@@ -55,6 +55,21 @@
            android:layout_margin="@dimen/dp_5"
            android:layout_gravity="center"/>
 
+
+       <View
+           android:layout_width="0dp"
+           android:layout_height="1dp"
+           android:layout_weight="1"/>
+
+       <androidx.appcompat.widget.SwitchCompat
+           android:id="@+id/notifyWxSwitch"
+           android:layout_width="wrap_content"
+           android:layout_gravity="center"
+           android:gravity="center"
+           android:layout_marginEnd="@dimen/dp_10"
+           android:layout_height="wrap_content"/>
+
+
    </com.hjq.shape.layout.ShapeLinearLayout>
 
 
@@ -89,6 +104,20 @@
             android:layout_margin="@dimen/dp_5"
             android:layout_gravity="center"/>
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notifyQqSwitch"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_height="wrap_content"/>
+
+
     </com.hjq.shape.layout.ShapeLinearLayout>
 
 
@@ -122,6 +151,22 @@
             android:textSize="@dimen/sp_18"
             android:layout_margin="@dimen/dp_5"
             android:layout_gravity="center"/>
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notifyDiscordSwitch"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_height="wrap_content"/>
+
+
 
     </com.hjq.shape.layout.ShapeLinearLayout>
 
