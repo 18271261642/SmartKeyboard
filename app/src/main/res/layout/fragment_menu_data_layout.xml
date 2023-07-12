@@ -24,7 +24,7 @@
 
     <com.hjq.shape.layout.ShapeLinearLayout
         android:layout_width="match_parent"
-
+        android:id="@+id/dataAddLayout"
         app:shape_startColor="#343348"
         app:shape_endColor="#262D38"
         android:layout_gravity="bottom"

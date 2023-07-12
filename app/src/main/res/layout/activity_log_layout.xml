@@ -14,7 +14,16 @@
       android:id="@+id/clearBtn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="clear"/>
+      android:text="Clear"/>
+
+
+
+    <Button
+        android:id="@+id/requestBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request"/>
+
 
    <androidx.core.widget.NestedScrollView
        android:layout_width="match_parent"

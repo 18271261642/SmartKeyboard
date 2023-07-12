@@ -61,7 +61,7 @@
            android:layout_height="1dp"
            android:layout_weight="1"/>
 
-       <androidx.appcompat.widget.SwitchCompat
+       <com.bonlala.widget.view.SwitchButton
            android:id="@+id/notifyWxSwitch"
            android:layout_width="wrap_content"
            android:layout_gravity="center"
@@ -109,7 +109,7 @@
             android:layout_height="1dp"
             android:layout_weight="1"/>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.bonlala.widget.view.SwitchButton
             android:id="@+id/notifyQqSwitch"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
@@ -158,7 +158,7 @@
             android:layout_height="1dp"
             android:layout_weight="1"/>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.bonlala.widget.view.SwitchButton
             android:id="@+id/notifyDiscordSwitch"
             android:layout_width="wrap_content"
             android:layout_gravity="center"

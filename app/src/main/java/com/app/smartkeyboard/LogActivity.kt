@@ -3,6 +3,14 @@ package com.app.smartkeyboard
 import android.widget.Button
 import android.widget.TextView
 import com.app.smartkeyboard.action.AppActivity
+import com.app.smartkeyboard.bean.OtaBean
+import com.app.smartkeyboard.utils.BikeUtils
+import com.app.smartkeyboard.utils.GsonUtils
+import com.hjq.http.EasyHttp
+import com.hjq.http.listener.OnHttpListener
+import org.json.JSONObject
+import timber.log.Timber
+import java.lang.Exception
 
 /**
  * Created by Admin
@@ -31,6 +39,28 @@ class LogActivity : AppActivity() {
             logTv?.text = ""
             updateLogTv?.text = ""
         }
+
+        findViewById<Button>(R.id.requestBtn).setOnClickListener {
+            request()
+        }
+    }
+
+
+
+    private fun request(){
+        EasyHttp.get(this).api("checkUpdate?firmwareVersionCode=320&productNumber=c003").request(object :
+            OnHttpListener<String> {
+            override fun onSucceed(result: String?) {
+                logTv?.text = result
+            }
+
+            override fun onFail(e: Exception?) {
+                e?.printStackTrace()
+                Timber.e("----e="+e?.printStackTrace()+"\n"+e?.fillInStackTrace()+"\n"+e?.localizedMessage)
+                logTv?.text = e?.message
+            }
+
+        })
     }
 
     override fun initData() {

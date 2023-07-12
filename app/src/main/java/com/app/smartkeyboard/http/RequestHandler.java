@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.R;
 import com.google.gson.JsonSyntaxException;
 
@@ -34,6 +35,7 @@ import java.net.UnknownHostException;
 import okhttp3.Headers;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import timber.log.Timber;
 
 /**
  *    author : Android 轮子哥
@@ -157,6 +159,8 @@ public final class RequestHandler implements IRequestHandler {
 
     @Override
     public Exception requestFail(HttpRequest<?> httpRequest, Exception e) {
+        Timber.e("-----requeFail="+e.getMessage()+"\n"+e.fillInStackTrace());
+        BaseApplication.getBaseApplication().setLogStr(e.fillInStackTrace().getLocalizedMessage());
         // 判断这个异常是不是自己抛的
         if (e instanceof HttpException) {
             if (e instanceof TokenException) {

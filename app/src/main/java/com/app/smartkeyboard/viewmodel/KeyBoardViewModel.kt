@@ -50,11 +50,13 @@ class KeyBoardViewModel : ViewModel() {
 
             override fun onFail(e: Exception?) {
                 e?.printStackTrace()
+                Timber.e("----e="+e?.printStackTrace()+"\n"+e?.fillInStackTrace()+"\n"+e?.localizedMessage)
                 val bean = OtaBean()
                 bean.isError=true
-                bean.setErrorMsg(e?.message)
+                bean.setErrorMsg(e?.message+"\n"+e?.printStackTrace())
                 firmwareData.postValue(bean)
             }
+
 
         })
     }
