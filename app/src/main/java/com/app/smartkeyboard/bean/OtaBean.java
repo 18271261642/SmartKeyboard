@@ -17,6 +17,10 @@ public class OtaBean {
 
     private String platform;
 
+
+    private boolean isError;
+    private String errorMsg;
+
     public String getFileName() {
         return fileName;
     }
@@ -63,6 +67,22 @@ public class OtaBean {
 
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    public boolean isError() {
+        return isError;
+    }
+
+    public void setError(boolean error) {
+        isError = error;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
 
     @Override

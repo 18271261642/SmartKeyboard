@@ -34,6 +34,7 @@ import com.app.smartkeyboard.utils.NotificationUtils
 import com.app.smartkeyboard.viewmodel.KeyBoardViewModel
 import com.blala.blalable.BleConstant
 import com.blala.blalable.listener.OnCommBackDataListener
+import com.google.gson.Gson
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
 import kotlinx.android.synthetic.main.dialog_show_upgrade_layout.*
@@ -73,6 +74,10 @@ class MainActivity : AppActivity() {
 
         setOnClickListener(homeNotebookLayout, homeKeyboardLayout, homeDialLayout)
 
+
+        findViewById<ImageView>(R.id.titleImgView)?.setOnClickListener {
+            startActivity(LogActivity::class.java)
+        }
         findViewById<ImageView>(R.id.titleImgView).setOnLongClickListener {
            // startActivity(LogActivity::class.java)
             startActivity(SecondHomeActivity::class.java)
@@ -105,6 +110,7 @@ class MainActivity : AppActivity() {
                 override fun onIntDataBack(value: IntArray?) {
                     Timber.e("------版本好="+ (value?.get(0) ?: 0))
                    val code = value?.get(0)
+                    BaseApplication.getBaseApplication().setLogStr("VersionCode="+code.toString())
                     if(code != null){
                         viewModel.checkVersion(this@MainActivity,code)
                     }
@@ -228,7 +234,13 @@ class MainActivity : AppActivity() {
 
         viewModel.firmwareData.observe(this){
             if(it != null){
-              showUpgradeDialog(it.ota,it.fileName)
+                if(it.isError){
+                    BaseApplication.getBaseApplication().logStr = it.errorMsg
+                }else{
+                    BaseApplication.getBaseApplication().logStr = Gson().toJson(it)
+                    showUpgradeDialog(it.ota,it.fileName)
+                }
+
             }
         }
     }

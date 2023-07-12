@@ -14,6 +14,7 @@ class LogActivity : AppActivity() {
 
     private var clearBtn : Button ?= null
 
+    private var updateLogTv : TextView ?= null
 
 
     override fun getLayoutId(): Int {
@@ -21,11 +22,14 @@ class LogActivity : AppActivity() {
     }
 
     override fun initView() {
+        updateLogTv = findViewById(R.id.updateLogTv)
         logTv = findViewById(R.id.logTv)
         clearBtn = findViewById(R.id.clearBtn)
         clearBtn?.setOnClickListener{
             BaseApplication.getBaseApplication().logStr = "--"
+            BaseApplication.getBaseApplication().clearLog()
             logTv?.text = ""
+            updateLogTv?.text = ""
         }
     }
 
@@ -35,5 +39,8 @@ class LogActivity : AppActivity() {
         val logStr = BaseApplication.getBaseApplication().logStr
 
         logTv?.text = logStr
+
+        val updateLog = BaseApplication.getBaseApplication().getAppLog()
+        updateLogTv?.text = updateLog
     }
 }

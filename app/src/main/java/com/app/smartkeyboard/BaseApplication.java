@@ -144,10 +144,20 @@ public class BaseApplication extends BleApplication {
 
 
     public String getLogStr() {
-        return logStr;
+        String log = getBleOperate().getLog();
+        return log;
+    }
+
+    private StringBuffer stringBuffer  = new StringBuffer();
+    public void clearLog(){
+        stringBuffer.delete(0,stringBuffer.length());
     }
 
     public void setLogStr(String logStr) {
-        this.logStr = logStr;
+        stringBuffer.append(logStr+"\n");
+    }
+
+    public String getAppLog(){
+        return stringBuffer.toString();
     }
 }

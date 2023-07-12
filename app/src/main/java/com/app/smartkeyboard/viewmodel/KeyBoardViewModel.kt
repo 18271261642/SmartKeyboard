@@ -29,8 +29,20 @@ class KeyBoardViewModel : ViewModel() {
                     val firmware = data.getString("firmware")
 
                     if(!BikeUtils.isEmpty(firmware)){
-                        val bean = GsonUtils.getGsonObject<OtaBean>(firmware)
+                        var bean = GsonUtils.getGsonObject<OtaBean>(firmware)
+                        if(bean == null){
+                            bean = OtaBean()
+                            bean.isError=true
+                            bean.setErrorMsg("back null")
+                        }else{
+                            bean.isError = false
+                        }
                         Timber.e("------bean="+bean.toString())
+                        firmwareData.postValue(bean)
+                    }else{
+                        val bean = OtaBean()
+                        bean.isError=true
+                        bean.setErrorMsg("back null")
                         firmwareData.postValue(bean)
                     }
                 }
@@ -38,6 +50,10 @@ class KeyBoardViewModel : ViewModel() {
 
             override fun onFail(e: Exception?) {
                 e?.printStackTrace()
+                val bean = OtaBean()
+                bean.isError=true
+                bean.setErrorMsg(e?.message)
+                firmwareData.postValue(bean)
             }
 
         })
