@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import com.app.smartkeyboard.action.DebugLoggerTree;
 import com.app.smartkeyboard.ble.ConnStatus;
 import com.app.smartkeyboard.ble.ConnStatusService;
+import com.app.smartkeyboard.dialog.OkHttpRetryInterceptor;
 import com.app.smartkeyboard.http.RequestHandler;
 import com.app.smartkeyboard.http.RequestServer;
 import com.app.smartkeyboard.utils.LanguageUtils;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.blala.blalable.BleApplication;
 import com.blala.blalable.BleOperateManager;
+import com.bonlala.widget.view.SwitchButton;
 import com.hjq.http.EasyConfig;
 import com.hjq.http.config.IRequestInterceptor;
 import com.hjq.http.model.HttpHeaders;
@@ -26,6 +28,9 @@ import com.hjq.http.request.HttpRequest;
 import com.hjq.toast.ToastUtils;
 import com.tencent.mmkv.MMKV;
 import org.litepal.LitePal;
+
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
@@ -85,9 +90,15 @@ public class BaseApplication extends BleApplication {
 
 
     private void initNet(){
-
+        OkHttpRetryInterceptor.Builder builder = new OkHttpRetryInterceptor.Builder();
+        builder.build();
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(0, TimeUnit.SECONDS)
+                .readTimeout(0,TimeUnit.SECONDS)
+                .writeTimeout(0,TimeUnit.SECONDS)
+//                .addInterceptor(new OkHttpRetryInterceptor(builder))
                 .build();
+
         //是否是中文
         boolean isChinese = LanguageUtils.isChinese();
         EasyConfig.with(okHttpClient)
@@ -99,6 +110,8 @@ public class BaseApplication extends BleApplication {
                 .setHandler(new RequestHandler(this))
                 // 设置请求重试次数
                 .setRetryCount(3)
+                .setRetryCount(3)
+                .setRetryTime(1000)
                 // 添加全局请求参数
                 //.addParam("token", "6666666")
                 // 添加全局请求头
