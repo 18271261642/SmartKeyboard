@@ -50,12 +50,12 @@ class LogActivity : AppActivity() {
     private fun request(){
         EasyHttp.get(this).api("checkUpdate?firmwareVersionCode=320&productNumber=c003").request(object :
             OnHttpListener<String> {
-            override fun onSucceed(result: String?) {
+
+            override fun onHttpSuccess(result: String?) {
                 logTv?.text = result
             }
 
-            override fun onFail(e: Exception?) {
-                e?.printStackTrace()
+            override fun onHttpFail(e: Exception?) {
                 Timber.e("----e="+e?.printStackTrace()+"\n"+e?.fillInStackTrace()+"\n"+e?.localizedMessage)
                 logTv?.text = e?.message
             }

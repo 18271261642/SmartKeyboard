@@ -22,7 +22,7 @@ class KeyBoardViewModel : ViewModel() {
     //检查版本
     fun checkVersion(lifecycleOwner: LifecycleOwner,versionCode : Int){
         EasyHttp.get(lifecycleOwner).api("checkUpdate?firmwareVersionCode=$versionCode&productNumber=c003").request(object : OnHttpListener<String>{
-            override fun onSucceed(result: String?) {
+            override fun onHttpSuccess(result: String?) {
                 val jsonObject = JSONObject(result)
                 if(jsonObject.getInt("code") == 200){
                     val data = jsonObject.getJSONObject("data")
@@ -48,9 +48,7 @@ class KeyBoardViewModel : ViewModel() {
                 }
             }
 
-            override fun onFail(e: Exception?) {
-                e?.printStackTrace()
-                Timber.e("----e="+e?.printStackTrace()+"\n"+e?.fillInStackTrace()+"\n"+e?.localizedMessage)
+            override fun onHttpFail(e: Exception?) {
                 val bean = OtaBean()
                 bean.isError=true
                 bean.setErrorMsg(e?.message+"\n"+e?.printStackTrace())

@@ -84,9 +84,9 @@ dependencies {
 
     implementation 'com.github.Baseflow:PhotoView:2.3.0'
 
-    implementation 'com.squareup.okhttp3:okhttp:3.12.13'
+    implementation 'com.squareup.okhttp3:okhttp:4.8.0'
 
-    implementation 'com.github.getActivity:EasyHttp:11.0'
+    implementation 'com.github.getActivity:EasyHttp:12.0'
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
     implementation 'com.github.getActivity:GsonFactory:5.2'
 

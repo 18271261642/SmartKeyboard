@@ -384,41 +384,31 @@ public class OtaDialogView extends AppCompatDialog {
         isUpgradeDisConn = false;
         sdFile = null;
         upgradeStateTv.setText(getContext().getResources().getString(R.string.string_start_download));
+        upgradeStateTv.setText(getContext().getResources().getString(R.string.string_downloading)+"..");
         visibilityOrGone(false);
         EasyHttp.download(this).url(downUrl)
                 .file(downloadFileUrl+fileName)
                 .listener(new OnDownloadListener() {
                     @Override
-                    public void onStart(File file) {
-                        Timber.e("----onStart-----");
-                        upgradeStateTv.setText(getContext().getResources().getString(R.string.string_downloading)+"..");
+                    public void onDownloadProgressChange(File file, int progress) {
+
                     }
 
                     @Override
-                    public void onProgress(File file, int progress) {
-                        Timber.e("----onProgress-----=%s", progress);
-                    }
-
-                    @Override
-                    public void onComplete(File file) {
-                        Timber.e("------onComplete---=%s",file.getPath());
+                    public void onDownloadSuccess(File file) {
                         upgradeStateTv.setText(getContext().getString(R.string.string_upgrading)+"..");
                         sdFile = file;
                         startScanDevice(mac);
                     }
 
                     @Override
-                    public void onError(File file, Exception e) {
+                    public void onDownloadFail(File file, Exception e) {
                         upgradeStateTv.setText("固件包下载失败"+e.getMessage());
                         visibilityOrGone(true);
                         Timber.e("----onError-----=%s", e.getMessage());
                         sdFile = null;
                     }
 
-                    @Override
-                    public void onEnd(File file) {
-                        Timber.e("----onEnd-----=%s", file.getPath());
-                    }
                 }).start();
 
     }
