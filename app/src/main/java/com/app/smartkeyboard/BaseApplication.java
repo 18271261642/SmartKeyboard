@@ -51,6 +51,8 @@ public class BaseApplication extends BleApplication {
 
     private String logStr;
 
+    public static String BASE_URL = "https://wuquedistribution.com:12349/";
+
     @Override
     public void onCreate() {
         super.onCreate();

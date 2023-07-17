@@ -2,15 +2,14 @@ package com.app.smartkeyboard
 
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.viewModels
 import com.app.smartkeyboard.action.AppActivity
-import com.app.smartkeyboard.bean.OtaBean
-import com.app.smartkeyboard.utils.BikeUtils
-import com.app.smartkeyboard.utils.GsonUtils
-import com.hjq.http.EasyHttp
-import com.hjq.http.listener.OnHttpListener
-import org.json.JSONObject
-import timber.log.Timber
-import java.lang.Exception
+import com.app.smartkeyboard.viewmodel.KeyBoardViewModel
+import com.kymjs.okhttp3.OkHttpStack
+import com.kymjs.rxvolley.RxVolley
+import com.kymjs.rxvolley.http.RequestQueue
+import okhttp3.OkHttpClient
+
 
 /**
  * Created by Admin
@@ -25,6 +24,7 @@ class LogActivity : AppActivity() {
     private var updateLogTv : TextView ?= null
 
 
+    private val viewModel by viewModels<KeyBoardViewModel>()
     override fun getLayoutId(): Int {
         return R.layout.activity_log_layout
     }
@@ -48,22 +48,27 @@ class LogActivity : AppActivity() {
 
 
     private fun request(){
-        EasyHttp.get(this).api("checkUpdate?firmwareVersionCode=320&productNumber=c003").request(object :
-            OnHttpListener<String> {
-
-            override fun onHttpSuccess(result: String?) {
-                logTv?.text = result
-            }
-
-            override fun onHttpFail(e: Exception?) {
-                Timber.e("----e="+e?.printStackTrace()+"\n"+e?.fillInStackTrace()+"\n"+e?.localizedMessage)
-                logTv?.text = e?.message
-            }
-
-        })
+        viewModel.checkVersion(this,0)
+//        EasyHttp.get(this).api("checkUpdate?firmwareVersionCode=320&productNumber=c003").request(object :
+//            OnHttpListener<String> {
+//
+//            override fun onHttpSuccess(result: String?) {
+//                logTv?.text = result
+//            }
+//
+//            override fun onHttpFail(e: Exception?) {
+//                Timber.e("----e="+e?.printStackTrace()+"\n"+e?.fillInStackTrace()+"\n"+e?.localizedMessage)
+//                logTv?.text = e?.message
+//            }
+//
+//        })
     }
 
     override fun initData() {
+
+
+
+
        // val logStr = BaseApplication.getBaseApplication().bleOperate.log.toString()
 
         val logStr = BaseApplication.getBaseApplication().logStr
