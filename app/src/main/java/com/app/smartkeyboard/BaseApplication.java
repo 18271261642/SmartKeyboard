@@ -9,6 +9,8 @@ import android.os.IBinder;
 
 import androidx.annotation.NonNull;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.app.smartkeyboard.action.DebugLoggerTree;
 import com.app.smartkeyboard.ble.ConnStatus;
 import com.app.smartkeyboard.ble.ConnStatusService;
@@ -26,6 +28,7 @@ import com.hjq.http.model.HttpHeaders;
 import com.hjq.http.model.HttpParams;
 import com.hjq.http.request.HttpRequest;
 import com.hjq.toast.ToastUtils;
+import com.liulishuo.filedownloader.FileDownloader;
 import com.tencent.mmkv.MMKV;
 import org.litepal.LitePal;
 
@@ -52,6 +55,8 @@ public class BaseApplication extends BleApplication {
     private String logStr;
 
     public static String BASE_URL = "https://wuquedistribution.com:12349/";
+
+    private RequestQueue requestQueue;
 
     @Override
     public void onCreate() {
@@ -85,8 +90,21 @@ public class BaseApplication extends BleApplication {
 
         initNet();
 
+        FileDownloader.setupOnApplicationOnCreate(baseApplication);
+
+        requestQueue = Volley.newRequestQueue(baseApplication);
+
         Intent intent = new Intent(this, ConnStatusService.class);
         this.bindService(intent,serviceConnection, Context.BIND_AUTO_CREATE);
+
+    }
+
+
+    public RequestQueue getRequestQueue(){
+        if(requestQueue == null){
+            requestQueue = Volley.newRequestQueue(baseApplication);
+        }
+        return requestQueue;
 
     }
 
@@ -136,8 +154,13 @@ public class BaseApplication extends BleApplication {
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            connStatusService =( (ConnStatusService.ConnBinder)iBinder).getService();
-            Timber.e("--------绑定服务="+(connStatusService == null));
+            try {
+                connStatusService =( (ConnStatusService.ConnBinder)iBinder).getService();
+                Timber.e("--------绑定服务="+(connStatusService == null));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
 
         @Override

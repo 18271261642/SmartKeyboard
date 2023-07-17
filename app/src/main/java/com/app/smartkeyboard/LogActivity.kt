@@ -3,12 +3,11 @@ package com.app.smartkeyboard
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
+
 import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.viewmodel.KeyBoardViewModel
-import com.kymjs.okhttp3.OkHttpStack
-import com.kymjs.rxvolley.RxVolley
-import com.kymjs.rxvolley.http.RequestQueue
-import okhttp3.OkHttpClient
+import com.google.gson.Gson
+
 
 
 /**
@@ -48,25 +47,15 @@ class LogActivity : AppActivity() {
 
 
     private fun request(){
+
+        viewModel.firmwareData.observe(this){
+            updateLogTv?.text = Gson().toJson(it)
+        }
         viewModel.checkVersion(this,0)
-//        EasyHttp.get(this).api("checkUpdate?firmwareVersionCode=320&productNumber=c003").request(object :
-//            OnHttpListener<String> {
-//
-//            override fun onHttpSuccess(result: String?) {
-//                logTv?.text = result
-//            }
-//
-//            override fun onHttpFail(e: Exception?) {
-//                Timber.e("----e="+e?.printStackTrace()+"\n"+e?.fillInStackTrace()+"\n"+e?.localizedMessage)
-//                logTv?.text = e?.message
-//            }
-//
-//        })
+
     }
 
     override fun initData() {
-
-
 
 
        // val logStr = BaseApplication.getBaseApplication().bleOperate.log.toString()

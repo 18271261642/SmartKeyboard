@@ -28,6 +28,10 @@ import com.hjq.shape.view.ShapeTextView;
 import com.hjq.toast.ToastUtils;
 import com.inuker.bluetooth.library.search.SearchResult;
 import com.inuker.bluetooth.library.search.response.SearchResponse;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadListener;
+import com.liulishuo.filedownloader.FileDownloader;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -386,30 +390,94 @@ public class OtaDialogView extends AppCompatDialog {
         upgradeStateTv.setText(getContext().getResources().getString(R.string.string_start_download));
         upgradeStateTv.setText(getContext().getResources().getString(R.string.string_downloading)+"..");
         visibilityOrGone(false);
-        EasyHttp.download(this).url(downUrl)
-                .file(downloadFileUrl+fileName)
-                .listener(new OnDownloadListener() {
-                    @Override
-                    public void onDownloadProgressChange(File file, int progress) {
 
+        Timber.e("-----downloadUrl="+downUrl);
+
+        FileDownloader.getImpl().create(downUrl)
+                .setPath(downloadFileUrl+fileName)
+                .setListener(new FileDownloadListener() {
+                    @Override
+                    protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                        Timber.e("-------pending=");
                     }
 
                     @Override
-                    public void onDownloadSuccess(File file) {
+                    protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes) {
+                        Timber.e("-------connected=");
+                    }
+
+                    @Override
+                    protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                        Timber.e("-------progress="+soFarBytes+" "+totalBytes);
+                    }
+
+                    @Override
+                    protected void blockComplete(BaseDownloadTask task) {
+                        Timber.e("-------blockComplete=");
+                    }
+
+                    @Override
+                    protected void retry(final BaseDownloadTask task, final Throwable ex, final int retryingTimes, final int soFarBytes) {
+                        Timber.e("-------retry=");
+                    }
+
+                    @Override
+                    protected void completed(BaseDownloadTask task) {
+                        Timber.e("-------completed=");
                         upgradeStateTv.setText(getContext().getString(R.string.string_upgrading)+"..");
+                        String p = task.getTargetFilePath();
+                        Timber.e("---p="+p);
+                        File file = new File(p);
+
                         sdFile = file;
                         startScanDevice(mac);
                     }
 
                     @Override
-                    public void onDownloadFail(File file, Exception e) {
+                    protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                    }
+
+                    @Override
+                    protected void error(BaseDownloadTask task, Throwable e) {
+                        Timber.e("-------error="+e.getMessage());
                         upgradeStateTv.setText("固件包下载失败"+e.getMessage());
                         visibilityOrGone(true);
-                        Timber.e("----onError-----=%s", e.getMessage());
                         sdFile = null;
                     }
 
+                    @Override
+                    protected void warn(BaseDownloadTask task) {
+                        Timber.e("-------warn="+task.getTargetFilePath());
+                    }
                 }).start();
+
+
+
+
+//        EasyHttp.download(this).url(downUrl)
+//                .file(downloadFileUrl+fileName)
+//                .listener(new OnDownloadListener() {
+//                    @Override
+//                    public void onDownloadProgressChange(File file, int progress) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDownloadSuccess(File file) {
+//                        upgradeStateTv.setText(getContext().getString(R.string.string_upgrading)+"..");
+//                        sdFile = file;
+//                        startScanDevice(mac);
+//                    }
+//
+//                    @Override
+//                    public void onDownloadFail(File file, Exception e) {
+//                        upgradeStateTv.setText("固件包下载失败"+e.getMessage());
+//                        visibilityOrGone(true);
+//                        Timber.e("----onError-----=%s", e.getMessage());
+//                        sdFile = null;
+//                    }
+//
+//                }).start();
 
     }
 
