@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 
 import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.R;
+import com.app.smartkeyboard.viewmodel.CusException;
 import com.google.gson.JsonSyntaxException;
 
 import com.hjq.gson.factory.GsonFactory;
@@ -268,37 +269,39 @@ public final class RequestHandler implements IRequestHandler {
 
     @Override
     public Exception requestFail(HttpRequest<?> httpRequest, Exception e) {
-        Timber.e("-----requeFail="+e.getMessage()+"\n"+e.fillInStackTrace());
+        String errorSte = e.getMessage()+"\n"+e.fillInStackTrace();
+        Timber.e("-----requeFail="+errorSte);
         BaseApplication.getBaseApplication().setLogStr(e.fillInStackTrace().getLocalizedMessage());
-        // 判断这个异常是不是自己抛的
-        if (e instanceof HttpException) {
-            if (e instanceof TokenException) {
-                // 登录信息失效，跳转到登录页
-            }
-
-            return e;
-        }
-
-        if (e instanceof SocketTimeoutException) {
-            return new TimeoutException(mApplication.getString(R.string.http_server_out_time), e);
-        }
-
-        if (e instanceof UnknownHostException) {
-            NetworkInfo info = ((ConnectivityManager) mApplication.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-            // 判断网络是否连接
-            if (info != null && info.isConnected()) {
-                // 有连接就是服务器的问题
-                return new ServerException(mApplication.getString(R.string.http_server_error), e);
-            }
-            // 没有连接就是网络异常
-            return new NetworkException(mApplication.getString(R.string.http_network_error), e);
-        }
-
-        if (e instanceof IOException) {
-            return new CancelException(mApplication.getString(R.string.http_request_cancel), e);
-        }
-
-        return new HttpException(e.getMessage(), e);
+        return new CusException(errorSte);
+//        // 判断这个异常是不是自己抛的
+//        if (e instanceof HttpException) {
+//            if (e instanceof TokenException) {
+//                // 登录信息失效，跳转到登录页
+//            }
+//
+//            return e;
+//        }
+//
+//        if (e instanceof SocketTimeoutException) {
+//            return new TimeoutException(mApplication.getString(R.string.http_server_out_time), e);
+//        }
+//
+//        if (e instanceof UnknownHostException) {
+//            NetworkInfo info = ((ConnectivityManager) mApplication.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+//            // 判断网络是否连接
+//            if (info != null && info.isConnected()) {
+//                // 有连接就是服务器的问题
+//                return new ServerException(mApplication.getString(R.string.http_server_error), e);
+//            }
+//            // 没有连接就是网络异常
+//            return new NetworkException(mApplication.getString(R.string.http_network_error), e);
+//        }
+//
+//        if (e instanceof IOException) {
+//            return new CancelException(mApplication.getString(R.string.http_request_cancel), e);
+//        }
+//
+//        return new HttpException(e.getMessage(), e);
     }
 
     @Override

@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-
 import androidx.annotation.NonNull;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.app.smartkeyboard.action.DebugLoggerTree;
@@ -21,7 +19,6 @@ import com.app.smartkeyboard.utils.LanguageUtils;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.blala.blalable.BleApplication;
 import com.blala.blalable.BleOperateManager;
-import com.bonlala.widget.view.SwitchButton;
 import com.hjq.http.EasyConfig;
 import com.hjq.http.config.IRequestInterceptor;
 import com.hjq.http.model.HttpHeaders;
@@ -29,12 +26,10 @@ import com.hjq.http.model.HttpParams;
 import com.hjq.http.request.HttpRequest;
 import com.hjq.toast.ToastUtils;
 import com.liulishuo.filedownloader.FileDownloader;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mmkv.MMKV;
 import org.litepal.LitePal;
-
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
@@ -97,6 +92,7 @@ public class BaseApplication extends BleApplication {
         Intent intent = new Intent(this, ConnStatusService.class);
         this.bindService(intent,serviceConnection, Context.BIND_AUTO_CREATE);
 
+        initThirdSDK();
     }
 
 
@@ -106,6 +102,12 @@ public class BaseApplication extends BleApplication {
         }
         return requestQueue;
 
+    }
+
+
+    /**初始化涉及到隐私的SDK**/
+    public void initThirdSDK(){
+        CrashReport.initCrashReport(getApplicationContext(), "04fbc2410e", false);
     }
 
 

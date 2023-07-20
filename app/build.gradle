@@ -12,7 +12,7 @@ android {
         minSdk 21
         targetSdk 32
         versionCode 7
-        versionName "V1.0.5"
+        versionName "V1.0.5.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -103,7 +103,6 @@ dependencies {
 //    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
     implementation 'com.android.volley:volley:1.2.1'
-
     implementation 'com.liulishuo.filedownloader:library:1.7.7'
-
+    implementation 'com.tencent.bugly:crashreport:latest.release'
 }

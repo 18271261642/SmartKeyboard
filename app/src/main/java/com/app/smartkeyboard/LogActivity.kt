@@ -40,7 +40,8 @@ class LogActivity : AppActivity() {
         }
 
         findViewById<Button>(R.id.requestBtn).setOnClickListener {
-            request()
+           // request()
+            viewModel.checkRequest(this)
         }
     }
 
@@ -66,5 +67,10 @@ class LogActivity : AppActivity() {
 
         val updateLog = BaseApplication.getBaseApplication().getAppLog()
         updateLogTv?.text = updateLog
+
+
+        viewModel?.logData.observe(this){
+            updateLogTv?.text = it
+        }
     }
 }
