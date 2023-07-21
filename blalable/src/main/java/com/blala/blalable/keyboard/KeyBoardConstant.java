@@ -279,4 +279,8 @@ public class KeyBoardConstant {
         Log.e("TAG","-------a_B="+re.length);
         return re;
     }
+
+
+
+
 }

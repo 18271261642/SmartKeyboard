@@ -556,6 +556,41 @@ public class BleOperateManager {
     }
 
 
+    /**
+     * 获取设备记事本信息
+     */
+    public void getDeviceNoteMsg(){
+        byte[] noteArray = new byte[]{0x00,0x15,0x00,0x00};
+        byte[] resultArray =  Utils.getFullPackage(noteArray);
+        bleManager.writeDataToDevice(resultArray, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+                Log.e(TAG,"--------设备记事本信息="+Utils.formatBtArrayToString(data));
+
+            }
+        });
+    }
+
+
+    public void deleteIndexNote(long time){
+        byte[] indexArray = new byte[4];
+        byte[] noteArray = new byte[]{0x04,0x0B};
+        byte[] resultArray = Utils.getFullPackage(noteArray);
+        bleManager.writeDataToDevice(resultArray, new WriteBackDataListener() {
+            @Override
+            public void backWriteData(byte[] data) {
+
+            }
+        });
+    }
+
+
+
+
+
+
+
+
     private final WriteBackDataListener writeBackDataListener = new WriteBackDataListener() {
         @Override
         public void backWriteData(byte[] data) {
