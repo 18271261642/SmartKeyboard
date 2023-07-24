@@ -559,7 +559,7 @@ public class BleOperateManager {
     /**
      * 获取设备记事本信息
      */
-    public void getDeviceNoteMsg(){
+    public void getDeviceNoteMsg(OnCommBackDataListener onCommBackDataListener){
         byte[] noteArray = new byte[]{0x00,0x15,0x00,0x00};
         byte[] resultArray =  Utils.getFullPackage(noteArray);
         bleManager.writeDataToDevice(resultArray, new WriteBackDataListener() {
@@ -567,19 +567,33 @@ public class BleOperateManager {
             public void backWriteData(byte[] data) {
                 Log.e(TAG,"--------设备记事本信息="+Utils.formatBtArrayToString(data));
 
+                //88 00 00 00 00 00 06 4f 00 16 2c 4e 7b 40
+                if(data.length == 14 && (data[9]& 0xff) == 22){
+                    //时间
+                    long timeLong = Utils.getIntFromBytes(data[10],data[11],data[12],data[13]);
+
+                    //转换成正常的时间，加上2000-01-01 00:00:00的时间戳
+                    long realTime = 946656000L+timeLong;
+                    Log.e(TAG,"-------时间="+timeLong+" "+realTime);
+                    if(onCommBackDataListener != null){
+                        String st = Utils.getFormatDateStr(realTime*1000, "yyyy-MM-dd HH:mm:ss");
+                        onCommBackDataListener.onStrDataBack(st,String.valueOf(timeLong));
+                    }
+                }
+
             }
         });
     }
 
 
     public void deleteIndexNote(long time){
-        byte[] indexArray = new byte[4];
-        byte[] noteArray = new byte[]{0x04,0x0B};
+        byte[] indexArray = Utils.intToByteArray((int) time);
+        byte[] noteArray = new byte[]{0x04,0x0B,indexArray[3],indexArray[2],indexArray[1],indexArray[0]};
         byte[] resultArray = Utils.getFullPackage(noteArray);
         bleManager.writeDataToDevice(resultArray, new WriteBackDataListener() {
             @Override
             public void backWriteData(byte[] data) {
-
+                Log.e(TAG,"------删除记事本返回="+Utils.formatBtArrayToString(data));
             }
         });
     }

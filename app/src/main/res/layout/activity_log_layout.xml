@@ -46,6 +46,13 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content"/>
 
+           <TextView
+               android:id="@+id/pingLogTv"
+               android:textSize="@dimen/sp_20"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"/>
+
+
        </LinearLayout>
 
    </androidx.core.widget.NestedScrollView>

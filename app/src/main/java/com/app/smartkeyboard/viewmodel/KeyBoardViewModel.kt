@@ -1,6 +1,7 @@
 package com.app.smartkeyboard.viewmodel
 
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
@@ -13,6 +14,7 @@ import com.app.smartkeyboard.BaseApplication
 import com.app.smartkeyboard.bean.OtaBean
 import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.utils.GsonUtils
+import com.google.gson.Gson
 import com.hjq.http.EasyConfig
 import com.hjq.http.EasyHttp
 import com.hjq.http.listener.OnHttpListener
@@ -91,19 +93,20 @@ class KeyBoardViewModel : ViewModel() {
     fun checkRequest(lifecycleOwner: LifecycleOwner) {
         stringBuffer.delete(0, stringBuffer.length)
 
-
+        val vUrl = "http://wuquedistribution.com:12348/recordDebugInfo?productNumber=c003&mac=%E6%B5%8B%E8%AF%95&osType=1&content=%E5%86%85%E5%AE%B9&remark=%E5%A4%87%E6%B3%A8&phoneModel=18888888888"
+        val httpsUrl = "https://wuquedistribution.com:12349/recordDebugInfo?productNumber=c003&mac=%E6%B5%8B%E8%AF%95&osType=1&content=%E5%86%85%E5%AE%B9&remark=%E5%A4%87%E6%B3%A8&phoneModel=18888888888"
         //volley
         val stringRequest =
-            StringRequest(BaseApplication.BASE_URL + "checkUpdate?firmwareVersionCode=1&productNumber=c003",
+            StringRequest(vUrl,
                 { response ->
                     Timber.e("----response=" + response)
-                   stringBuffer.append("v keyboard:$response\n\n")
+                   stringBuffer.append("v http keyboard:$response\n\n")
                     logData.postValue(stringBuffer.toString())
                 }
             ) { error ->
                 val errorStr = "型号:"+Build.MODEL+" android版本："+Build.VERSION.SDK_INT+"\n"+"error="+error?.message
                 Timber.e("----ErrorListener=" + error?.message)
-                stringBuffer.append("v keyboard error:"+errorStr+" " +error?.message+"\n\n")
+                stringBuffer.append("v keyboard http error:"+errorStr+" " +error?.message+"\n\n")
                 logData.postValue(stringBuffer.toString())
 
             }
@@ -115,6 +118,29 @@ class KeyBoardViewModel : ViewModel() {
         )
         BaseApplication.getBaseApplication().requestQueue.add(stringRequest)
 
+
+
+        val httpsRequest =
+            StringRequest(httpsUrl,
+                { response ->
+                    Timber.e("----response=" + response)
+                    stringBuffer.append("v keyboard https:$response\n\n")
+                    logData.postValue(stringBuffer.toString())
+                }
+            ) { error ->
+                val errorStr = "型号:"+Build.MODEL+" android版本："+Build.VERSION.SDK_INT+"\n"+"error="+error?.message
+                Timber.e("----ErrorListener=" + error?.message)
+                stringBuffer.append("v keyboard https error:"+errorStr+" " +error?.message+"\n\n")
+                logData.postValue(stringBuffer.toString())
+
+            }
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            TimeUnit.SECONDS.toMillis(20)
+                .toInt(),  //After the set time elapses the request will timeout
+            0,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
+        BaseApplication.getBaseApplication().requestQueue.add(httpsRequest)
 
 
 
@@ -157,7 +183,7 @@ class KeyBoardViewModel : ViewModel() {
         val config2 = EasyConfig.getInstance()
         config2.setServer("https://wuquedistribution.com:12349/")
         config2.into()
-        EasyHttp.get(lifecycleOwner).api("checkUpdate?firmwareVersionCode=1&productNumber=c003")
+        EasyHttp.get(lifecycleOwner).api("recordDebugInfo?productNumber=c003&mac=测试&osType=1&content=内容&remark=备注&phoneModel=18888888888")
             .request(
                 object : OnHttpListener<String> {
                     override fun onHttpSuccess(result: String?) {
@@ -180,14 +206,9 @@ class KeyBoardViewModel : ViewModel() {
 
         //请求aiHealth
         val config = EasyConfig.getInstance()
-        val m = HashMap<String, Any>()
-        m["appName"] = "aiHealth"
-        m["versionCode"] = 1
-        m["type"] = 1
-        config.params = m
-        config.setServer("http://47.106.139.220:8089/")
+        config.setServer("https://wuquedistribution.com:12349/")
         config.into()
-        EasyHttp.post(lifecycleOwner).api("find_app_update")
+        EasyHttp.get(lifecycleOwner).api("recordDebugInfo?productNumber=c003&mac=测试&osType=1&content=内容&remark=备注&phoneModel=18888888888")
             .request(object : OnHttpListener<String> {
                 override fun onHttpSuccess(result: String?) {
                     Timber.e("--ai--key=" + result)
@@ -205,6 +226,47 @@ class KeyBoardViewModel : ViewModel() {
                 }
             })
 
+
+    }
+
+
+    fun setAppData(lifecycleOwner: LifecycleOwner,context: Context){
+        val phoneModel = Build.MODEL
+        EasyHttp.get(lifecycleOwner).api("recordDebugInfo?productNumber=123&osType=0&phoneModel=$phoneModel")
+            .request(object : OnHttpListener<String>{
+                override fun onHttpSuccess(result: String?) {
+                    stringBuffer.append("上传="+Gson().toJson(result)+"\n")
+                }
+
+                override fun onHttpFail(e: java.lang.Exception?) {
+                    stringBuffer.append("上传error="+e?.message+"\n")
+                }
+
+            })
+
+        val httpUrl = "http://wuquedistribution.com:12348/recordDebugInfo?productNumber=123&osType=0&phoneModel=$phoneModel"
+
+        val httpsRequest =
+            StringRequest(httpUrl,
+                { response ->
+                    Timber.e("----response=" + response)
+                    stringBuffer.append("v keyboard https:$response\n\n")
+                    logData.postValue(stringBuffer.toString())
+                }
+            ) { error ->
+                val errorStr = "型号:"+Build.MODEL+" android版本："+Build.VERSION.SDK_INT+"\n"+"error="+error?.message
+                Timber.e("----ErrorListener=" + error?.message)
+                stringBuffer.append("v keyboard https error:"+errorStr+" " +error?.message+"\n\n")
+                logData.postValue(stringBuffer.toString())
+
+            }
+        httpsRequest.retryPolicy = DefaultRetryPolicy(
+            TimeUnit.SECONDS.toMillis(20)
+                .toInt(),  //After the set time elapses the request will timeout
+            0,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
+        BaseApplication.getBaseApplication().requestQueue.add(httpsRequest)
 
     }
 }

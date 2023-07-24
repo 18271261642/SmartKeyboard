@@ -21,12 +21,16 @@ import com.app.smartkeyboard.bean.NoteBookBean
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.dialog.DeleteNoteDialog
 import com.app.smartkeyboard.dialog.SelectPhotoDialog
+import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.viewmodel.NoteBookViewModel
+import com.blala.blalable.BleOperateManager
+import com.blala.blalable.listener.OnCommBackDataListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * 笔记页面
@@ -185,6 +189,13 @@ class NotebookActivity : AppActivity() {
         dialog.setOnCommClickListener { position ->
             dialog.dismiss()
             if (position == 0x01) { //删除
+
+                val timeLong = noteList!!.get(positions).noteTimeLong
+                val deviceTimeLong = timeLong/1000-946656000L
+                if (deviceTimeLong != null) {
+                    BaseApplication.getBaseApplication().bleOperate.deleteIndexNote(deviceTimeLong)
+                }
+
                 DbManager.getInstance().deleteNotebook(noteList?.get(positions)?.saveTime)
                 GlobalScope.launch {
                     delay(500)

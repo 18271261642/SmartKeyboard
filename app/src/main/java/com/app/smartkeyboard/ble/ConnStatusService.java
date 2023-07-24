@@ -15,6 +15,8 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.app.smartkeyboard.BaseApplication;
+import com.app.smartkeyboard.bean.DbManager;
+import com.app.smartkeyboard.bean.NoteBookBean;
 import com.app.smartkeyboard.utils.BikeUtils;
 import com.app.smartkeyboard.utils.MmkvUtils;
 import com.blala.blalable.BleConstant;
@@ -23,6 +25,7 @@ import com.blala.blalable.BleOperateManager;
 import com.blala.blalable.Utils;
 import com.blala.blalable.listener.BleConnStatusListener;
 import com.blala.blalable.listener.ConnStatusListener;
+import com.blala.blalable.listener.OnCommBackDataListener;
 import com.blala.blalable.listener.WriteBackDataListener;
 import com.inuker.bluetooth.library.BluetoothClient;
 import com.inuker.bluetooth.library.Constants;
@@ -257,9 +260,31 @@ public class ConnStatusService extends Service {
 
     /**获取设备的状态**/
     private void getKeyBoardStatus(String mac,int code){
-        BaseApplication.getBaseApplication().getBleOperate().getKeyBoardStatus();
+       // BaseApplication.getBaseApplication().getBleOperate().getKeyBoardStatus();
 
+        BaseApplication.getBaseApplication().getBleOperate().getDeviceNoteMsg(new OnCommBackDataListener() {
+            @Override
+            public void onIntDataBack(int[] value) {
 
+            }
+
+            @Override
+            public void onStrDataBack(String... value) {
+                //记事本的时间
+                String timeStr = value[0];
+                //键盘中的时间戳
+                String deviceTime = value[1];
+                if(!BikeUtils.isEmpty(timeStr)){
+                    NoteBookBean nb = DbManager.getInstance().queryNoteBookByTime(timeStr);
+                    if(nb == null){
+                        if(!BikeUtils.isEmpty(deviceTime)){
+                            long t = Long.parseLong(deviceTime);
+                            BleOperateManager.getInstance().deleteIndexNote(t);
+                        }
+                    }
+                }
+            }
+        });
     }
 
 

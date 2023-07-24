@@ -1,71 +1,62 @@
-package com.app.smartkeyboard.dialog;
+package com.app.smartkeyboard.http;
 
+import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
-/**
- * Created by Admin
- * Date 2023/7/13
- *
- * @author Admin
- */
 public class OkHttpRetryInterceptor implements Interceptor {
 
+    public int executionCount; //最大重试次数
+    private long retryInterval; //重试的间隔
 
-    public int executionCount;//最大重试次数
-    private long retryInterval;//重试的间隔
-
-    public OkHttpRetryInterceptor(Builder builder) {
+    public OkHttpRetryInterceptor(Builder builder){
         this.executionCount = builder.executionCount;
         this.retryInterval = builder.retryInterval;
+
     }
 
 
+    @NonNull
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
         Response response = doRequest(chain, request);
+        if(request == null){
+            return null;
+        }
         int retryNum = 0;
         while ((response == null || !response.isSuccessful()) && retryNum <= executionCount) {
-            //Timber.e("intercept Request is not successful - {}",retryNum);
             Timber.e("intercept Request is not successful - {}"+retryNum);
             final long nextInterval = getRetryInterval();
             try {
-                //log.info("Wait for {}",nextInterval);
-                Timber.e("Wait for {}\",nextInterval"+nextInterval);
+                Timber.e("Wait for {}"+nextInterval);
                 Thread.sleep(nextInterval);
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new InterruptedIOException();
             }
             retryNum++;
-            if(response != null){
-                response.close();
-            }
-
             // retry the request
             response = doRequest(chain, request);
         }
-        //response.close();
         return response;
     }
 
-    private Response doRequest(Chain chain, Request request) {
+
+    private Response doRequest(Chain chain,Request request){
         Response response = null;
         try {
             response = chain.proceed(request);
             return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return response;
+        } catch (IOException e) {
+            return null;
         }
-
     }
+
 
     /**
      * retry间隔时间
@@ -74,28 +65,29 @@ public class OkHttpRetryInterceptor implements Interceptor {
         return this.retryInterval;
     }
 
-    public static final class Builder {
+    public final static class Builder{
         private int executionCount;
+
         private long retryInterval;
 
-        public Builder() {
+        public Builder(){
             executionCount = 3;
             retryInterval = 1000;
         }
 
-        public OkHttpRetryInterceptor.Builder executionCount(int executionCount) {
-            this.executionCount = executionCount;
+
+        public OkHttpRetryInterceptor.Builder executionCount(int count){
+            this.executionCount = count;
             return this;
         }
 
-        public OkHttpRetryInterceptor.Builder retryInterval(long retryInterval) {
-            this.retryInterval = retryInterval;
+        public OkHttpRetryInterceptor.Builder retryInterval(int interval){
+            this.retryInterval = interval;
             return this;
         }
 
-        public OkHttpRetryInterceptor build() {
+        public OkHttpRetryInterceptor build(){
             return new OkHttpRetryInterceptor(this);
         }
     }
-
 }

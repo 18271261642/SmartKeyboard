@@ -7,19 +7,21 @@ import android.util.Log;
 import org.apache.commons.lang.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Created by Admin
  * Date 2021/9/16
  */
 public class Utils {
-
 
 
 
@@ -641,5 +643,10 @@ public class Utils {
         return result;
     }
 
+
+    public static String getFormatDateStr(long time,String format){
+        SimpleDateFormat sdf = new SimpleDateFormat(format,Locale.CHINA);
+        return sdf.format(new Date(time));
+    }
 
 }
