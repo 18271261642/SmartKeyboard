@@ -100,11 +100,6 @@ class LogActivity : AppActivity() {
 
         stringBuffer.delete(0,stringBuffer.length)
         viewModel.setAppData(this, this)
-        GlobalScope.launch {
-            pingW()
-        }
-
-
     }
 
 
@@ -141,29 +136,6 @@ class LogActivity : AppActivity() {
 
     }
 
-//    private fun ping2() {
-//        val ipString = "34.66.19.66"
-//        val p = Runtime.getRuntime().exec("ping -c 1 -w 1 $ipString")
-//// 读取ping的内容，可不加
-//// 读取ping的内容，可不加
-//        val input = p.inputStream
-//        val `in` = BufferedReader(InputStreamReader(input))
-//        val stringBuffer = StringBuffer()
-//        var content: String? = ""
-//        while (`in`.readLine().also { content = it } != null) {
-//            stringBuffer.append(content)
-//        }
-//// PING的状态
-//// PING的状态
-//        val status = p.waitFor()
-//        if (status == 0) {
-//            sleep(3000)
-//        } else {
-//            isEnable = false
-//            ExDispatcher.dispatchMessage(ExMessage.PING_CONNECT_BREAK)
-//            interrupt()
-//        }
-//    }
 
     override fun onDestroy() {
         super.onDestroy()

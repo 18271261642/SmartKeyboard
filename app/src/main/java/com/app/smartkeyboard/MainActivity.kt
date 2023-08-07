@@ -76,11 +76,11 @@ class MainActivity : AppActivity() {
 
 
         findViewById<ImageView>(R.id.titleImgView)?.setOnClickListener {
-            startActivity(LogActivity::class.java)
+            //startActivity(LogActivity::class.java)
         }
         findViewById<ImageView>(R.id.titleImgView).setOnLongClickListener {
            // startActivity(LogActivity::class.java)
-            startActivity(SecondHomeActivity::class.java)
+           // startActivity(SecondHomeActivity::class.java)
             true
         }
         val intentFilter = IntentFilter()

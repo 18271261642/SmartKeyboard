@@ -127,7 +127,7 @@ class DialogScanDeviceView : AppCompatDialog {
                 if(repeatList?.contains(p0.address) == true)
                     return
                 //030543
-                if(!BikeUtils.isEmpty(recordStr) && recordStr.toLowerCase(Locale.ROOT).contains("c003")){
+                if(!BikeUtils.isEmpty(recordStr) && (recordStr.lowercase(Locale.ROOT).contains("c003")|| recordStr.lowercase(Locale.ROOT).contains("03c0"))){
                     //判断少于40个设备就不添加了
                     if(repeatList?.size!! >40){
                         return
