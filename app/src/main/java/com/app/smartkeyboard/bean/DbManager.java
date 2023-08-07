@@ -77,6 +77,5 @@ public class DbManager {
      */
     public void deleteNotebook(String timeStr){
         int code = LitePal.deleteAll(NoteBookBean.class,"saveTime = ?",timeStr);
-        Timber.e("--------删除="+code);
     }
 }

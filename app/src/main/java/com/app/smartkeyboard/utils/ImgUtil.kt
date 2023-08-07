@@ -1,18 +1,13 @@
 package com.app.smartkeyboard.utils
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.os.Environment
 import android.widget.ImageView
 import com.app.smartkeyboard.R
 import com.app.smartkeyboard.listeners.OnGetImgWidthListener
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 
 import java.io.File

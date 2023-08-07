@@ -16,8 +16,6 @@
 
 package com.app.smartkeyboard.ble.ota;
 
-import android.annotation.SuppressLint;
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -29,13 +27,9 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Build;
-import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 

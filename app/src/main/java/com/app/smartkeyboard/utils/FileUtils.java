@@ -38,8 +38,6 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 
-import androidx.core.content.FileProvider;
-
 
 /**
  * 作者：Android_AJ on 2017/4/24.

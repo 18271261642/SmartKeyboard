@@ -37,7 +37,6 @@ import com.blala.blalable.listener.OnCommBackDataListener
 import com.google.gson.Gson
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
-import kotlinx.android.synthetic.main.dialog_show_upgrade_layout.*
 import timber.log.Timber
 
 /**

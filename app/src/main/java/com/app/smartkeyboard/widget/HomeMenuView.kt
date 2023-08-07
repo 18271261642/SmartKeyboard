@@ -5,12 +5,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.app.smartkeyboard.R
 import com.app.smartkeyboard.adapter.OnCommItemClickListener
 import com.hjq.shape.layout.ShapeLinearLayout
-import com.hjq.toast.ToastUtils
 
 class HomeMenuView : LinearLayout ,OnClickListener{
 

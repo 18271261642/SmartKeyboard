@@ -22,8 +22,6 @@ import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.R;
 import com.app.smartkeyboard.utils.BikeUtils;
 import com.app.smartkeyboard.widget.CusScheduleView;
-import com.hjq.http.EasyHttp;
-import com.hjq.http.listener.OnDownloadListener;
 import com.hjq.shape.view.ShapeTextView;
 import com.hjq.toast.ToastUtils;
 import com.inuker.bluetooth.library.search.SearchResult;

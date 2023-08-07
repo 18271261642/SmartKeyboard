@@ -13,7 +13,6 @@ import com.app.smartkeyboard.R;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
 

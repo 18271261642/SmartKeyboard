@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">掌上悟确</string>
+    <string name="app_name">Freya</string>
 
 
+    <string name="string_delete_txt">删除</string>
     <string name="string_alarm_edit">闹钟编辑</string>
     <string name="string_save">保存</string>
     <string name="string_please_input_title">请输入标题!</string>

@@ -1,11 +1,8 @@
 package com.app.smartkeyboard.http;
 
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.R;
@@ -15,13 +12,8 @@ import com.google.gson.JsonSyntaxException;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.http.EasyLog;
 import com.hjq.http.config.IRequestHandler;
-import com.hjq.http.exception.CancelException;
 import com.hjq.http.exception.DataException;
-import com.hjq.http.exception.HttpException;
-import com.hjq.http.exception.NetworkException;
 import com.hjq.http.exception.ResponseException;
-import com.hjq.http.exception.ServerException;
-import com.hjq.http.exception.TimeoutException;
 import com.hjq.http.request.HttpRequest;
 import com.tencent.mmkv.MMKV;
 import org.json.JSONArray;
@@ -31,8 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 
 import androidx.annotation.NonNull;
 import okhttp3.Headers;

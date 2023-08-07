@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">Pocket Wuque</string>
+    <string name="app_name">Freya</string>
 
 
+    <string name="string_delete_txt">Delete</string>
     <string name="string_alarm_edit">Alarm Editing</string>
     <string name="string_save">Save</string>
     <string name="string_please_input_title">Please enter title!</string>

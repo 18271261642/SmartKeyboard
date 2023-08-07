@@ -3,12 +3,10 @@ package com.app.smartkeyboard.viewmodel
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.app.smartkeyboard.BaseApplication
 import com.app.smartkeyboard.bean.OtaBean

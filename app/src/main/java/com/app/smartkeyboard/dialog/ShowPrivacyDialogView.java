@@ -16,9 +16,7 @@ import android.widget.TextView;
 
 import com.app.smartkeyboard.R;
 import com.app.smartkeyboard.ShowWebViewActivity;
-import com.app.smartkeyboard.utils.MmkvUtils;
 import com.hjq.shape.layout.ShapeLinearLayout;
-import com.hjq.shape.view.ShapeButton;
 import com.hjq.shape.view.ShapeTextView;
 
 import androidx.annotation.NonNull;

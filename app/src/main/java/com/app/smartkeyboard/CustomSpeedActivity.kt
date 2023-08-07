@@ -26,7 +26,9 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-
+/**
+ * 自定义GIF速度页面
+ */
 class CustomSpeedActivity : AppActivity() {
 
 
@@ -132,18 +134,6 @@ class CustomSpeedActivity : AppActivity() {
                 if (progress != null) {
                     changeGifSpeed(progress)
                 }
-
-//                GlobalScope.launch {
-//                    if (progress != null) {
-//                      //  reChangeGif(progress * 30)
-//
-//                      //  saveBitmap(progress)
-//                        val message = handlers.obtainMessage()
-//                        message.what = 0x01;
-//                        message.obj = progress
-//                        handlers.sendMessage(message)
-//                    }
-//                }
             }
 
         })
@@ -242,13 +232,6 @@ class CustomSpeedActivity : AppActivity() {
         val file = File(gifPath + "/previews.gif")
         this.dialFileUrl = file.path
         drawable = GifDrawable(file)
-
-//        if(isCustomSped){
-//            val file = File(gifPath + "/previews.gif")
-//            drawable = GifDrawable(file)
-//        }else{
-//            drawable = GifDrawable(resources,R.drawable.gif_preview)
-//        }
         Timber.e("-----速度="+speed+" "+speed*30)
        drawable.setSpeed(speed.toFloat())
         gifImageView?.minimumWidth = 800

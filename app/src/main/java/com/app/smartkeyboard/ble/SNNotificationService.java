@@ -1,23 +1,17 @@
 package com.app.smartkeyboard.ble;
 
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.text.TextUtils;
 
 import com.app.smartkeyboard.BaseApplication;
 import com.app.smartkeyboard.utils.BikeUtils;
-import com.blala.blalable.Utils;
-import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import timber.log.Timber;

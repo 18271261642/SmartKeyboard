@@ -32,8 +32,9 @@
 
 
         <com.bonlala.widget.view.StringScrollPicker
+            android:id="@+id/alarmHourScrollPicker"
             android:layout_width="@dimen/dp_100"
-            app:spv_max_text_size="@dimen/sp_23"
+            app:spv_max_text_size="@dimen/sp_36"
             app:spv_start_color="@color/white"
             app:spv_end_color="@color/white"
             app:spv_visible_item_count="5"
@@ -51,8 +52,9 @@
             android:textSize="@dimen/sp_36"/>
 
         <com.bonlala.widget.view.StringScrollPicker
+            android:id="@+id/alarmMinuteScrollPicker"
             android:layout_width="@dimen/dp_100"
-            app:spv_max_text_size="@dimen/sp_23"
+            app:spv_max_text_size="@dimen/sp_36"
             app:spv_start_color="@color/white"
             app:spv_end_color="@color/white"
             app:spv_visible_item_count="5"
