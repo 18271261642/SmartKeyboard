@@ -2,7 +2,7 @@ package com.app.smartkeyboard.second
 
 import com.app.smartkeyboard.R
 import com.app.smartkeyboard.action.TitleBarFragment
-import com.hjq.shape.layout.ShapeLinearLayout
+import com.app.smartkeyboard.widget.SecondHomeTemperatureView
 
 /**
  * 数据页面
@@ -10,7 +10,8 @@ import com.hjq.shape.layout.ShapeLinearLayout
 class MenuDataFragment : TitleBarFragment<SecondHomeActivity>()
 {
 
-    private var dataAddLayout : ShapeLinearLayout ?= null
+
+    private var homeTempView : SecondHomeTemperatureView ?= null
 
     companion object{
 
@@ -25,13 +26,12 @@ class MenuDataFragment : TitleBarFragment<SecondHomeActivity>()
     }
 
     override fun initView() {
-        dataAddLayout = findViewById(R.id.dataAddLayout)
+        homeTempView = findViewById(R.id.homeTempView)
 
-        dataAddLayout?.setOnClickListener { startActivity(SecondScanActivity::class.java) }
     }
 
     override fun initData() {
-
+        homeTempView?.setTemperatures("--","--","--")
     }
 
 }

@@ -317,7 +317,7 @@ public class CircleProgress extends View {
        // Log.e(TAG,"------bitmap="+bitmap.getWidth()+" "+bitmap.getHeight());
         unitImgPatin.setTextAlign(Paint.Align.CENTER);
 //        canvas.drawBitmap(bitmap,null,new RectF(mCenterPoint.x-imgWidht/2,mCenterPoint.y+imgHeight/2,mCenterPoint.x+imgWidht/2,mCenterPoint.y+imgHeight/2),unitImgPatin);
-        canvas.drawBitmap(bitmap,mCenterPoint.x-imgWidht/2, mCenterPoint.y+imgHeight/4,unitImgPatin);
+      //  canvas.drawBitmap(bitmap,mCenterPoint.x-imgWidht/2, mCenterPoint.y+imgHeight/4,unitImgPatin);
     }
 
     private void drawArc(Canvas canvas) {

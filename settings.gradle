@@ -28,7 +28,7 @@ dependencyResolutionManagement {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
-rootProject.name = "SmartKeyboard"
+rootProject.name = "SmartKeyboardDeluxe"
 include ':app'
 include ':blalable'
 include ':base'

@@ -21,10 +21,7 @@ import com.app.smartkeyboard.bean.NoteBookBean
 import com.app.smartkeyboard.ble.ConnStatus
 import com.app.smartkeyboard.dialog.DeleteNoteDialog
 import com.app.smartkeyboard.dialog.SelectPhotoDialog
-import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.viewmodel.NoteBookViewModel
-import com.blala.blalable.BleOperateManager
-import com.blala.blalable.listener.OnCommBackDataListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -8,14 +8,12 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.smartkeyboard.BaseApplication
 import com.app.smartkeyboard.R
 import com.app.smartkeyboard.action.AppActivity
 import com.app.smartkeyboard.adapter.OnCommItemClickListener
-import com.app.smartkeyboard.adapter.ScanDeviceAdapter
 import com.app.smartkeyboard.adapter.SecondScanAdapter
 import com.app.smartkeyboard.bean.BleBean
 import com.app.smartkeyboard.ble.ConnStatus
@@ -23,11 +21,9 @@ import com.app.smartkeyboard.utils.BikeUtils
 import com.app.smartkeyboard.utils.BonlalaUtils
 import com.app.smartkeyboard.utils.MmkvUtils
 import com.blala.blalable.Utils
-import com.blala.blalable.listener.BleConnStatusListener
 import com.hjq.permissions.XXPermissions
 import com.inuker.bluetooth.library.search.SearchResult
 import com.inuker.bluetooth.library.search.response.SearchResponse
-import java.util.Locale
 
 /**
  * Created by Admin
@@ -140,20 +136,23 @@ class SecondScanActivity : AppActivity() {
             val service = BaseApplication.getBaseApplication().connStatusService
             val bean = list?.get(position)
             if (bean != null) {
+                showDialog("连接中..")
                 handlers.sendEmptyMessageDelayed(0x00, 500)
                 service.connDeviceBack(
                     bean.bluetoothDevice.name, bean.bluetoothDevice.address
                 ) { mac, status ->
+                    hideDialog()
                     MmkvUtils.saveConnDeviceMac(mac)
                     MmkvUtils.saveConnDeviceName(bean.bluetoothDevice.name)
                     BaseApplication.getBaseApplication().connStatus = ConnStatus.CONNECTED
+                    finish()
                 }
             }
         }
 
 
     //开始扫描
-    fun startScan() {
+    private fun startScan() {
 
         BaseApplication.getBaseApplication().bleOperate.scanBleDevice(object : SearchResponse {
 
@@ -173,9 +172,9 @@ class SecondScanActivity : AppActivity() {
                     return
                 if (repeatList?.contains(p0.address) == true)
                     return
-                //030543
-                if (!BikeUtils.isEmpty(recordStr) && recordStr.toLowerCase(Locale.ROOT)
-                        .contains("c003")
+                //030543  && recordStr.toLowerCase(Locale.ROOT)
+                //                        .contains("c003")
+                if (!BikeUtils.isEmpty(recordStr)
                 ) {
                     //判断少于40个设备就不添加了
                     if (repeatList?.size!! > 40) {
