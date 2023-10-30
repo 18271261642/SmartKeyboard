@@ -1,6 +1,8 @@
 package com.app.smartkeyboard.img;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import timber.log.Timber;
 
@@ -96,12 +99,21 @@ public final class CameraActivity extends AppActivity {
 
         boolean isPack = intent.resolveActivity(getPackageManager()) == null;
         Timber.e("---isPack="+isPack);
-        if (
-                !XXPermissions.isGranted(this, Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.CAMERA)) {
-            setResult(RESULT_ERROR, new Intent().putExtra(INTENT_KEY_OUT_ERROR, getString(R.string.camera_launch_fail)));
-            finish();
-            return;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if(ActivityCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_DENIED){
+                setResult(RESULT_ERROR, new Intent().putExtra(INTENT_KEY_OUT_ERROR, getString(R.string.camera_launch_fail)));
+                finish();
+            }
+
+        }else{
+            if (!XXPermissions.isGranted(this, Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.CAMERA)) {
+                setResult(RESULT_ERROR, new Intent().putExtra(INTENT_KEY_OUT_ERROR, getString(R.string.camera_launch_fail)));
+                finish();
+                return;
+            }
         }
+
 
         File file = getSerializable(INTENT_KEY_IN_FILE);
         if (file == null) {

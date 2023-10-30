@@ -91,8 +91,10 @@ class MainActivity : AppActivity() {
 //        if (Build.VERSION.SDK_INT >= 33) {
 //            XXPermissions.with(this).permission(arrayOf(Manifest.permission.POST_NOTIFICATIONS)).request { permissions, all ->  }
 //        }
-        
-        XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)).request { permissions, allGranted ->  }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_MEDIA_IMAGES,Manifest.permission.READ_MEDIA_VIDEO)).request { permissions, allGranted ->  }
+        }
     }
 
 

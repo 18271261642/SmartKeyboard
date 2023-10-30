@@ -1,9 +1,11 @@
 package com.app.smartkeyboard.img;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
@@ -375,6 +377,12 @@ public final class ImageSelectActivity extends AppActivity
                 MediaStore.MediaColumns.HEIGHT, MediaStore.MediaColumns.SIZE};
 
         Cursor cursor = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            cursor = contentResolver.query(contentUri, projections, selection, new String[]{String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)}, sortOrder);
+            //XXPermissions.with(this).permission(Manifest.permission.READ_MEDIA_IMAGES)
+        }
+
         if (XXPermissions.isGranted(this, Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE)) {
             cursor = contentResolver.query(contentUri, projections, selection, new String[]{String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)}, sortOrder);
         }

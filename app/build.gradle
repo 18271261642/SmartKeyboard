@@ -5,12 +5,13 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    namespace 'com.app.smartkeyboard'
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.app.smartkeyboard"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 8
         versionName "V1.0.6.2"
 

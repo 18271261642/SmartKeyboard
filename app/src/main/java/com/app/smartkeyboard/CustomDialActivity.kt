@@ -181,13 +181,21 @@ class CustomDialActivity : AppActivity() {
     }
 
     override fun initData() {
-        XXPermissions.with(this).permission(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        ).request { permissions, all -> }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_MEDIA_IMAGES,Manifest.permission.READ_MEDIA_VIDEO)).request { permissions, allGranted ->  }
+        }else{
+
+            XXPermissions.with(this).permission(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            ).request { permissions, all -> }
+        }
+
+
 
 
 
@@ -565,18 +573,27 @@ class CustomDialActivity : AppActivity() {
             choosePick()
             return
         }
-        XXPermissions.with(this).permission(
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        ).request(object : OnPermissionCallback {
-            override fun onGranted(permissions: MutableList<String>, all: Boolean) {
-                if (all) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            XXPermissions.with(this).permission(arrayOf(Manifest.permission.READ_MEDIA_IMAGES,Manifest.permission.READ_MEDIA_VIDEO)).request { permissions, allGranted ->
+                if (allGranted) {
                     choosePick()
                 }
             }
-        })
+        }else{
+            XXPermissions.with(this).permission(
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            ).request(object : OnPermissionCallback {
+                override fun onGranted(permissions: MutableList<String>, all: Boolean) {
+                    if (all) {
+                        choosePick()
+                    }
+                }
+            })
+        }
+
 
     }
 

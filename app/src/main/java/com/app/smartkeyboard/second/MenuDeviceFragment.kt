@@ -41,7 +41,7 @@ class MenuDeviceFragment : TitleBarFragment<SecondHomeActivity>(){
         }
         //关于设备
         findViewById<ShapeTextView>(R.id.deviceAboutTv).setOnClickListener {
-            startActivity(AboutDeviceActivity::class.java)
+
         }
     }
 
